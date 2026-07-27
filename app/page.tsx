@@ -11,6 +11,7 @@ import { Faq } from "@/components/sections/faq";
 import { CtaFinal } from "@/components/sections/cta-final";
 import { Footer } from "@/components/sections/footer";
 import { WhatsappFab } from "@/components/whatsapp-fab";
+import { RetornoInscricao } from "@/components/retorno-inscricao";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
       <CtaFinal />
       <Footer />
       <WhatsappFab />
+      <RetornoInscricao />
     </main>
   );
 }

@@ -52,7 +52,7 @@ export function InscricaoCta({
   const [honeypot, setHoneypot] = React.useState("");
   const [enviando, setEnviando] = React.useState(false);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!nome.trim()) {
@@ -75,27 +75,54 @@ export function InscricaoCta({
 
     setEnviando(true);
 
-    // Grava no Supabase — mas o lead nunca se perde: com sucesso ou falha,
-    // a pessoa é levada ao WhatsApp mesmo assim.
+    const url = whatsappInscricao(nome, turma);
+
+    // Registra o interesse localmente. É isso que faz a mensagem "seu interesse
+    // ficou salvo" aparecer quando a pessoa volta do WhatsApp.
     try {
-      await fetch("/api/inscricao", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+      localStorage.setItem(
+        "ceramica:lead",
+        JSON.stringify({
           nome: nome.trim(),
-          whatsapp,
           turma,
-          experiencia,
-          origem,
-          empresa: honeypot, // honeypot
-        }),
-        keepalive: true,
-      });
+          at: Date.now(),
+          confirmado: false,
+        })
+      );
     } catch {
-      // silencioso de propósito — segue pro WhatsApp
+      // localStorage indisponível — segue mesmo assim
     }
 
-    window.location.href = whatsappInscricao(nome, turma);
+    // Grava no Supabase sem bloquear a ida ao WhatsApp. O lead nunca se perde:
+    // keepalive garante a entrega mesmo se a aba mudar de contexto.
+    fetch("/api/inscricao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: nome.trim(),
+        whatsapp,
+        turma,
+        experiencia,
+        origem,
+        empresa: honeypot, // honeypot
+      }),
+      keepalive: true,
+    }).catch(() => {
+      // silencioso de propósito — segue pro WhatsApp
+    });
+
+    setOpen(false);
+    setEnviando(false);
+
+    // Mostra a confirmação (depois do form fechar, para não brigar pelo foco).
+    window.setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("ceramica:inscrito"));
+    }, 140);
+
+    // Abre o WhatsApp em nova aba e mantém a landing (e a confirmação) à vista.
+    // Se o navegador bloquear a nova aba, navega na própria aba.
+    const janela = window.open(url, "_blank", "noopener,noreferrer");
+    if (!janela) window.location.href = url;
   }
 
   return (

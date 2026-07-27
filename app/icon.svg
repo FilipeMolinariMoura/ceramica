@@ -1,9 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tigela de cerâmica">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Vaso de cerâmica torneado">
+  <defs>
+    <!-- volume torneado: claro no centro-esquerda, sombra à direita -->
+    <linearGradient id="barro" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#F6F1E9" />
+      <stop offset="0.42" stop-color="#EFE8DE" />
+      <stop offset="1" stop-color="#DCCFBB" />
+    </linearGradient>
+    <path id="corpo" d="M256 150
+      C284 150 306 152 306 165 C306 178 288 184 282 202
+      C276 230 316 250 344 276 C366 296 374 316 374 328
+      C374 366 352 402 320 428 C316 431 314 432 310 434
+      L202 434 C198 432 196 431 192 428
+      C160 402 138 366 138 328 C138 316 146 296 168 276
+      C196 250 236 230 230 202 C224 184 206 178 206 165
+      C206 152 228 150 256 150 Z" />
+    <clipPath id="dentro"><use href="#corpo" /></clipPath>
+  </defs>
+
+  <!-- fundo cobalto full-bleed -->
   <rect width="512" height="512" fill="#1D4FA0" />
-  <!-- corpo da tigela (lona) -->
-  <path d="M74 192 C 92 396 420 396 438 192 A182 44 0 0 1 74 192 Z" fill="#EFE8DE" />
-  <!-- boca da tigela -->
-  <ellipse cx="256" cy="192" rx="152" ry="32" fill="#1D4FA0" />
-  <!-- gota de engobe pousada na tigela (coral) -->
-  <circle cx="256" cy="300" r="17" fill="#F26B57" />
+
+  <!-- sombra de assentamento -->
+  <ellipse cx="256" cy="440" rx="62" ry="9" fill="#163F80" />
+
+  <!-- corpo torneado -->
+  <use href="#corpo" fill="url(#barro)" />
+
+  <!-- decoração pintada à mão (esmalte cobalto) + gota coral -->
+  <g clip-path="url(#dentro)">
+    <rect x="120" y="300" width="272" height="9" fill="#1D4FA0" />
+    <rect x="120" y="346" width="272" height="9" fill="#1D4FA0" />
+    <circle cx="256" cy="327" r="15" fill="#F26B57" />
+  </g>
+
+  <!-- boca aberta do vaso -->
+  <ellipse cx="256" cy="156" rx="42" ry="9" fill="#163F80" />
+  <ellipse cx="256" cy="154" rx="42" ry="7" fill="none" stroke="#F6F1E9" stroke-width="4" />
 </svg>
