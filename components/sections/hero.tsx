@@ -49,7 +49,7 @@ export function Hero() {
             <p className="max-w-md text-[1.05rem] leading-relaxed text-barro-ink/85">
               Depois de quatro anos ensinando cerâmica, abro minhas primeiras
               turmas em um espaço dedicado a processos criativos. Duas turmas de
-              seis pessoas — manhã ou tarde —, com acompanhamento individual,
+              seis pessoas, manhã ou tarde, com acompanhamento individual,
               começando em 4 de agosto.
             </p>
 

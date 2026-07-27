@@ -99,7 +99,7 @@ export function Informacoes() {
                 Mês com cinco terças
               </p>
               <p className="mt-2 text-[1.05rem] leading-relaxed">
-                Mensalidade fixa. Alguns meses têm cinco terças — nesses, você
+                Mensalidade fixa. Alguns meses têm cinco terças. Nesses, você
                 tem <em className="font-display italic">uma aula a mais</em> sem
                 pagar a mais.
               </p>

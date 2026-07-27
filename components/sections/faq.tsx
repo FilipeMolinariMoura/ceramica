@@ -17,7 +17,7 @@ const PERGUNTAS = [
   },
   {
     q: "E a queima das peças?",
-    a: "Inclusa — tanto a queima de baixa temperatura quanto a de esmalte.",
+    a: "Está inclusa: a queima de baixa temperatura e a de esmalte.",
   },
   {
     q: "Preciso comprar argila?",

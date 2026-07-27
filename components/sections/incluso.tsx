@@ -22,7 +22,7 @@ const ITENS = [
     tom: "quase" as const,
     titulo: "Argila e esmaltes",
     texto:
-      "Ficam por conta do aluno — mas nas duas primeiras aulas eu forneço, para você começar sem se preocupar com isso.",
+      "Ficam por conta do aluno, mas nas duas primeiras aulas eu forneço, para você começar sem se preocupar com isso.",
   },
 ];
 

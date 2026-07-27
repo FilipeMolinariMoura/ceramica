@@ -18,17 +18,17 @@ const sans = Hanken_Grotesk({
 });
 
 const description =
-  "Seis vagas, acompanhamento individual, terças de manhã em Pinheiros. A primeira turma de cerâmica da artista visual Isabela Molinari começa em 4 de agosto.";
+  "Duas turmas às terças, de manhã e de tarde, com seis vagas cada e acompanhamento individual, em Pinheiros. As turmas de cerâmica da artista visual Isabela Molinari começam em 4 de agosto.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ceramica-isabela.vercel.app"),
-  title: "Primeira turma de cerâmica · Isabela Molinari — Pinheiros, SP",
+  title: "Turmas de cerâmica · Isabela Molinari · Pinheiros, SP",
   description,
   openGraph: {
     type: "website",
     locale: "pt_BR",
     siteName: "Cerâmica com Isabela Molinari",
-    title: "Primeira turma de cerâmica · Isabela Molinari",
+    title: "Turmas de cerâmica · Isabela Molinari",
     description,
     images: [
       {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Primeira turma de cerâmica · Isabela Molinari",
+    title: "Turmas de cerâmica · Isabela Molinari",
     description,
     images: ["/og.jpg"],
   },

@@ -52,7 +52,7 @@ export function DoisCaminhos() {
 
         <Reveal delay={160}>
           <p className="mt-14 max-w-2xl text-2xl font-light leading-snug text-lona sm:text-[1.75rem]">
-            Você escolhe o caminho —{" "}
+            Você escolhe o caminho,{" "}
             <em className="font-display italic text-parede">
               e pode trocar no meio.
             </em>
