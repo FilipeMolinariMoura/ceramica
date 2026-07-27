@@ -38,15 +38,18 @@ prefixe com `NEXT_PUBLIC_` e nunca a use em componentes client.
 2. Em **SQL Editor**, rode o conteúdo de [`supabase/schema.sql`](supabase/schema.sql):
    ele cria a tabela `inscricoes`, liga o Row Level Security e **não** cria policy
    — assim a escrita só acontece via `service_role`, pelo servidor.
+   Se você já tinha criado a tabela antes das duas turmas, rode só o
+   `ALTER TABLE … add column … turma` que está no mesmo arquivo.
 3. Em **Project Settings → API**, copie:
    - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
    - `service_role` key → `SUPABASE_SERVICE_ROLE_KEY`
 
 ### Fluxo de captação
 
-Clique no CTA → `Dialog` com 3 campos (Nome, WhatsApp com máscara, experiência) →
-`POST /api/inscricao` grava no Supabase → a pessoa é redirecionada ao WhatsApp da
-Isabela com a mensagem pronta.
+Clique no CTA → `Dialog` com 4 campos (Nome, WhatsApp com máscara, **horário da
+turma** — manhã/tarde — e experiência) → `POST /api/inscricao` grava no Supabase →
+a pessoa é redirecionada ao WhatsApp da Isabela com a mensagem pronta (já incluindo
+o horário escolhido).
 
 O **lead nunca se perde**: se o Supabase falhar, o erro vai para o log e o redirect
 para o WhatsApp acontece do mesmo jeito. Há um honeypot (`empresa`) contra bots.

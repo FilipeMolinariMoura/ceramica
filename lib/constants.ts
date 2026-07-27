@@ -2,11 +2,19 @@
 
 export const WHATSAPP_NUMBER = "5511957040729";
 
-export function whatsappInscricao(nome: string): string {
-  const primeiro = nome.trim() || "";
-  const msg = primeiro
-    ? `Oi, Isabela! Sou a/o ${primeiro} e quero garantir minha vaga na primeira turma de cerâmica.`
-    : "Oi, Isabela! Quero garantir minha vaga na primeira turma de cerâmica.";
+export function whatsappInscricao(nome: string, turma?: TurmaValor): string {
+  const abertura = nome.trim()
+    ? `Sou a/o ${nome.trim()} e quero`
+    : "Quero";
+  const periodo =
+    turma === "manha"
+      ? " — no horário da manhã (9h30)"
+      : turma === "tarde"
+        ? " — no horário da tarde (13h30)"
+        : turma === "tanto_faz"
+          ? " — manhã ou tarde, tanto faz"
+          : "";
+  const msg = `Oi, Isabela! ${abertura} garantir minha vaga na turma de cerâmica${periodo}.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -14,17 +22,32 @@ export const WHATSAPP_DUVIDA = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeUR
   "Oi, Isabela! Tenho uma dúvida sobre a turma de cerâmica."
 )}`;
 
+// TODO: PREENCHER com o @ real da Isabela.
 export const INSTAGRAM_HANDLE = "zabelamolinari";
 export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;
 
 export const CURSO = {
   inicio: "4 de agosto",
-  quando: "Terças, 9h30 às 11h30",
-  vagas: 6,
+  diaSemana: "Terças",
+  vagasPorTurma: 6,
   endereco: "Rua Irmão Lucas, 75 — Pinheiros, São Paulo",
   mensalidadePix: "R$ 800",
   mensalidadeCartao: "R$ 835,08",
 } as const;
+
+// Duas turmas, ambas às terças — só muda o horário.
+export const TURMAS = [
+  { id: "manha", periodo: "Manhã", horario: "9h30 às 11h30" },
+  { id: "tarde", periodo: "Tarde", horario: "13h30 às 15h30" },
+] as const;
+
+export const TURMA_OPCOES = [
+  { value: "manha", label: "Manhã — 9h30 às 11h30" },
+  { value: "tarde", label: "Tarde — 13h30 às 15h30" },
+  { value: "tanto_faz", label: "Tanto faz" },
+] as const;
+
+export type TurmaValor = (typeof TURMA_OPCOES)[number]["value"];
 
 export const EXPERIENCIA_OPCOES = [
   { value: "nenhuma", label: "Nunca tive contato" },

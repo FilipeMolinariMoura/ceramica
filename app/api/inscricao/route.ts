@@ -5,6 +5,7 @@ import { onlyDigits } from "@/lib/utils";
 export const runtime = "nodejs";
 
 const EXPERIENCIAS = new Set(["nenhuma", "pouca", "pratico"]);
+const TURMAS = new Set(["manha", "tarde", "tanto_faz"]);
 
 export async function POST(req: Request) {
   let raw: unknown;
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
 
   const nome = String(body.nome ?? "").trim();
   const whatsapp = String(body.whatsapp ?? "").trim();
+  const turma = String(body.turma ?? "");
   const experiencia = String(body.experiencia ?? "");
   const origem = String(body.origem ?? "landing").slice(0, 60);
 
@@ -31,6 +33,7 @@ export async function POST(req: Request) {
     !nome ||
     digits.length < 10 ||
     digits.length > 11 ||
+    !TURMAS.has(turma) ||
     !EXPERIENCIAS.has(experiencia)
   ) {
     return NextResponse.json(
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
     const supabase = supabaseAdmin();
     const { error } = await supabase
       .from("inscricoes")
-      .insert({ nome, whatsapp, experiencia, origem });
+      .insert({ nome, whatsapp, turma, experiencia, origem });
 
     if (error) {
       console.error("[inscricao] falha ao gravar no Supabase:", error.message);

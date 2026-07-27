@@ -15,7 +15,8 @@ export function CtaFinal() {
             Inscrições abertas
           </h2>
           <p className="mt-5 max-w-md text-lg text-lona/85">
-            Seis vagas. As aulas começam em 4 de agosto.
+            Seis vagas por turma, manhã ou tarde. As aulas começam em 4 de
+            agosto.
           </p>
         </Reveal>
 

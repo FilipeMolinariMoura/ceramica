@@ -19,7 +19,7 @@ export function Quebra() {
       <Container className="relative">
         <Reveal className="max-w-xl">
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-lona/70">
-            Terças, 9h30
+            Terças · manhã ou tarde
           </p>
           <p className="mt-3 font-display text-3xl font-light italic leading-tight text-lona sm:text-4xl lg:text-[2.9rem]">
             Uma pausa no meio da semana — só você e o barro.

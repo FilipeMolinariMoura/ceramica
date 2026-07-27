@@ -8,6 +8,10 @@ const PERGUNTAS = [
     a: "Não. A turma recebe iniciantes e o acompanhamento é individual.",
   },
   {
+    q: "Tem horário de manhã e de tarde?",
+    a: "Sim. As duas turmas são às terças: uma de manhã (9h30 às 11h30) e outra de tarde (13h30 às 15h30). Você escolhe o horário na inscrição.",
+  },
+  {
     q: "Preciso comprar ferramentas?",
     a: "Não. Todas as ferramentas estão inclusas.",
   },

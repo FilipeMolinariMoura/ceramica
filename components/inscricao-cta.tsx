@@ -22,8 +22,10 @@ import {
 } from "@/components/ui/select";
 import {
   EXPERIENCIA_OPCOES,
+  TURMA_OPCOES,
   whatsappInscricao,
   type ExperienciaValor,
+  type TurmaValor,
 } from "@/lib/constants";
 import { maskPhone, onlyDigits } from "@/lib/utils";
 
@@ -45,6 +47,7 @@ export function InscricaoCta({
   const [open, setOpen] = React.useState(false);
   const [nome, setNome] = React.useState("");
   const [whatsapp, setWhatsapp] = React.useState("");
+  const [turma, setTurma] = React.useState<TurmaValor | "">("");
   const [experiencia, setExperiencia] = React.useState<ExperienciaValor | "">("");
   const [honeypot, setHoneypot] = React.useState("");
   const [enviando, setEnviando] = React.useState(false);
@@ -59,6 +62,10 @@ export function InscricaoCta({
     const digits = onlyDigits(whatsapp);
     if (digits.length < 10 || digits.length > 11) {
       toast.error("Confere o WhatsApp com DDD, por favor.");
+      return;
+    }
+    if (!turma) {
+      toast.error("Escolha o horário: manhã ou tarde.");
       return;
     }
     if (!experiencia) {
@@ -77,6 +84,7 @@ export function InscricaoCta({
         body: JSON.stringify({
           nome: nome.trim(),
           whatsapp,
+          turma,
           experiencia,
           origem,
           empresa: honeypot, // honeypot
@@ -87,7 +95,7 @@ export function InscricaoCta({
       // silencioso de propósito — segue pro WhatsApp
     }
 
-    window.location.href = whatsappInscricao(nome);
+    window.location.href = whatsappInscricao(nome, turma);
   }
 
   return (
@@ -102,7 +110,7 @@ export function InscricaoCta({
         <DialogHeader>
           <DialogTitle>Reservar minha vaga</DialogTitle>
           <DialogDescription>
-            São seis vagas. Preencha e eu te respondo pelo WhatsApp para
+            Seis vagas por turma. Preencha e eu te respondo pelo WhatsApp para
             confirmar tudo.
           </DialogDescription>
         </DialogHeader>
@@ -132,6 +140,25 @@ export function InscricaoCta({
               value={whatsapp}
               onChange={(e) => setWhatsapp(maskPhone(e.target.value))}
             />
+          </div>
+
+          <div className="grid gap-2">
+            <Label htmlFor="turma">Qual horário? (terças)</Label>
+            <Select
+              value={turma}
+              onValueChange={(v) => setTurma(v as TurmaValor)}
+            >
+              <SelectTrigger id="turma" aria-label="Qual horário da turma?">
+                <SelectValue placeholder="Manhã ou tarde" />
+              </SelectTrigger>
+              <SelectContent>
+                {TURMA_OPCOES.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    {o.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="grid gap-2">

@@ -2,14 +2,14 @@ import { Container } from "@/components/section";
 import { Eyebrow } from "@/components/eyebrow";
 import { Reveal } from "@/components/reveal";
 import { InscricaoCta } from "@/components/inscricao-cta";
-import { CURSO } from "@/lib/constants";
+import { CURSO, TURMAS } from "@/lib/constants";
 
 const FICHA = [
   { rotulo: "Início", valor: CURSO.inicio },
-  { rotulo: "Quando", valor: "Todas as terças, 9h30 às 11h30" },
   { rotulo: "Onde", valor: CURSO.endereco },
-  { rotulo: "Turma", valor: "Até 6 alunos" },
 ];
+
+const COR_TURMA = ["bg-cobalto", "bg-coral"];
 
 export function Informacoes() {
   return (
@@ -23,23 +23,60 @@ export function Informacoes() {
         </Reveal>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <Reveal>
-            <dl>
-              {FICHA.map((f) => (
-                <div
-                  key={f.rotulo}
-                  className="flex flex-col gap-1 border-t border-lona-300 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
-                >
-                  <dt className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-barro/45">
-                    {f.rotulo}
-                  </dt>
-                  <dd className="font-display text-xl text-barro sm:text-right">
-                    {f.valor}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </Reveal>
+          <div className="flex flex-col gap-10">
+            {/* Dois horários — sempre às terças. Manhã ou tarde, bem separados. */}
+            <Reveal>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-barro/45">
+                Duas turmas · sempre às terças
+              </p>
+              <div className="mt-5 grid gap-6 sm:grid-cols-2">
+                {TURMAS.map((t, i) => (
+                  <div
+                    key={t.id}
+                    className={
+                      i === 1
+                        ? "border-t border-lona-300 pt-6 sm:border-l sm:border-t-0 sm:pl-6 sm:pt-0"
+                        : ""
+                    }
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span
+                        aria-hidden
+                        className={`h-2.5 w-2.5 rounded-full ${COR_TURMA[i]}`}
+                      />
+                      <span className="text-sm font-semibold uppercase tracking-[0.12em] text-barro/70">
+                        {t.periodo}
+                      </span>
+                    </div>
+                    <p className="mt-2 font-display text-2xl text-barro">
+                      {t.horario}
+                    </p>
+                    <p className="mt-1 text-sm text-barro/55">
+                      {CURSO.vagasPorTurma} vagas
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal>
+              <dl>
+                {FICHA.map((f) => (
+                  <div
+                    key={f.rotulo}
+                    className="flex flex-col gap-1 border-t border-lona-300 py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                  >
+                    <dt className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-barro/45">
+                      {f.rotulo}
+                    </dt>
+                    <dd className="font-display text-xl text-barro sm:text-right">
+                      {f.valor}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </Reveal>
+          </div>
 
           <Reveal delay={90} className="flex flex-col gap-6">
             <div className="border-t border-lona-300 pt-5">

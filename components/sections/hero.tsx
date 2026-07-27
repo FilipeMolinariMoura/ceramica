@@ -7,8 +7,8 @@ import { CURSO } from "@/lib/constants";
 
 const DADOS = [
   { label: "Início", valor: CURSO.inicio },
-  { label: "Encontros", valor: "Terças, 9h30–11h30" },
-  { label: "Turma", valor: "6 vagas" },
+  { label: "Encontros", valor: "Terças · manhã ou tarde" },
+  { label: "Vagas", valor: "6 por turma" },
 ];
 
 export function Hero() {
@@ -36,7 +36,7 @@ export function Hero() {
             data-enter
             className="flex w-full max-w-xl flex-col items-start gap-6 px-6 py-11 sm:px-8 lg:max-w-[34rem] lg:py-16 lg:pr-14"
           >
-            <Eyebrow>Primeira turma · Terças de manhã · Pinheiros</Eyebrow>
+            <Eyebrow>Primeiras turmas · Manhã e tarde · Pinheiros</Eyebrow>
 
             <h1 className="font-display text-[2.55rem] font-light leading-[1.05] tracking-[-0.02em] text-barro sm:text-5xl lg:text-[4rem]">
               Um espaço para{" "}
@@ -47,14 +47,15 @@ export function Hero() {
             </h1>
 
             <p className="max-w-md text-[1.05rem] leading-relaxed text-barro-ink/85">
-              Depois de quatro anos ensinando cerâmica, abro minha primeira turma
-              em um espaço dedicado a processos criativos. Seis pessoas,
-              acompanhamento individual, começando em 4 de agosto.
+              Depois de quatro anos ensinando cerâmica, abro minhas primeiras
+              turmas em um espaço dedicado a processos criativos. Duas turmas de
+              seis pessoas — manhã ou tarde —, com acompanhamento individual,
+              começando em 4 de agosto.
             </p>
 
             <InscricaoCta origem="hero" />
 
-            <SeisLugares animate caption="seis lugares · terças de manhã" />
+            <SeisLugares animate caption="seis lugares por turma" />
 
             <dl className="mt-1 flex flex-wrap items-stretch gap-x-6 gap-y-3 border-t border-lona-300 pt-5">
               {DADOS.map((d, i) => (
