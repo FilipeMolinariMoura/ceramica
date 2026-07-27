@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# preview temporário do favicon
+scripts/_favicon-preview.png
+
 # vercel
 .vercel
 

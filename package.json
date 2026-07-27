@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "fotos": "node scripts/fotos.mjs"
+    "fotos": "node scripts/fotos.mjs",
+    "favicon": "node scripts/favicon.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",

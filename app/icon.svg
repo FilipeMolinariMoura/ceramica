@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Tigela de cerâmica">
+  <rect width="512" height="512" fill="#1D4FA0" />
+  <!-- corpo da tigela (lona) -->
+  <path d="M74 192 C 92 396 420 396 438 192 A182 44 0 0 1 74 192 Z" fill="#EFE8DE" />
+  <!-- boca da tigela -->
+  <ellipse cx="256" cy="192" rx="152" ry="32" fill="#1D4FA0" />
+  <!-- gota de engobe pousada na tigela (coral) -->
+  <circle cx="256" cy="300" r="17" fill="#F26B57" />
+</svg>
