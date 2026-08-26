@@ -18,7 +18,7 @@ const sans = Hanken_Grotesk({
 });
 
 const description =
-  "Duas turmas às terças, de manhã e de tarde, com seis vagas cada e acompanhamento individual, em Pinheiros. As turmas de cerâmica da artista visual Isabela Molinari começam em 4 de agosto.";
+  "Duas turmas às terças, de manhã e de tarde, com seis vagas cada e acompanhamento individual, em Pinheiros. Inscrições abertas para as turmas de setembro da artista visual Isabela Molinari: começam em 1º de setembro.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ceramica-isabela.vercel.app"),

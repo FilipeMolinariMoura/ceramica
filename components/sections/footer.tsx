@@ -51,7 +51,7 @@ export function Footer() {
 
         <div className="flex flex-col gap-2 border-t border-lona/15 pt-6 text-[0.8rem] text-lona/45 sm:flex-row sm:items-center sm:justify-between">
           <p>© {ano} Isabela Molinari · Pinheiros, São Paulo</p>
-          <p>Primeira turma · Terças de manhã</p>
+          <p>Turmas de setembro · Terças, manhã ou tarde</p>
         </div>
       </Container>
     </footer>

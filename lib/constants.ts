@@ -24,7 +24,7 @@ export const INSTAGRAM_HANDLE = "zabelamolinari";
 export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;
 
 export const CURSO = {
-  inicio: "4 de agosto",
+  inicio: "1º de setembro",
   diaSemana: "Terças",
   vagasPorTurma: 6,
   endereco: "Rua Irmão Lucas, 75, Pinheiros, São Paulo",

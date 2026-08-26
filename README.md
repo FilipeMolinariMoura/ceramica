@@ -3,7 +3,7 @@
 Landing page de página única, mobile-first, para a primeira turma de cerâmica da
 artista visual Isabela Molinari, em Pinheiros (SP). O trabalho da página é levar
 a pessoa ao WhatsApp com a vaga reservada mentalmente — são 6 vagas, começando em
-4 de agosto.
+1º de setembro.
 
 **Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Supabase ·
 deploy na Vercel.

@@ -36,7 +36,7 @@ export function Hero() {
             data-enter
             className="flex w-full max-w-xl flex-col items-start gap-6 px-6 py-11 sm:px-8 lg:max-w-[34rem] lg:py-16 lg:pr-14"
           >
-            <Eyebrow>Primeiras turmas · Manhã e tarde · Pinheiros</Eyebrow>
+            <Eyebrow>Inscrições abertas · Turmas de setembro · Pinheiros</Eyebrow>
 
             <h1 className="font-display text-[2.55rem] font-light leading-[1.05] tracking-[-0.02em] text-barro sm:text-5xl lg:text-[4rem]">
               Um espaço para{" "}
@@ -50,7 +50,7 @@ export function Hero() {
               Depois de quatro anos ensinando cerâmica, abro minhas primeiras
               turmas em um espaço dedicado a processos criativos. Duas turmas de
               seis pessoas, manhã ou tarde, com acompanhamento individual,
-              começando em 4 de agosto.
+              começando em 1º de setembro.
             </p>
 
             <InscricaoCta origem="hero" />
