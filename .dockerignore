@@ -1,0 +1,12 @@
+.git
+.github
+.next
+node_modules
+fotos-fonte
+.env
+.env.local
+.vercel
+.claude
+README.md
+._*
+.DS_Store

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/db";
 import { onlyDigits } from "@/lib/utils";
 
 export const runtime = "nodejs";
@@ -43,19 +43,20 @@ export async function POST(req: Request) {
   }
 
   // O lead nunca se perde: qualquer falha aqui é logada, mas o cliente
-  // redireciona a pessoa para o WhatsApp de qualquer forma.
+  // redireciona a pessoa para o WhatsApp de qualquer forma. Banco fora do ar
+  // não pode virar vaga perdida — a conversa no WhatsApp é o que fecha a
+  // turma, o registro é conveniência.
   try {
-    const supabase = supabaseAdmin();
-    const { error } = await supabase
-      .from("inscricoes")
-      .insert({ nome, whatsapp, turma, experiencia, origem });
-
-    if (error) {
-      console.error("[inscricao] falha ao gravar no Supabase:", error.message);
-      return NextResponse.json({ ok: false, saved: false }, { status: 200 });
-    }
+    await db().query(
+      `insert into inscricoes (nome, whatsapp, turma, experiencia, origem)
+       values ($1, $2, $3, $4, $5)`,
+      [nome, whatsapp, turma, experiencia, origem]
+    );
   } catch (err) {
-    console.error("[inscricao] erro inesperado:", err);
+    console.error(
+      "[inscricao] falha ao gravar:",
+      err instanceof Error ? err.message : err
+    );
     return NextResponse.json({ ok: false, saved: false }, { status: 200 });
   }
 

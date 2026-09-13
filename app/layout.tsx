@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Fraunces, Hanken_Grotesk } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
+import { WhatsappFab } from "@/components/whatsapp-fab";
+import { SITE } from "@/lib/constants";
 import "./globals.css";
 
 const display = Fraunces({
@@ -18,17 +22,21 @@ const sans = Hanken_Grotesk({
 });
 
 const description =
-  "Duas turmas às terças, de manhã e de tarde, com seis vagas cada e acompanhamento individual, em Pinheiros. Inscrições abertas para as turmas de setembro da artista visual Isabela Molinari: começam em 1º de setembro.";
+  "Ateliê de cerâmica de Isabela Molinari, artista visual e arteterapeuta, em Pinheiros. Peças autorais, encomendas e turmas de cerâmica com acompanhamento individual.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ceramica-isabela.vercel.app"),
-  title: "Turmas de cerâmica · Isabela Molinari · Pinheiros, SP",
+  metadataBase: new URL(SITE.dominio),
+  title: {
+    default: `${SITE.nome} · ${SITE.artista}`,
+    // Cada página define só o próprio nome; a marca entra por aqui.
+    template: `%s · ${SITE.nome}`,
+  },
   description,
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    siteName: "Cerâmica com Isabela Molinari",
-    title: "Turmas de cerâmica · Isabela Molinari",
+    siteName: SITE.nome,
+    title: `${SITE.nome} · ${SITE.artista}`,
     description,
     images: [
       {
@@ -41,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Turmas de cerâmica · Isabela Molinari",
+    title: `${SITE.nome} · ${SITE.artista}`,
     description,
     images: ["/og.jpg"],
   },
@@ -56,7 +64,10 @@ export default function RootLayout({
       className={`${display.variable} ${sans.variable} antialiased`}
     >
       <body>
-        {children}
+        <SiteHeader />
+        <main>{children}</main>
+        <SiteFooter />
+        <WhatsappFab />
         <Toaster />
       </body>
     </html>

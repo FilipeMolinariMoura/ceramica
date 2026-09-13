@@ -1,0 +1,160 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-ceramica
+  cancel-in-progress: false
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+  imagem:
+    needs: verificar
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Registro em minúsculas
+        run: echo "REGISTRO=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Entrar no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construir e publicar
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRO }}/site:${{ github.sha }}
+            ${{ env.REGISTRO }}/site:latest
+          cache-from: type=gha,scope=site
+          cache-to: type=gha,mode=max,scope=site
+
+  publicar:
+    needs: imagem
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Registro em minúsculas
+        run: echo "REGISTRO=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Chave de deploy
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.VPS_SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+
+      - name: Chave do host (com retentativa)
+        run: |
+          # O keyscan falha de forma intermitente mesmo com a VPS de pé.
+          # Mesma lógica já usada nos deploys do Prisma e do prisma-site.
+          esperas="5 10 20 40 60"
+          tentativa=0
+          for espera in $esperas; do
+            tentativa=$((tentativa + 1))
+            erro="$(ssh-keyscan -T 15 -H "${{ secrets.VPS_HOST }}" 2>&1 >> ~/.ssh/known_hosts)" || true
+            if [ -s ~/.ssh/known_hosts ]; then
+              echo "chave do host lida na tentativa $tentativa"
+              exit 0
+            fi
+            echo "tentativa $tentativa falhou: ${erro:-(sem mensagem)}"
+            sleep "$espera"
+          done
+          echo "não foi possível ler a chave do host em $tentativa tentativas."
+          exit 1
+
+      - name: Subir na VPS
+        env:
+          VPS: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          SHA: ${{ github.sha }}
+          REGISTRO: ${{ env.REGISTRO }}
+          GHCR_USUARIO: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ssh -i ~/.ssh/deploy "$VPS" bash -s <<EOF
+            set -euo pipefail
+
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USUARIO" --password-stdin
+
+            # ── Primeira instalação ──────────────────────────────────────
+            # Precisa de uma DEPLOY KEY deste repositório em
+            # ~/.ssh/repo_ceramica na VPS (GitHub → Settings → Deploy keys).
+            if [ ! -d /opt/ceramica/.git ]; then
+              echo "primeira instalação: preparando /opt/ceramica"
+              mkdir -p /opt/ceramica
+              [ ! -f ~/.ssh/repo_ceramica ] && echo "falta ~/.ssh/repo_ceramica na VPS (deploy key deste repositório)" && exit 1
+              GIT_SSH_COMMAND="ssh -i ~/.ssh/repo_ceramica -o StrictHostKeyChecking=accept-new" \
+                git clone git@github.com:${{ github.repository }}.git /opt/ceramica
+            fi
+
+            cd /opt/ceramica
+
+            git config core.fileMode false
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/repo_ceramica -o StrictHostKeyChecking=accept-new" \
+              git pull --ff-only
+
+            # O .env da VPS guarda IMAGEM_SITE e POSTGRES_SENHA. A senha é
+            # posta à mão uma vez (ver README); aqui só a imagem é reescrita
+            # a cada deploy.
+            if ! grep -q '^POSTGRES_SENHA=' .env 2>/dev/null; then
+              echo "o .env de /opt/ceramica não tem POSTGRES_SENHA."
+              echo "rode na VPS, uma vez:"
+              echo "  printf 'POSTGRES_SENHA=%s\n' \"\$(openssl rand -base64 24 | tr -d /+=)\" >> /opt/ceramica/.env && chmod 600 /opt/ceramica/.env"
+              exit 1
+            fi
+            grep -q '^IMAGEM_SITE=' .env || echo "IMAGEM_SITE=" >> .env
+            sed -i "s|^IMAGEM_SITE=.*|IMAGEM_SITE=$REGISTRO/site:$SHA|" .env
+
+            docker compose -f docker-compose.prod.yml pull site
+            # `up -d` sem nome de serviço: sobe o banco junto se ele ainda não
+            # estiver de pé, e respeita o depends_on/healthcheck do site.
+            docker compose -f docker-compose.prod.yml up -d
+
+            # ── Borda ────────────────────────────────────────────────────
+            # O que identifica o bloco é o upstream, não o hostname: assim
+            # trocar/ acrescentar domínio não faz o deploy duplicar o bloco.
+            if grep -q "reverse_proxy ceramica-1:3000" /opt/shared-proxy/Caddyfile 2>/dev/null; then
+              echo "bloco do site já estava no proxy"
+            elif cat infra/caddy/ceramica.Caddyfile >> /opt/shared-proxy/Caddyfile 2>/dev/null; then
+              if command -v recarregar-borda >/dev/null 2>&1; then recarregar-borda; else docker exec shared-proxy-caddy caddy reload --config /etc/caddy/Caddyfile </dev/null; fi
+              echo "bloco do site anexado ao proxy e recarregado"
+            else
+              echo "ATENÇÃO: sem permissão para escrever em /opt/shared-proxy/Caddyfile."
+              echo "A stack subiu, mas o site ainda não responde por fora. Rode como root:"
+              echo "  cat /opt/ceramica/infra/caddy/ceramica.Caddyfile >> /opt/shared-proxy/Caddyfile"
+              echo "  recarregar-borda"
+            fi
+
+            docker images --filter "reference=$REGISTRO/site" --format '{{.ID}}' \
+              | sort -u \
+              | while read -r img; do docker rmi "\$img" >/dev/null 2>&1 || true; done
+
+            docker logout ghcr.io
+          EOF

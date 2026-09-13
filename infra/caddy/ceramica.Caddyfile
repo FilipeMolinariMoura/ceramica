@@ -1,0 +1,44 @@
+# Bloco de borda do site da Bela Cerâmica.
+#
+# Como os do Prisma, este arquivo NÃO é montado em lugar nenhum: ele é a fonte
+# da verdade versionada do que precisa existir dentro de
+# /opt/shared-proxy/Caddyfile, que é compartilhado com o painel do Prisma, o
+# prisma-site e o PersonalizaML.
+#
+# Para aplicar à mão:
+#   1. anexe o conteúdo abaixo ao fim de /opt/shared-proxy/Caddyfile
+#   2. recarregar-borda
+#
+# O deploy faz isso sozinho — ver o passo "Borda" em .github/workflows/deploy.yml.
+#
+# O site mora num subdomínio do prismax.tech, o domínio que já é nosso —
+# decisão de setembro de 2026, para não registrar domínio novo. Se um dia vier
+# um domínio próprio (belaceramica.com.br, por exemplo), basta acrescentá-lo a
+# esta lista: o que identifica o bloco no Caddyfile compartilhado é o upstream
+# `reverse_proxy ceramica-1:3000`, não o hostname.
+#
+# ATENÇÃO: o Caddy só emite certificado para host que já resolva para o IP
+# desta VPS. Host sem DNS aqui faz o Caddy tentar o desafio ACME em laço e
+# sujar o log — sem derrubar os outros, mas sem servir também.
+
+belaceramica.prismax.tech {
+	import observabilidade
+	encode zstd gzip
+
+	handle {
+		reverse_proxy ceramica-1:3000 {
+			# Durante o deploy o contêiner é recriado e fica alguns segundos
+			# fora. Segurar a requisição evita um 502 na cara de quem veio do
+			# Instagram da Isabela.
+			lb_try_duration 30s
+		}
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "DENY"
+		-Server
+	}
+}

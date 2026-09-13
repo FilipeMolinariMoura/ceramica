@@ -34,7 +34,10 @@ export function Hero() {
         <div className="order-2 flex items-center lg:order-1 lg:justify-end">
           <div
             data-enter
-            className="flex w-full max-w-xl flex-col items-start gap-6 px-6 py-11 sm:px-8 lg:max-w-[34rem] lg:py-16 lg:pr-14"
+            /* pt maior que pb: a barra do site é fixa e mede 4.5rem, e sem
+               esta folga o primeiro elemento (o eyebrow) corre por baixo dela
+               quando a coluna é alta demais para centralizar. */
+            className="flex w-full max-w-xl flex-col items-start gap-6 px-6 pb-11 pt-11 sm:px-8 lg:max-w-[34rem] lg:pb-16 lg:pr-14 lg:pt-[7.5rem]"
           >
             <Eyebrow>Inscrições abertas · Turmas de setembro · Pinheiros</Eyebrow>
 

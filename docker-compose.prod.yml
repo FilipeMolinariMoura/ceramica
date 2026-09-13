@@ -1,0 +1,70 @@
+# Produção. Roda em /opt/ceramica na VPS prismax, ao lado das stacks do Prisma
+# (/opt/prisma, /opt/prisma-site) e do PersonalizaML — mesma máquina, deploy e
+# ciclo de vida independentes.
+#
+# Tudo self-hosted: site e banco são desta stack. O Postgres daqui NÃO é o do
+# Prisma — banco separado é o que permite restaurar, migrar ou derrubar um sem
+# tocar no outro.
+#
+# `shared-proxy` já existe: é a rede do Caddy de borda, criada pela stack do
+# painel. `external: true` faz o compose falhar alto se ela não existir, em vez
+# de criar uma rede nova de mesmo nome e deixar o site inalcançável pelo proxy.
+
+name: ceramica
+
+x-log: &log
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  site:
+    image: ${IMAGEM_SITE:?defina IMAGEM_SITE}
+    # Nome fixo: é o que o Caddyfile compartilhado usa em `reverse_proxy`.
+    # Sem isto o nome viraria "ceramica-site-1" e o proxy pararia de achar.
+    container_name: ceramica-1
+    restart: unless-stopped
+    logging: *log
+    environment:
+      NODE_ENV: production
+      # `db` é o nome do serviço na rede interna. A senha vem do .env da VPS.
+      DATABASE_URL: postgres://ceramica:${POSTGRES_SENHA:?defina no .env da VPS}@db:5432/ceramica
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [interna, shared-proxy]
+
+  db:
+    image: postgres:17-alpine
+    container_name: ceramica-db
+    restart: unless-stopped
+    logging: *log
+    environment:
+      POSTGRES_USER: ceramica
+      POSTGRES_DB: ceramica
+      POSTGRES_PASSWORD: ${POSTGRES_SENHA:?defina no .env da VPS}
+    volumes:
+      - dados:/var/lib/postgresql/data
+      # Só roda na primeira subida, com o volume vazio. Ver db/init.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ceramica -d ceramica"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    # NENHUMA porta publicada, de propósito: o banco só é alcançável pela rede
+    # interna do compose. Para consultar de fora, `docker exec ceramica-db psql`.
+    networks: [interna]
+
+volumes:
+  dados:
+    name: ceramica-dados
+
+networks:
+  interna:
+    name: ceramica_interna
+  shared-proxy:
+    name: shared-proxy
+    external: true

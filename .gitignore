@@ -43,3 +43,4 @@ scripts/_favicon-preview.png
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+backups/

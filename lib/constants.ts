@@ -53,3 +53,47 @@ export const EXPERIENCIA_OPCOES = [
 ] as const;
 
 export type ExperienciaValor = (typeof EXPERIENCIA_OPCOES)[number]["value"];
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Site completo
+   Até setembro de 2026 isto aqui era uma landing de uma turma só. O site
+   passou a ter quatro portas de entrada (obras, sobre, aulas, encomendas) e
+   o que era "o curso" virou UMA delas. As constantes acima seguem sendo a
+   fonte da verdade da aba de aulas; as daqui para baixo são do site.
+   ────────────────────────────────────────────────────────────────────────── */
+
+export const SITE = {
+  nome: "Bela Cerâmica",
+  artista: "Isabela Molinari",
+  dominio: "https://belaceramica.prismax.tech",
+  bairro: "Pinheiros",
+  cidade: "Pinheiros, São Paulo",
+} as const;
+
+/** Ordem da navegação: o trabalho primeiro, a venda por último. */
+export const NAV = [
+  { href: "/obras", label: "Obras" },
+  { href: "/sobre", label: "Sobre" },
+  { href: "/aulas", label: "Aulas" },
+  { href: "/encomendas", label: "Encomendas" },
+] as const;
+
+/** Fatos verificados sobre a Isabela — não invente linha nova aqui. */
+export const ARTISTA = {
+  nome: "Isabela Molinari",
+  /** Com separador, para as linhas de crédito sob o nome. */
+  titulo: "Artista visual · Arteterapeuta",
+  /** Em frase corrida, para parágrafos. */
+  tituloFrase: "Artista visual e arteterapeuta",
+  formacao: "Bacharela em Artes Visuais pela Belas Artes de São Paulo",
+  anosEnsinando: 4,
+} as const;
+
+export function whatsappObra(peca: string): string {
+  const msg = `Oi, Isabela! Vi a peça "${peca}" no site e queria saber mais.`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
+export const WHATSAPP_ENCOMENDA = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+  "Oi, Isabela! Queria conversar sobre uma encomenda."
+)}`;
