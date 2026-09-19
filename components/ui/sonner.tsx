@@ -8,9 +8,9 @@ export function Toaster(props: ToasterProps) {
       position="top-center"
       toastOptions={{
         style: {
-          background: "var(--color-lona-100)",
-          color: "var(--color-barro)",
-          border: "1px solid var(--color-lona-300)",
+          background: "var(--color-branco)",
+          color: "var(--color-preto)",
+          border: "1px solid var(--color-linha)",
           borderRadius: "0.9rem",
           fontFamily: "var(--font-hanken), system-ui, sans-serif",
         },

@@ -1,38 +1,53 @@
-// Dados do curso e links de contato. Ajuste o @ do Instagram antes de publicar.
+// Dados do ateliê e links de contato.
 
 export const WHATSAPP_NUMBER = "5511957040729";
 
-export function whatsappInscricao(nome: string, turma?: TurmaValor): string {
-  const abertura = nome.trim() ? `Sou a/o ${nome.trim()} e quero` : "Quero";
-  const periodo =
-    turma === "manha"
-      ? ", no horário da manhã (9h30)"
-      : turma === "tarde"
-        ? ", no horário da tarde (13h30)"
-        : turma === "tanto_faz"
-          ? ", pode ser de manhã ou de tarde"
-          : "";
-  const msg = `Oi, Isabela! ${abertura} garantir minha vaga na turma de cerâmica${periodo}.`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-}
+export const SITE = {
+  nome: "Bela Cerâmica",
+  artista: "Isabela Molinari",
+  dominio: "https://belaceramica.prismax.tech",
+  bairro: "Pinheiros",
+  cidade: "Pinheiros, São Paulo",
+  endereco: "Rua Irmão Lucas, 75, Pinheiros, São Paulo",
+} as const;
 
-export const WHATSAPP_DUVIDA = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Oi, Isabela! Tenho uma dúvida sobre a turma de cerâmica."
-)}`;
+/**
+ * Navegação.
+ *
+ * As três primeiras são as portas do catálogo da home, na ordem em que a
+ * Isabela as pediu. `Obras` e `Sobre` vêm depois porque não vendem nada
+ * diretamente. `/encomendas` ficou FORA da barra de propósito: seis itens não
+ * cabem no mobile sem virar lista de sistema, e ela é alcançada por dentro de
+ * `/obras` e pelo rodapé, que é onde as pessoas a procuram.
+ */
+export const NAV = [
+  { href: "/aulas", label: "Aulas" },
+  { href: "/oficinas", label: "Oficinas" },
+  { href: "/atendimentos", label: "Atendimentos" },
+  { href: "/obras", label: "Obras" },
+  { href: "/sobre", label: "Sobre" },
+] as const;
 
-export const INSTAGRAM_HANDLE = "zabelamolinari";
-export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;
+/** Fatos verificados sobre a Isabela — não invente linha nova aqui. */
+export const ARTISTA = {
+  nome: "Isabela Molinari",
+  titulo: "Artista visual · Arteterapeuta",
+  tituloFrase: "Artista visual e arteterapeuta",
+  formacao: "Bacharela em Artes Visuais pela Belas Artes de São Paulo",
+  anosEnsinando: 4,
+} as const;
+
+/* ── Turma mensal ──────────────────────────────────────────────────────── */
 
 export const CURSO = {
   inicio: "1º de setembro",
   diaSemana: "Terças",
   vagasPorTurma: 6,
-  endereco: "Rua Irmão Lucas, 75, Pinheiros, São Paulo",
+  endereco: SITE.endereco,
   mensalidadePix: "R$ 800",
   mensalidadeCartao: "R$ 835,08",
 } as const;
 
-// Duas turmas, ambas às terças; só muda o horário.
 export const TURMAS = [
   { id: "manha", periodo: "Manhã", horario: "9h30 às 11h30" },
   { id: "tarde", periodo: "Tarde", horario: "13h30 às 15h30" },
@@ -54,46 +69,55 @@ export const EXPERIENCIA_OPCOES = [
 
 export type ExperienciaValor = (typeof EXPERIENCIA_OPCOES)[number]["value"];
 
-/* ──────────────────────────────────────────────────────────────────────────
-   Site completo
-   Até setembro de 2026 isto aqui era uma landing de uma turma só. O site
-   passou a ter quatro portas de entrada (obras, sobre, aulas, encomendas) e
-   o que era "o curso" virou UMA delas. As constantes acima seguem sendo a
-   fonte da verdade da aba de aulas; as daqui para baixo são do site.
-   ────────────────────────────────────────────────────────────────────────── */
+/* ── Aula avulsa ───────────────────────────────────────────────────────── */
 
-export const SITE = {
-  nome: "Bela Cerâmica",
-  artista: "Isabela Molinari",
-  dominio: "https://belaceramica.prismax.tech",
-  bairro: "Pinheiros",
-  cidade: "Pinheiros, São Paulo",
-} as const;
+/**
+ * O slug que a página de aulas procura no banco. O preço e as vagas NÃO moram
+ * aqui: moram na tabela `servicos`, porque a Isabela precisa mudá-los pelo
+ * painel sem esperar deploy. Só o identificador é código.
+ */
+export const SERVICO_AULA_AVULSA = "aula-avulsa";
 
-/** Ordem da navegação: o trabalho primeiro, a venda por último. */
-export const NAV = [
-  { href: "/obras", label: "Obras" },
-  { href: "/sobre", label: "Sobre" },
-  { href: "/aulas", label: "Aulas" },
-  { href: "/encomendas", label: "Encomendas" },
-] as const;
+/* ── WhatsApp ──────────────────────────────────────────────────────────── */
 
-/** Fatos verificados sobre a Isabela — não invente linha nova aqui. */
-export const ARTISTA = {
-  nome: "Isabela Molinari",
-  /** Com separador, para as linhas de crédito sob o nome. */
-  titulo: "Artista visual · Arteterapeuta",
-  /** Em frase corrida, para parágrafos. */
-  tituloFrase: "Artista visual e arteterapeuta",
-  formacao: "Bacharela em Artes Visuais pela Belas Artes de São Paulo",
-  anosEnsinando: 4,
-} as const;
-
-export function whatsappObra(peca: string): string {
-  const msg = `Oi, Isabela! Vi a peça "${peca}" no site e queria saber mais.`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+function zap(mensagem: string): string {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
 }
 
-export const WHATSAPP_ENCOMENDA = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+export function whatsappInscricao(nome: string, turma?: TurmaValor): string {
+  const abertura = nome.trim() ? `Sou a/o ${nome.trim()} e quero` : "Quero";
+  const periodo =
+    turma === "manha"
+      ? ", no horário da manhã (9h30)"
+      : turma === "tarde"
+        ? ", no horário da tarde (13h30)"
+        : turma === "tanto_faz"
+          ? ", pode ser de manhã ou de tarde"
+          : "";
+  return zap(
+    `Oi, Isabela! ${abertura} garantir minha vaga na turma de cerâmica${periodo}.`
+  );
+}
+
+export const WHATSAPP_DUVIDA = zap(
+  "Oi, Isabela! Tenho uma dúvida sobre as aulas de cerâmica."
+);
+
+export const WHATSAPP_ENCOMENDA = zap(
   "Oi, Isabela! Queria conversar sobre uma encomenda."
-)}`;
+);
+
+export const WHATSAPP_OFICINA = zap(
+  "Oi, Isabela! Queria um orçamento de oficina de cerâmica."
+);
+
+export const WHATSAPP_ATENDIMENTO = zap(
+  "Oi, Isabela! Queria marcar um atendimento de tarot ou astrologia."
+);
+
+export function whatsappObra(peca: string): string {
+  return zap(`Oi, Isabela! Vi a peça "${peca}" no site e queria saber mais.`);
+}
+
+export const INSTAGRAM_HANDLE = "zabelamolinari";
+export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;

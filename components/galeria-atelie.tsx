@@ -38,7 +38,7 @@ export function GaleriaAtelie({
                   className="object-cover"
                 />
               </div>
-              <p className="mt-3 text-[0.82rem] uppercase tracking-[0.14em] text-barro/50">
+              <p className="mt-3 text-[0.82rem] uppercase tracking-[0.14em] text-preto/50">
                 {foto.legenda}
               </p>
             </li>
@@ -73,7 +73,7 @@ export function GaleriaAtelie({
                 className="object-cover transition-transform duration-[900ms] ease-out hover:scale-[1.03]"
               />
             </div>
-            <figcaption className="mt-3 text-[0.82rem] uppercase tracking-[0.14em] text-barro/50">
+            <figcaption className="mt-3 text-[0.82rem] uppercase tracking-[0.14em] text-preto/50">
               {foto.legenda}
             </figcaption>
           </figure>

@@ -1,24 +1,31 @@
 import { cn } from "@/lib/utils";
 
+/**
+ * A linha curta acima do título, com o filete à esquerda.
+ *
+ * `tone` diz sobre que fundo ela está, não que cor ela tem — `claro` é para
+ * fundo escuro ou foto, `escuro` para quando o vermelho competiria com um
+ * título vermelho logo abaixo.
+ */
 export function Eyebrow({
   children,
   className,
-  tone = "cobalto",
+  tone = "padrao",
 }: {
   children: React.ReactNode;
   className?: string;
-  tone?: "cobalto" | "lona" | "barro";
+  tone?: "padrao" | "claro" | "escuro";
 }) {
   const color =
-    tone === "lona"
-      ? "text-lona/75"
-      : tone === "barro"
-        ? "text-barro/55"
-        : "text-cobalto";
+    tone === "claro"
+      ? "text-papel/80"
+      : tone === "escuro"
+        ? "text-preto/55"
+        : "text-vermelho";
   return (
     <p
       className={cn(
-        "flex items-center gap-3 text-[0.72rem] font-semibold uppercase tracking-[0.2em]",
+        "versalete-larga flex items-center gap-3 text-[0.7rem]",
         color,
         className
       )}

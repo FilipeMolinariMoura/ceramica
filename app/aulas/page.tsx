@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/sections/hero";
+import { AgendaAulaAvulsa } from "@/components/agenda/agenda-aula-avulsa";
 import { Sobre } from "@/components/sections/sobre";
 import { DoisCaminhos } from "@/components/sections/dois-caminhos";
 import { Incluso } from "@/components/sections/incluso";
@@ -12,8 +13,12 @@ import { Faq } from "@/components/sections/faq";
 import { CtaFinal } from "@/components/sections/cta-final";
 import { RetornoInscricao } from "@/components/retorno-inscricao";
 
+// A agenda lê o banco a cada visita. Sem isto o Next tentaria prerenderizar
+// esta página no `docker build`, onde não existe Postgres, e o build quebraria.
+export const dynamic = "force-dynamic";
+
 const description =
-  "Duas turmas às terças, de manhã e de tarde, com seis vagas cada e acompanhamento individual, em Pinheiros. Turmas de cerâmica da artista visual Isabela Molinari.";
+  "Aula avulsa de cerâmica com horário marcado e pagamento online, e turmas mensais com seis vagas, em Pinheiros. Com a artista visual Isabela Molinari.";
 
 export const metadata: Metadata = {
   title: "Aulas de cerâmica",
@@ -39,6 +44,10 @@ export default function Aulas() {
   return (
     <>
       <Hero />
+      {/* A agenda vem ANTES do argumento. Quem chega pelo Instagram decidido a
+          marcar uma aula não deve ter que rolar a página de venda inteira para
+          achar onde clicar. */}
+      <AgendaAulaAvulsa />
       <Sobre />
       <DoisCaminhos />
       <Incluso />

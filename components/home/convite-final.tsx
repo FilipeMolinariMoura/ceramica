@@ -10,17 +10,17 @@ import { SITE, WHATSAPP_DUVIDA } from "@/lib/constants";
  */
 export function ConviteFinal() {
   return (
-    <section className="bg-cobalto py-20 text-lona-100 sm:py-24">
+    <section className="bg-vermelho py-20 text-branco sm:py-24">
       <Container className="flex flex-col items-start gap-7">
-        <Eyebrow tone="lona">Turmas abertas</Eyebrow>
+        <Eyebrow tone="claro">Turmas abertas</Eyebrow>
         <Reveal>
           <h2 className="max-w-2xl font-display text-3xl font-light leading-[1.12] tracking-[-0.01em] sm:text-4xl lg:text-[2.9rem]">
             Seis pessoas por turma, às terças, em{" "}
-            <em className="italic text-parede-soft">{SITE.bairro}</em>.
+            <em className="italic text-verde-claro">{SITE.bairro}</em>.
           </h2>
         </Reveal>
         <Reveal delay={80}>
-          <p className="max-w-xl text-[1.05rem] leading-relaxed text-lona/85">
+          <p className="max-w-xl text-[1.05rem] leading-relaxed text-papel/85">
             Turma pequena é decisão de projeto: dá para acompanhar cada pessoa
             individualmente. Não é preciso ter experiência com barro.
           </p>
@@ -28,7 +28,7 @@ export function ConviteFinal() {
         <Reveal delay={140} className="flex flex-wrap items-center gap-3">
           <Link
             href="/aulas"
-            className="inline-flex h-[3.35rem] items-center justify-center rounded-full bg-lona-100 px-8 text-base font-medium tracking-tight text-barro transition-[background-color,transform] duration-200 hover:bg-white active:scale-[0.98]"
+            className="inline-flex h-[3.35rem] items-center justify-center rounded-none bg-branco px-8 text-base font-medium tracking-tight text-preto transition-[background-color,transform] duration-200 hover:bg-branco active:scale-[0.98]"
           >
             Ver as turmas
           </Link>
@@ -36,7 +36,7 @@ export function ConviteFinal() {
             href={WHATSAPP_DUVIDA}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-[3.35rem] items-center justify-center rounded-full border border-lona/40 px-8 text-base font-medium tracking-tight text-lona transition-colors duration-200 hover:border-lona hover:bg-lona hover:text-cobalto"
+            className="inline-flex h-[3.35rem] items-center justify-center rounded-none border border-papel/40 px-8 text-base font-medium tracking-tight text-papel transition-colors duration-200 hover:border-papel hover:bg-papel hover:text-vermelho"
           >
             Falar no WhatsApp
           </a>

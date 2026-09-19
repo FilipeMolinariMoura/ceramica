@@ -1,64 +1,71 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/section";
-import { Eyebrow } from "@/components/eyebrow";
 import { fotos } from "@/lib/fotos";
-import { SITE } from "@/lib/constants";
+import { reais, servicoPorSlug } from "@/lib/agenda";
+import { SERVICO_AULA_AVULSA, SITE } from "@/lib/constants";
 
 /**
- * Abertura do site: uma foto só, do tamanho da tela, e o nome por cima.
+ * Abertura: o nome grande em versalete vermelho sobre creme, e a foto inteira
+ * logo abaixo — a composição da referência.
  *
- * A landing de aulas abre diferente (foto ao lado do texto, com data, vagas e
- * CTA) porque tem 20 segundos para vender uma turma. A home não vende nada na
- * primeira dobra — ela diz de quem é o ateliê. Por isso a foto vem inteira e
- * o texto é curto.
+ * A versão anterior era uma foto de tela cheia com o texto por cima e nenhum
+ * preço à vista. Bonita, e não vendia: quem chegava do Instagram não
+ * descobria o que custava nem o que dava para marcar sem rolar a página.
+ * Agora a primeira dobra diz o que é, quanto custa e onde clicar.
  */
-export function HeroHome() {
-  return (
-    <section className="relative h-[92svh] min-h-[34rem] w-full overflow-hidden">
-      <Image
-        src={fotos.hero.src}
-        alt={fotos.hero.alt}
-        fill
-        priority
-        quality={90}
-        placeholder="blur"
-        sizes="100vw"
-        className="hero-img object-cover object-center"
-      />
-      {/* Escurece só o suficiente para o texto ter contraste no topo e no pé. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-barro/45 via-barro/10 to-barro/60" />
+export async function HeroHome() {
+  const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
+  const preco = servico ? reais(servico.precoCentavos) : null;
 
-      <Container className="relative flex h-full flex-col justify-end pb-14 sm:pb-20">
-        <div data-enter className="flex max-w-2xl flex-col items-start gap-5">
-          <Eyebrow tone="lona">Ateliê de cerâmica · {SITE.cidade}</Eyebrow>
-          <h1 className="font-display text-[2.7rem] font-light leading-[1.03] tracking-[-0.02em] text-lona sm:text-6xl lg:text-[4.4rem]">
-            O barro como{" "}
-            <em className="font-normal italic text-parede-soft">
-              linguagem de criação
-            </em>
-            .
-          </h1>
-          <p className="max-w-lg text-[1.05rem] leading-relaxed text-lona/85">
-            Peças autorais, encomendas e turmas conduzidas por{" "}
-            {SITE.artista}, artista visual e arteterapeuta.
+  return (
+    <section className="bg-papel pt-[6.5rem] sm:pt-[7.5rem]">
+      <Container>
+        <div data-enter className="flex flex-col gap-6">
+          <p className="versalete-larga text-[0.68rem] text-preto/55">
+            Ateliê de cerâmica · {SITE.cidade}
           </p>
-          <div className="mt-1 flex flex-wrap items-center gap-3">
-            <Link
-              href="/obras"
-              className="inline-flex h-[3.35rem] items-center justify-center rounded-full bg-lona-100 px-8 text-base font-medium tracking-tight text-barro transition-[background-color,transform] duration-200 hover:bg-white active:scale-[0.98]"
-            >
-              Ver as obras
-            </Link>
-            <Link
-              href="/aulas"
-              className="inline-flex h-[3.35rem] items-center justify-center rounded-full border border-lona/40 px-8 text-base font-medium tracking-tight text-lona transition-colors duration-200 hover:border-lona hover:bg-lona hover:text-barro"
-            >
-              Aulas de cerâmica
-            </Link>
+
+          <h1 className="versalete font-display text-[2.6rem] leading-[0.95] text-vermelho sm:text-[4.2rem] lg:text-[5.6rem]">
+            Bela Cerâmica
+          </h1>
+
+          <div className="flex flex-col gap-5 border-t border-linha pt-6 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
+            <p className="max-w-md text-[1.05rem] leading-relaxed text-grafite">
+              Aulas, oficinas e peças autorais com {SITE.artista}, artista
+              visual e arteterapeuta. {preco ? `Aula avulsa ${preco}.` : ""}
+            </p>
+
+            <div className="flex shrink-0 flex-wrap gap-3">
+              <Link
+                href="/aulas#agenda"
+                className="inline-flex h-12 items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-colors hover:bg-vermelho-escuro"
+              >
+                Marcar uma aula
+              </Link>
+              <Link
+                href="/obras"
+                className="inline-flex h-12 items-center justify-center border border-preto/25 px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-colors hover:border-preto"
+              >
+                Ver as obras
+              </Link>
+            </div>
           </div>
         </div>
       </Container>
+
+      <div className="relative mt-10 aspect-[16/10] w-full overflow-hidden sm:aspect-[16/7]">
+        <Image
+          src={fotos.hero.src}
+          alt={fotos.hero.alt}
+          fill
+          priority
+          quality={90}
+          placeholder="blur"
+          sizes="100vw"
+          className="hero-img object-cover object-center"
+        />
+      </div>
     </section>
   );
 }

@@ -40,7 +40,7 @@ type Props = {
 export function InscricaoCta({
   label = "Quero minha vaga",
   origem,
-  variant = "cobalto",
+  variant = "solido",
   size = "lg",
   className,
 }: Props) {
@@ -222,14 +222,14 @@ export function InscricaoCta({
 
           <Button
             type="submit"
-            variant="cobalto"
+            variant="solido"
             size="lg"
             disabled={enviando}
             className="mt-1 w-full"
           >
             {enviando ? "Abrindo o WhatsApp…" : "Continuar no WhatsApp"}
           </Button>
-          <p className="text-center text-[0.78rem] leading-relaxed text-barro/50">
+          <p className="text-center text-[0.78rem] leading-relaxed text-preto/50">
             Ao continuar, você abre uma conversa com a Isabela no WhatsApp.
           </p>
         </form>

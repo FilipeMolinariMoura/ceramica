@@ -14,7 +14,7 @@ export function ObraCard({ obra, delay = 0 }: { obra: Obra; delay?: number }) {
 
   const conteudo = (
     <>
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-lona-100">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-branco">
         <Image
           src={obra.foto}
           alt={obra.alt}
@@ -29,22 +29,22 @@ export function ObraCard({ obra, delay = 0 }: { obra: Obra; delay?: number }) {
           )}
         />
         {obra.estado !== "disponivel" ? (
-          <span className="absolute left-4 top-4 rounded-full bg-lona/90 px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.12em] text-barro/70 backdrop-blur-sm">
+          <span className="absolute left-4 top-4 bg-papel/90 px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.12em] text-preto/70 backdrop-blur-sm">
             {ESTADO_ROTULO[obra.estado]}
           </span>
         ) : null}
       </div>
 
       <div className="mt-4 flex flex-col gap-1">
-        <h3 className="font-display text-xl text-barro">{obra.nome}</h3>
-        <p className="text-[0.95rem] text-barro/60">{obra.tecnica}</p>
-        <p className="text-[0.88rem] text-barro/45">
+        <h3 className="font-display text-xl text-preto">{obra.nome}</h3>
+        <p className="text-[0.95rem] text-preto/60">{obra.tecnica}</p>
+        <p className="text-[0.88rem] text-preto/45">
           {obra.dimensoes} · {obra.ano}
         </p>
         <p
           className={cn(
             "mt-1 font-display text-lg",
-            vendida ? "text-barro/40" : "text-cobalto"
+            vendida ? "text-preto/40" : "text-vermelho"
           )}
         >
           {vendida ? "Vendida" : precoFormatado(obra)}
@@ -62,10 +62,10 @@ export function ObraCard({ obra, delay = 0 }: { obra: Obra; delay?: number }) {
           href={whatsappObra(obra.nome)}
           target="_blank"
           rel="noopener noreferrer"
-          className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cobalto"
+          className="group block focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-vermelho"
         >
           {conteudo}
-          <span className="mt-2 inline-block text-[0.9rem] text-barro/55 transition-colors group-hover:text-cobalto">
+          <span className="mt-2 inline-block text-[0.9rem] text-preto/55 transition-colors group-hover:text-vermelho">
             Perguntar no WhatsApp →
           </span>
         </a>

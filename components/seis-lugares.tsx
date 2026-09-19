@@ -13,8 +13,8 @@ type Props = {
   className?: string;
   /** Anima a entrada dos lugares um a um. */
   animate?: boolean;
-  /** Cor dos anéis: acento cobalto (padrão) ou claro para fundos escuros. */
-  tone?: "cobalto" | "lona";
+  /** Sobre que fundo os anéis estão: `padrao` (claro) ou `claro` (escuro/foto). */
+  tone?: "padrao" | "claro";
   caption?: string;
 };
 
@@ -25,12 +25,12 @@ type Props = {
 export function SeisLugares({
   className,
   animate = false,
-  tone = "cobalto",
+  tone = "padrao",
   caption = "seis lugares · uma turma",
 }: Props) {
-  const ring = tone === "cobalto" ? "var(--color-cobalto)" : "var(--color-lona)";
-  const disc = tone === "cobalto" ? "var(--color-barro)" : "var(--color-lona-100)";
-  const edge = tone === "cobalto" ? "var(--color-barro)" : "var(--color-lona)";
+  const ring = tone === "padrao" ? "var(--color-vermelho)" : "var(--color-papel)";
+  const disc = tone === "padrao" ? "var(--color-preto)" : "var(--color-branco)";
+  const edge = tone === "padrao" ? "var(--color-preto)" : "var(--color-papel)";
 
   return (
     <div className={cn("flex flex-col items-start gap-2.5", className)}>
@@ -69,7 +69,7 @@ export function SeisLugares({
         <span
           className={cn(
             "text-[0.68rem] font-semibold uppercase tracking-[0.22em]",
-            tone === "cobalto" ? "text-barro/55" : "text-lona/70"
+            tone === "padrao" ? "text-preto/55" : "text-papel/70"
           )}
         >
           {caption}

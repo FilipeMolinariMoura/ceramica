@@ -21,21 +21,21 @@ export function PageHero({
   children?: React.ReactNode;
 }) {
   return (
-    <section className="bg-lona pb-14 pt-[8.5rem] sm:pb-16 sm:pt-[10rem]">
+    <section className="bg-papel pb-14 pt-[8.5rem] sm:pb-16 sm:pt-[10rem]">
       <Container>
         <div data-enter className="flex max-w-3xl flex-col items-start gap-6">
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="font-display text-[2.5rem] font-light leading-[1.06] tracking-[-0.02em] text-barro sm:text-5xl lg:text-[3.6rem]">
+          <h1 className="font-display text-[2.5rem] font-light leading-[1.06] tracking-[-0.02em] text-preto sm:text-5xl lg:text-[3.6rem]">
             {titulo}
             {destaque ? (
               <>
                 {" "}
-                <em className="font-normal italic text-cobalto">{destaque}</em>
+                <em className="font-normal italic text-vermelho">{destaque}</em>
               </>
             ) : null}
           </h1>
           {texto ? (
-            <p className="max-w-xl text-[1.08rem] leading-relaxed text-barro-ink/85">
+            <p className="max-w-xl text-[1.08rem] leading-relaxed text-grafite/85">
               {texto}
             </p>
           ) : null}

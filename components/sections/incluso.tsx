@@ -28,15 +28,15 @@ const ITENS = [
 
 export function Incluso() {
   return (
-    <section className="bg-parede py-20 text-barro sm:py-28 lg:py-32">
+    <section className="bg-verde py-20 text-preto sm:py-28 lg:py-32">
       <Container className="grid items-center gap-12 lg:grid-cols-[1fr_0.8fr] lg:gap-16">
         <div className="flex flex-col items-start gap-8">
           <div className="flex flex-col gap-5">
-            <Eyebrow tone="barro">O que está incluso</Eyebrow>
+            <Eyebrow tone="escuro">O que está incluso</Eyebrow>
             <Reveal>
-              <h2 className="max-w-md font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-barro sm:text-4xl lg:text-[2.9rem]">
+              <h2 className="max-w-md font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl lg:text-[2.9rem]">
                 Você não precisa comprar{" "}
-                <em className="italic text-cobalto">nada</em> para começar.
+                <em className="italic text-vermelho">nada</em> para começar.
               </h2>
             </Reveal>
           </div>
@@ -44,22 +44,22 @@ export function Incluso() {
           <ul className="w-full">
             {ITENS.map((item, i) => (
               <Reveal key={item.titulo} delay={i * 80}>
-                <li className="flex flex-col gap-2 border-t border-barro/15 py-6 sm:flex-row sm:items-baseline sm:gap-6">
+                <li className="flex flex-col gap-2 border-t border-preto/15 py-6 sm:flex-row sm:items-baseline sm:gap-6">
                   <span
                     className={
-                      "inline-flex shrink-0 items-center rounded-full px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.12em] " +
+                      "inline-flex shrink-0 items-center px-3 py-1 text-[0.64rem] font-semibold uppercase tracking-[0.12em] " +
                       (item.tom === "sim"
-                        ? "bg-cobalto text-lona-100"
-                        : "border border-barro/30 text-barro/70")
+                        ? "bg-vermelho text-branco"
+                        : "border border-preto/30 text-preto/70")
                     }
                   >
                     {item.tag}
                   </span>
                   <div>
-                    <h3 className="font-display text-xl text-barro">
+                    <h3 className="font-display text-xl text-preto">
                       {item.titulo}
                     </h3>
-                    <p className="mt-1 text-[1rem] leading-relaxed text-barro-ink/80">
+                    <p className="mt-1 text-[1rem] leading-relaxed text-grafite/80">
                       {item.texto}
                     </p>
                   </div>

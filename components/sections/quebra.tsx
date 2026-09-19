@@ -15,13 +15,13 @@ export function Quebra() {
         sizes="100vw"
         className="object-cover object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-barro/85 via-barro/30 to-barro/10" />
+      <div className="absolute inset-0 bg-gradient-to-t from-preto/85 via-preto/30 to-preto/10" />
       <Container className="relative">
         <Reveal className="max-w-xl">
-          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-lona/70">
+          <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-papel/70">
             Terças · manhã ou tarde
           </p>
-          <p className="mt-3 font-display text-3xl font-light italic leading-tight text-lona sm:text-4xl lg:text-[2.9rem]">
+          <p className="mt-3 font-display text-3xl font-light italic leading-tight text-papel sm:text-4xl lg:text-[2.9rem]">
             Uma pausa no meio da semana, só você e o barro.
           </p>
         </Reveal>

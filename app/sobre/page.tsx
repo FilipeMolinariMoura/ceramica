@@ -47,7 +47,7 @@ export default function Sobre() {
         texto={`${ARTISTA.tituloFrase}. ${ARTISTA.formacao}.`}
       />
 
-      <section className="bg-lona pb-20 sm:pb-24">
+      <section className="bg-papel pb-20 sm:pb-24">
         <Container className="grid items-start gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
           <Reveal className="relative aspect-[5/4] w-full overflow-hidden rounded-lg">
             <Image
@@ -62,7 +62,7 @@ export default function Sobre() {
             />
           </Reveal>
 
-          <div className="flex flex-col gap-5 text-[1.08rem] leading-relaxed text-barro-ink/85">
+          <div className="flex flex-col gap-5 text-[1.08rem] leading-relaxed text-grafite/85">
             <Reveal>
               <p>
                 Trabalho com cerâmica como linguagem de criação, e não como
@@ -91,7 +91,7 @@ export default function Sobre() {
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block border-b border-cobalto/30 pb-1 text-cobalto transition-colors hover:border-cobalto"
+                className="inline-block border-b border-vermelho/30 pb-1 text-vermelho transition-colors hover:border-vermelho"
               >
                 Acompanhar no Instagram @{INSTAGRAM_HANDLE}
               </a>
@@ -100,17 +100,17 @@ export default function Sobre() {
         </Container>
       </section>
 
-      <section className="bg-parede py-20 text-barro sm:py-24">
+      <section className="bg-verde py-20 text-preto sm:py-24">
         <Container>
-          <Eyebrow tone="barro">O que guia o trabalho</Eyebrow>
+          <Eyebrow tone="escuro">O que guia o trabalho</Eyebrow>
           <ul className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-3">
             {EIXOS.map((eixo, i) => (
               <Reveal key={eixo.titulo} delay={i * 90}>
-                <li className="border-t border-barro/20 pt-5">
-                  <h2 className="font-display text-2xl text-barro">
+                <li className="border-t border-preto/20 pt-5">
+                  <h2 className="font-display text-2xl text-preto">
                     {eixo.titulo}
                   </h2>
-                  <p className="mt-2 text-[1rem] leading-relaxed text-barro-ink/80">
+                  <p className="mt-2 text-[1rem] leading-relaxed text-grafite/80">
                     {eixo.texto}
                   </p>
                 </li>
@@ -120,16 +120,16 @@ export default function Sobre() {
         </Container>
       </section>
 
-      <section className="bg-lona py-20 sm:py-24">
+      <section className="bg-papel py-20 sm:py-24">
         <Container className="flex flex-col items-start gap-6">
           <Reveal>
-            <h2 className="max-w-2xl font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-barro sm:text-4xl">
+            <h2 className="max-w-2xl font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl">
               Dá para começar do zero —{" "}
-              <em className="italic text-cobalto">a maioria começa</em>.
+              <em className="italic text-vermelho">a maioria começa</em>.
             </h2>
           </Reveal>
           <Reveal delay={80}>
-            <p className="max-w-xl text-[1.05rem] leading-relaxed text-barro-ink/80">
+            <p className="max-w-xl text-[1.05rem] leading-relaxed text-grafite/80">
               As turmas recebem quem nunca encostou em barro. São seis pessoas
               por turma justamente para caber acompanhamento individual.
             </p>
@@ -137,7 +137,7 @@ export default function Sobre() {
           <Reveal delay={140}>
             <Link
               href="/aulas"
-              className="inline-flex h-[3.35rem] items-center justify-center rounded-full bg-cobalto px-8 text-base font-medium tracking-tight text-lona-100 shadow-[0_14px_30px_-16px_rgba(29,79,160,0.85)] transition-colors hover:bg-cobalto-700"
+              className="inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-colors hover:bg-vermelho-escuro"
             >
               Ver as turmas
             </Link>

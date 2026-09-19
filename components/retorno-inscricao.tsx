@@ -90,7 +90,7 @@ export function RetornoInscricao() {
         <DialogHeader className="items-center gap-3">
           <span
             aria-hidden
-            className="grid h-16 w-16 place-items-center rounded-full bg-cobalto text-lona-100 shadow-[0_14px_30px_-16px_rgba(29,79,160,0.85)]"
+            className="grid h-16 w-16 place-items-center rounded-full bg-vermelho text-branco"
           >
             <Check className="h-8 w-8" strokeWidth={2.4} />
           </span>
@@ -107,7 +107,7 @@ export function RetornoInscricao() {
 
         <div className="grid gap-2">
           <Button
-            variant="cobalto"
+            variant="solido"
             size="lg"
             className="w-full"
             onClick={() => window.open(link, "_blank", "noopener,noreferrer")}
@@ -117,7 +117,7 @@ export function RetornoInscricao() {
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="mx-auto py-1 text-sm text-barro/60 transition-colors hover:text-barro"
+            className="mx-auto py-1 text-sm text-preto/60 transition-colors hover:text-preto"
           >
             Fechar
           </button>

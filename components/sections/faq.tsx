@@ -31,11 +31,11 @@ const PERGUNTAS = [
 
 export function Faq() {
   return (
-    <section className="bg-lona py-20 sm:py-28 lg:py-32">
+    <section className="bg-papel py-20 sm:py-28 lg:py-32">
       <Container className="grid gap-10 lg:grid-cols-[0.5fr_1fr] lg:gap-16">
         <Reveal>
           <Eyebrow>Perguntas frequentes</Eyebrow>
-          <h2 className="mt-5 max-w-xs font-display text-3xl font-normal leading-[1.1] tracking-[-0.01em] text-barro sm:text-4xl">
+          <h2 className="mt-5 max-w-xs font-display text-3xl font-normal leading-[1.1] tracking-[-0.01em] text-preto sm:text-4xl">
             Ainda em dúvida?
           </h2>
         </Reveal>
@@ -43,19 +43,19 @@ export function Faq() {
         <div>
           {PERGUNTAS.map((item, i) => (
             <Reveal key={item.q} delay={i * 50}>
-              <details className="group border-t border-lona-300 last:border-b">
+              <details className="group border-t border-linha last:border-b">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
-                  <span className="text-lg font-medium text-barro sm:text-xl">
+                  <span className="text-lg font-medium text-preto sm:text-xl">
                     {item.q}
                   </span>
                   <span
                     aria-hidden
-                    className="faq-plus select-none text-2xl font-light leading-none text-cobalto transition-transform duration-200"
+                    className="faq-plus select-none text-2xl font-light leading-none text-vermelho transition-transform duration-200"
                   >
                     +
                   </span>
                 </summary>
-                <p className="-mt-1 max-w-2xl pb-6 text-[1.02rem] leading-relaxed text-barro-ink/80">
+                <p className="-mt-1 max-w-2xl pb-6 text-[1.02rem] leading-relaxed text-grafite/80">
                   {item.a}
                 </p>
               </details>

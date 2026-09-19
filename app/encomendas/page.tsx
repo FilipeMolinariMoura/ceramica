@@ -76,13 +76,13 @@ export default function Encomendas() {
           href={WHATSAPP_ENCOMENDA}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 inline-flex h-[3.35rem] items-center justify-center rounded-full bg-cobalto px-8 text-base font-medium tracking-tight text-lona-100 shadow-[0_14px_30px_-16px_rgba(29,79,160,0.85)] transition-colors hover:bg-cobalto-700"
+          className="mt-1 inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-colors hover:bg-vermelho-escuro"
         >
           Começar pelo WhatsApp
         </a>
       </PageHero>
 
-      <section className="bg-lona pb-20 sm:pb-24">
+      <section className="bg-papel pb-20 sm:pb-24">
         <Container className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:gap-16">
           <Reveal className="relative order-2 aspect-[4/5] w-full overflow-hidden rounded-lg lg:order-1">
             <Image
@@ -101,15 +101,15 @@ export default function Encomendas() {
             <ol className="mt-8">
               {ETAPAS.map((etapa, i) => (
                 <Reveal key={etapa.n} delay={i * 70}>
-                  <li className="flex gap-5 border-t border-lona-300 py-6 last:border-b">
-                    <span className="font-display text-lg text-cobalto/70">
+                  <li className="flex gap-5 border-t border-linha py-6 last:border-b">
+                    <span className="font-display text-lg text-vermelho/70">
                       {etapa.n}
                     </span>
                     <div>
-                      <h2 className="font-display text-xl text-barro">
+                      <h2 className="font-display text-xl text-preto">
                         {etapa.titulo}
                       </h2>
-                      <p className="mt-1.5 max-w-md text-[1rem] leading-relaxed text-barro-ink/80">
+                      <p className="mt-1.5 max-w-md text-[1rem] leading-relaxed text-grafite/80">
                         {etapa.texto}
                       </p>
                     </div>
@@ -121,17 +121,17 @@ export default function Encomendas() {
         </Container>
       </section>
 
-      <section className="bg-lona-100 py-20 sm:py-24">
+      <section className="bg-branco py-20 sm:py-24">
         <Container className="grid gap-10 lg:grid-cols-2 lg:gap-16">
           <div>
             <Eyebrow>O que dá para encomendar</Eyebrow>
             <ul className="mt-7 flex flex-col">
               {TIPOS.map((tipo, i) => (
                 <Reveal key={tipo} delay={i * 55}>
-                  <li className="flex items-start gap-3 border-t border-lona-300 py-4 text-[1.05rem] text-barro-ink/85 last:border-b">
+                  <li className="flex items-start gap-3 border-t border-linha py-4 text-[1.05rem] text-grafite/85 last:border-b">
                     <span
                       aria-hidden
-                      className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-coral"
+                      className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-verde"
                     />
                     {tipo}
                   </li>
@@ -141,8 +141,8 @@ export default function Encomendas() {
           </div>
 
           <Reveal delay={120}>
-            <div className="flex h-full flex-col items-start justify-center gap-5 rounded-2xl bg-cobalto p-8 text-lona-100 sm:p-10">
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-lona/70">
+            <div className="flex h-full flex-col items-start justify-center gap-5 rounded-2xl bg-vermelho p-8 text-branco sm:p-10">
+              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-papel/70">
                 Antes de encomendar
               </p>
               <p className="text-[1.08rem] leading-relaxed">
@@ -156,7 +156,7 @@ export default function Encomendas() {
                   href={WHATSAPP_ENCOMENDA}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-full bg-lona-100 px-7 text-[0.95rem] font-medium text-cobalto transition-colors hover:bg-white"
+                  className="inline-flex h-12 items-center justify-center rounded-none bg-branco px-7 text-[0.95rem] font-medium text-vermelho transition-colors hover:bg-branco"
                 >
                   Falar no WhatsApp
                 </a>
@@ -164,7 +164,7 @@ export default function Encomendas() {
                   href={INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-full border border-lona/40 px-7 text-[0.95rem] font-medium text-lona transition-colors hover:border-lona hover:bg-lona hover:text-cobalto"
+                  className="inline-flex h-12 items-center justify-center rounded-none border border-papel/40 px-7 text-[0.95rem] font-medium text-papel transition-colors hover:border-papel hover:bg-papel hover:text-vermelho"
                 >
                   Ver @{INSTAGRAM_HANDLE}
                 </a>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Hanken_Grotesk } from "next/font/google";
+import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -7,12 +7,17 @@ import { WhatsappFab } from "@/components/whatsapp-fab";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
-const display = Fraunces({
+// Bodoni Moda: serifa de alto contraste, que em versalete com entreletra larga
+// é o gesto da referência que a Isabela mandou. Substituiu a Fraunces, que é
+// macia e arredondada — exatamente a "tia da cerâmica" que ela pediu para
+// evitar. O eixo `opsz` deixa o título grande ganhar contraste sem afinar o
+// texto pequeno.
+const display = Bodoni_Moda({
   subsets: ["latin"],
   display: "swap",
   style: ["normal", "italic"],
   axes: ["opsz"],
-  variable: "--font-fraunces",
+  variable: "--font-bodoni",
 });
 
 const sans = Hanken_Grotesk({

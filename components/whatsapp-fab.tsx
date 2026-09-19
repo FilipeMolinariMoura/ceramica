@@ -28,7 +28,7 @@ export function WhatsappFab() {
       rel="noopener noreferrer"
       aria-label="Tirar uma dúvida com a Isabela pelo WhatsApp"
       data-visivel={visivel}
-      className="group fixed bottom-5 right-5 z-50 flex items-center gap-0 overflow-hidden rounded-full bg-barro py-3 pl-3 pr-3 text-lona-100 shadow-lift transition-all duration-300 hover:bg-cobalto data-[visivel=false]:pointer-events-none data-[visivel=false]:translate-y-4 data-[visivel=false]:opacity-0 sm:hover:pr-5"
+      className="group fixed bottom-5 right-5 z-50 flex items-center gap-0 overflow-hidden rounded-full bg-preto py-3 pl-3 pr-3 text-branco shadow-lift transition-all duration-300 hover:bg-vermelho data-[visivel=false]:pointer-events-none data-[visivel=false]:translate-y-4 data-[visivel=false]:opacity-0 sm:hover:pr-5"
     >
       <WhatsappGlyph />
       <span className="max-w-0 whitespace-nowrap text-sm font-medium opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-[10rem] group-hover:opacity-100 sm:group-hover:ml-2">

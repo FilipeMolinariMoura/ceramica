@@ -2,85 +2,103 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/section";
+import { Eyebrow } from "@/components/eyebrow";
 import { Reveal } from "@/components/reveal";
 import { fotos } from "@/lib/fotos";
-import { cn } from "@/lib/utils";
+import { reais, servicoPorSlug } from "@/lib/agenda";
+import { SERVICO_AULA_AVULSA } from "@/lib/constants";
 
 /**
- * As três portas do site, no formato que as referências usam: foto grande,
- * nome da seção e seta.
+ * O catálogo: três portas, na ordem que a Isabela pediu.
  *
- * A grade é assimétrica de propósito: aulas (o que tem vaga aberta) ocupa
- * duas colunas na primeira linha, obras fecha a linha, e encomendas atravessa
- * a segunda como faixa. Três cards iguais dariam o mesmo peso a três coisas
- * que não têm o mesmo peso — e deixariam um card sozinho numa linha de três.
+ * Três cards do MESMO tamanho, de propósito — é um catálogo, e um card maior
+ * diria que uma das três importa mais. A versão anterior tinha grade
+ * assimétrica porque a home vendia uma turma só.
+ *
+ * O preço da aula avulsa aparece aqui, na primeira dobra: é o número que faz
+ * a pessoa clicar, e escondê-lo dentro da página seria perder quem só passa
+ * os olhos. Ele vem do banco, não do código — a Isabela muda pelo painel.
  */
 const PORTAS = [
   {
     href: "/aulas",
-    titulo: "Aulas de cerâmica",
-    texto: "Duas turmas às terças, seis pessoas cada, acompanhamento individual.",
+    numero: "01",
+    titulo: "Turma de aulas",
+    texto: "Aula avulsa com horário marcado, ou turma mensal de seis pessoas.",
     foto: fotos.isabela,
-    span: "sm:col-span-2",
-    altura: "min-h-[20rem] sm:min-h-[26rem]",
+    chamada: "Ver a agenda",
   },
   {
-    href: "/obras",
-    titulo: "Obras",
-    texto: "Peças autorais saídas do ateliê.",
+    href: "/oficinas",
+    numero: "02",
+    titulo: "Sua oficina",
+    texto: "Aniversário, time, bodas, formatura. A gente monta e leva.",
+    foto: fotos.prova,
+    chamada: "Pedir orçamento",
+  },
+  {
+    href: "/atendimentos",
+    numero: "03",
+    titulo: "Atendimento 1:1",
+    texto: "Tarot e astrologia, em sessão individual.",
     foto: fotos.quebra,
-    span: "",
-    altura: "min-h-[20rem] sm:min-h-[26rem]",
-  },
-  {
-    href: "/encomendas",
-    titulo: "Encomendas",
-    texto: "Uma peça pensada para o seu espaço.",
-    foto: fotos.sobre,
-    span: "sm:col-span-2 lg:col-span-3",
-    altura: "min-h-[17rem]",
+    chamada: "Saber como funciona",
   },
 ] as const;
 
-export function Portas() {
+export async function Portas() {
+  const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
+  const preco = servico ? reais(servico.precoCentavos) : null;
+
   return (
-    <section className="bg-lona py-20 sm:py-24 lg:py-28">
-      <Container className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <section className="bg-papel py-16 sm:py-20 lg:py-24">
+      <Container className="mb-9">
+        <Eyebrow>O que tem aqui</Eyebrow>
+      </Container>
+
+      <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PORTAS.map((porta, i) => (
-          <Reveal
-            key={porta.href}
-            delay={i * 90}
-            className={porta.span}
-          >
+          <Reveal key={porta.href} delay={i * 90} className="h-full">
             <Link
               href={porta.href}
-              className={cn(
-                "group relative flex h-full flex-col justify-end overflow-hidden rounded-lg p-7",
-                porta.altura
-              )}
+              className="group flex h-full flex-col border border-linha bg-branco transition-colors hover:border-vermelho"
             >
-              <Image
-                src={porta.foto.src}
-                alt={porta.foto.alt}
-                fill
-                placeholder="blur"
-                quality={88}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-barro/80 via-barro/25 to-transparent transition-opacity duration-500 group-hover:from-barro/85" />
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <Image
+                  src={porta.foto.src}
+                  alt={porta.foto.alt}
+                  fill
+                  placeholder="blur"
+                  quality={86}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+                />
+                <span className="versalete-larga absolute left-0 top-0 bg-vermelho px-2.5 py-1.5 text-[0.6rem] text-branco">
+                  {porta.numero}
+                </span>
+              </div>
 
-              <div className="relative flex flex-col gap-2">
-                <h2 className="flex items-center gap-2.5 font-display text-2xl text-lona sm:text-[1.7rem]">
+              <div className="flex flex-1 flex-col gap-2.5 p-6">
+                <h2 className="versalete font-display text-[1.45rem] leading-[1.1] text-vermelho">
                   {porta.titulo}
-                  <ArrowRight
-                    aria-hidden
-                    className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1"
-                  />
                 </h2>
-                <p className="max-w-sm text-[0.98rem] leading-relaxed text-lona/80">
+                <p className="text-[0.95rem] leading-relaxed text-grafite/85">
                   {porta.texto}
                 </p>
+
+                {porta.href === "/aulas" && preco ? (
+                  <p className="text-[0.95rem] font-semibold text-preto">
+                    Avulsa {preco}
+                  </p>
+                ) : null}
+
+                <span className="versalete-larga mt-auto flex items-center gap-2 pt-3 text-[0.65rem] text-preto/60 transition-colors group-hover:text-vermelho">
+                  {porta.chamada}
+                  <ArrowRight
+                    aria-hidden
+                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </span>
               </div>
             </Link>
           </Reveal>
