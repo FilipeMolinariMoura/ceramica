@@ -16,10 +16,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
-# As chaves do Supabase NÃO entram aqui: a única que o cliente veria
-# (NEXT_PUBLIC_SUPABASE_URL) é lida no route handler, em runtime, junto com a
-# service_role. Assim a mesma imagem serve qualquer ambiente e nenhum segredo
-# fica assado na camada.
+# Nenhum segredo entra aqui: tudo que o servidor precisa (DATABASE_URL,
+# INFINITEPAY_HANDLE) é lido em runtime, pelo compose. Assim a mesma imagem
+# serve qualquer ambiente e nada fica assado na camada.
 RUN npm run build
 
 FROM node:22-alpine AS runtime
@@ -31,7 +30,27 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 
+# As migrations e o runner NÃO vêm no standalone — ele só traz o que o
+# server.js importa. Sem estas duas linhas o passo de migration do deploy
+# rodaria contra um diretório vazio e "passaria" sem migrar nada.
+COPY --from=build /app/db/migracoes ./db/migracoes
+COPY --from=build /app/scripts/migrar.mjs ./scripts/migrar.mjs
+
+# Falhar alto, e não em silêncio: sem o sharp o Next desliga a otimização de
+# imagem e serve o original, com AVIF configurado e nada sendo gerado. Já
+# aconteceu uma vez; agora o build quebra em vez de degradar.
+RUN node -e "require('sharp'); console.log('sharp ok')"
+
+# O volume de mídias é montado aqui. O diretório precisa EXISTIR e já ser do
+# usuário `node` antes do volume subir: o Docker copia a ownership do caminho
+# na primeira montagem, e um volume em caminho inexistente nasce root:root —
+# o upload falharia só na VPS, no primeiro uso do painel.
+RUN mkdir -p /dados/midias && chown -R node:node /dados
+
 USER node
 EXPOSE 3000
 ENTRYPOINT ["/sbin/tini", "--"]
+# Migration NÃO roda aqui. Ela é passo de release no deploy (ver
+# .github/workflows/deploy.yml): no boot, uma migration ruim viraria crashloop
+# com o contêiner antigo já destruído e o site fora do ar.
 CMD ["node", "server.js"]

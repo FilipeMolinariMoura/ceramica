@@ -30,6 +30,18 @@ services:
       NODE_ENV: production
       # `db` é o nome do serviço na rede interna. A senha vem do .env da VPS.
       DATABASE_URL: postgres://ceramica:${POSTGRES_SENHA:?defina no .env da VPS}@db:5432/ceramica
+      # InfiniteTag da Isabela, sem o `$$`. Sem ele a agenda mostra os horários
+      # mas nenhuma reserva consegue abrir pagamento.
+      INFINITEPAY_HANDLE: ${INFINITEPAY_HANDLE:?defina no .env da VPS}
+      # Origem usada para montar as URLs de retorno e de webhook que a
+      # InfinitePay vai chamar. Não sai do cabeçalho Host de propósito: quem
+      # controla o Host é quem chama, e uma reserva forjada faria a confirmação
+      # do pagamento ser entregue em outro lugar.
+      SITE_ORIGEM: ${SITE_ORIGEM:-https://belaceramica.prismax.tech}
+    volumes:
+      # Imagens que a Isabela sobe pelo painel. A imagem do contêiner é
+      # imutável e `public/` não é gravável, então elas moram num volume.
+      - midias:/dados/midias
     depends_on:
       db:
         condition: service_healthy
@@ -46,8 +58,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_SENHA:?defina no .env da VPS}
     volumes:
       - dados:/var/lib/postgresql/data
-      # Só roda na primeira subida, com o volume vazio. Ver db/init.
-      - ./db/init:/docker-entrypoint-initdb.d:ro
+      # NÃO há mais montagem de /docker-entrypoint-initdb.d. Aquele diretório
+      # só é executado com o volume vazio, então em produção ele nunca rodou e
+      # o schema de dev foi divergindo do de produção em silêncio. Agora existe
+      # uma fonte só: db/migracoes, aplicada como passo de release no deploy.
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ceramica -d ceramica"]
       interval: 10s
@@ -61,6 +75,8 @@ services:
 volumes:
   dados:
     name: ceramica-dados
+  midias:
+    name: ceramica-midias
 
 networks:
   interna:

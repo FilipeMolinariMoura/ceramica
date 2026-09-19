@@ -129,10 +129,31 @@ jobs:
               echo "  printf 'POSTGRES_SENHA=%s\n' \"\$(openssl rand -base64 24 | tr -d /+=)\" >> /opt/ceramica/.env && chmod 600 /opt/ceramica/.env"
               exit 1
             fi
+            if ! grep -q '^INFINITEPAY_HANDLE=' .env 2>/dev/null; then
+              echo "o .env de /opt/ceramica não tem INFINITEPAY_HANDLE."
+              echo "é o InfiniteTag da Isabela, sem o cifrão. Rode na VPS, uma vez:"
+              echo "  printf 'INFINITEPAY_HANDLE=%s\n' 'o-tag-dela' >> /opt/ceramica/.env"
+              echo "e ative o checkout externo em app.infinitepay.io/external-checkout."
+              exit 1
+            fi
             grep -q '^IMAGEM_SITE=' .env || echo "IMAGEM_SITE=" >> .env
             sed -i "s|^IMAGEM_SITE=.*|IMAGEM_SITE=$REGISTRO/site:$SHA|" .env
 
             docker compose -f docker-compose.prod.yml pull site
+
+            # ── Migration como PORTÃO DE RELEASE ─────────────────────────
+            # Roda com a imagem NOVA, num contêiner descartável, antes de
+            # encostar no site que está no ar. Se falhar, o `set -e` aborta o
+            # deploy inteiro: o job fica vermelho e o contêiner ANTIGO segue
+            # de pé e saudável.
+            #
+            # É por isso que a migration não roda no boot do site: lá o
+            # `up -d` já teria destruído o contêiner antigo antes de o novo
+            # falhar, e o resultado seria crashloop com o site fora do ar.
+            docker compose -f docker-compose.prod.yml up -d db
+            docker compose -f docker-compose.prod.yml run --rm --no-deps site \
+              node scripts/migrar.mjs
+
             # `up -d` sem nome de serviço: sobe o banco junto se ele ainda não
             # estiver de pé, e respeita o depends_on/healthcheck do site.
             docker compose -f docker-compose.prod.yml up -d
