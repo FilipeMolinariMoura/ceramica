@@ -1,22 +1,43 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Eyebrow } from "@/components/eyebrow";
 import { InscricaoCta } from "@/components/inscricao-cta";
-import { SeisLugares } from "@/components/seis-lugares";
 import { fotos } from "@/lib/fotos";
-import { CURSO } from "@/lib/constants";
+import { reais, servicoPorSlug } from "@/lib/agenda";
+import { CURSO, SERVICO_AULA_AVULSA } from "@/lib/constants";
 
-const DADOS = [
-  { label: "Início", valor: CURSO.inicio },
-  { label: "Encontros", valor: "Terças · manhã ou tarde" },
-  { label: "Vagas", valor: "6 por turma" },
-];
+/**
+ * Abertura de `/aulas`.
+ *
+ * Vende DUAS coisas, e a avulsa vem primeiro. A versão anterior abria com
+ * "um espaço para criar, experimentar e desenvolver sua relação com o barro"
+ * e um parágrafo de quatro linhas sobre a turma mensal — bonito, e pedindo
+ * exatamente o que a Isabela disse que ninguém faz: ler.
+ *
+ * Agora a primeira dobra responde o que custa e o que dá para marcar hoje, e
+ * o botão principal desce para a agenda em vez de abrir um formulário.
+ */
+export async function Hero() {
+  const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
+  const preco = servico ? reais(servico.precoCentavos) : null;
 
-export function Hero() {
+  const CAMINHOS = [
+    {
+      titulo: "Aula avulsa",
+      valor: preco ?? "sob consulta",
+      detalhe: "Duas horas, com dia e hora marcados",
+    },
+    {
+      titulo: "Turma mensal",
+      valor: CURSO.mensalidadePix,
+      detalhe: `${CURSO.diaSemana}, ${CURSO.vagasPorTurma} pessoas por turma`,
+    },
+  ];
+
   return (
     <section className="relative overflow-hidden">
-      <div className="lg:grid lg:min-h-[94svh] lg:grid-cols-2 lg:items-stretch">
-        {/* Foto 1 — tese da página. No mobile, corte vertical no centro da mesa. */}
-        <div className="relative order-1 h-[56svh] w-full overflow-hidden sm:h-[64svh] lg:order-2 lg:h-auto lg:min-h-[94svh]">
+      <div className="lg:grid lg:min-h-[90svh] lg:grid-cols-2 lg:items-stretch">
+        <div className="relative order-1 h-[42svh] w-full overflow-hidden sm:h-[52svh] lg:order-2 lg:h-auto lg:min-h-[90svh]">
           <Image
             src={fotos.hero.src}
             alt={fotos.hero.alt}
@@ -27,54 +48,57 @@ export function Hero() {
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="hero-img object-cover object-center"
           />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-preto/25 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-papel/20" />
         </div>
 
-        {/* Texto */}
         <div className="order-2 flex items-center lg:order-1 lg:justify-end">
           <div
             data-enter
-            /* pt maior que pb: a barra do site é fixa e mede 4.5rem, e sem
-               esta folga o primeiro elemento (o eyebrow) corre por baixo dela
-               quando a coluna é alta demais para centralizar. */
-            className="flex w-full max-w-xl flex-col items-start gap-6 px-6 pb-11 pt-11 sm:px-8 lg:max-w-[34rem] lg:pb-16 lg:pr-14 lg:pt-[7.5rem]"
+            /* pt maior que pb: a barra do site é fixa e mede 4.25rem, e sem
+               esta folga o eyebrow corre por baixo dela quando a coluna é
+               alta demais para centralizar. */
+            className="flex w-full max-w-xl flex-col items-start gap-6 px-6 pb-12 pt-10 sm:px-8 lg:max-w-[34rem] lg:pb-16 lg:pr-14 lg:pt-[7rem]"
           >
-            <Eyebrow>Inscrições abertas · Turmas de setembro · Pinheiros</Eyebrow>
+            <Eyebrow>Aulas de cerâmica · Pinheiros</Eyebrow>
 
-            <h1 className="font-display text-[2.55rem] font-light leading-[1.05] tracking-[-0.02em] text-preto sm:text-5xl lg:text-[4rem]">
-              Um espaço para{" "}
-              <em className="font-normal italic text-vermelho">
-                criar, experimentar
-              </em>{" "}
-              e desenvolver sua relação com o barro.
+            <h1 className="versalete font-display text-[2.4rem] leading-[0.98] text-vermelho sm:text-[3.2rem] lg:text-[3.8rem]">
+              Mão no barro,
+              <br />
+              nesta semana
             </h1>
 
-            <p className="max-w-md text-[1.05rem] leading-relaxed text-grafite/85">
-              Depois de quatro anos ensinando cerâmica, abro minhas primeiras
-              turmas em um espaço dedicado a processos criativos. Duas turmas de
-              seis pessoas, manhã ou tarde, com acompanhamento individual,
-              começando em 1º de setembro.
+            <p className="max-w-md text-[1.05rem] leading-relaxed text-grafite">
+              Você escolhe o horário, paga aqui e vem. Barro, ferramentas,
+              esmalte e queima inclusos. Não precisa ter experiência.
             </p>
 
-            <InscricaoCta origem="hero" />
-
-            <SeisLugares animate caption="seis lugares por turma" />
-
-            <dl className="mt-1 flex flex-wrap items-stretch gap-x-6 gap-y-3 border-t border-linha pt-5">
-              {DADOS.map((d, i) => (
-                <div
-                  key={d.label}
-                  className={i > 0 ? "border-l border-linha pl-6" : ""}
-                >
-                  <dt className="text-[0.66rem] font-semibold uppercase tracking-[0.16em] text-preto/45">
-                    {d.label}
+            <dl className="grid w-full gap-px border border-linha bg-linha sm:grid-cols-2">
+              {CAMINHOS.map((c) => (
+                <div key={c.titulo} className="flex flex-col gap-1 bg-papel p-4">
+                  <dt className="versalete-larga text-[0.6rem] text-preto/50">
+                    {c.titulo}
                   </dt>
-                  <dd className="mt-0.5 font-display text-lg text-preto">
-                    {d.valor}
+                  <dd className="font-display text-xl text-preto">{c.valor}</dd>
+                  <dd className="text-[0.82rem] leading-snug text-grafite/75">
+                    {c.detalhe}
                   </dd>
                 </div>
               ))}
             </dl>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="#agenda"
+                className="inline-flex h-[3.1rem] items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-colors hover:bg-vermelho-escuro"
+              >
+                Ver os horários
+              </Link>
+              <InscricaoCta
+                origem="hero"
+                label="Quero a turma mensal"
+                variant="contorno"
+                size="lg"
+              />
+            </div>
           </div>
         </div>
       </div>

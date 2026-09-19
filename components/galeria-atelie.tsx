@@ -27,7 +27,7 @@ export function GaleriaAtelie({
               key={foto.legenda}
               className="w-[16rem] shrink-0 sm:w-[20rem]"
             >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-lg">
+              <div className="relative aspect-[4/5] overflow-hidden rounded-none">
                 <Image
                   src={foto.src}
                   alt={foto.alt}
@@ -59,7 +59,7 @@ export function GaleriaAtelie({
           <figure>
             <div
               className={cn(
-                "relative w-full overflow-hidden rounded-lg",
+                "relative w-full overflow-hidden rounded-none",
                 foto.formato === "alta" ? "aspect-[4/5]" : "aspect-[3/2]"
               )}
             >

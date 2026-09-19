@@ -8,7 +8,7 @@ export function QuemConduz() {
   return (
     <section className="bg-branco py-20 sm:py-28 lg:py-32">
       <Container className="grid items-center gap-10 lg:grid-cols-[1fr_0.82fr] lg:gap-16">
-        <Reveal className="relative order-1 aspect-[5/4] w-full overflow-hidden rounded-lg">
+        <Reveal className="relative order-1 aspect-[5/4] w-full overflow-hidden rounded-none">
           <Image
             src={fotos.isabela.src}
             alt={fotos.isabela.alt}

@@ -2,9 +2,9 @@
   <defs>
     <!-- volume torneado: claro no centro-esquerda, sombra à direita -->
     <linearGradient id="barro" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#F6F1E9" />
-      <stop offset="0.42" stop-color="#EFE8DE" />
-      <stop offset="1" stop-color="#DCCFBB" />
+      <stop offset="0" stop-color="#FBF8F3" />
+      <stop offset="0.42" stop-color="#F4F0E8" />
+      <stop offset="1" stop-color="#DCD2C0" />
     </linearGradient>
     <path id="corpo" d="M256 150
       C284 150 306 152 306 165 C306 178 288 184 282 202
@@ -17,23 +17,23 @@
     <clipPath id="dentro"><use href="#corpo" /></clipPath>
   </defs>
 
-  <!-- fundo cobalto full-bleed -->
-  <rect width="512" height="512" fill="#1D4FA0" />
+  <!-- fundo vermelho full-bleed -->
+  <rect width="512" height="512" fill="#A82F1C" />
 
   <!-- sombra de assentamento -->
-  <ellipse cx="256" cy="440" rx="62" ry="9" fill="#163F80" />
+  <ellipse cx="256" cy="440" rx="62" ry="9" fill="#7E2213" />
 
   <!-- corpo torneado -->
   <use href="#corpo" fill="url(#barro)" />
 
-  <!-- decoração pintada à mão (esmalte cobalto) + gota coral -->
+  <!-- decoração pintada à mão (dois filetes) + ponto verde -->
   <g clip-path="url(#dentro)">
-    <rect x="120" y="300" width="272" height="9" fill="#1D4FA0" />
-    <rect x="120" y="346" width="272" height="9" fill="#1D4FA0" />
-    <circle cx="256" cy="327" r="15" fill="#F26B57" />
+    <rect x="120" y="300" width="272" height="9" fill="#A82F1C" />
+    <rect x="120" y="346" width="272" height="9" fill="#A82F1C" />
+    <circle cx="256" cy="327" r="15" fill="#5E7A63" />
   </g>
 
   <!-- boca aberta do vaso -->
-  <ellipse cx="256" cy="156" rx="42" ry="9" fill="#163F80" />
-  <ellipse cx="256" cy="154" rx="42" ry="7" fill="none" stroke="#F6F1E9" stroke-width="4" />
+  <ellipse cx="256" cy="156" rx="42" ry="9" fill="#7E2213" />
+  <ellipse cx="256" cy="154" rx="42" ry="7" fill="none" stroke="#FBF8F3" stroke-width="4" />
 </svg>

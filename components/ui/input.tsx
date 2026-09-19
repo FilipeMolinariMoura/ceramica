@@ -11,7 +11,7 @@ const Input = React.forwardRef<
     ref={ref}
     type={type}
     className={cn(
-      "h-12 w-full rounded-xl border border-preto/15 bg-branco/70 px-4 text-[1rem] text-preto placeholder:text-preto/35",
+      "h-12 w-full rounded-none border border-linha bg-branco px-4 text-[1rem] text-preto placeholder:text-preto/35",
       "transition-colors focus:border-vermelho focus:bg-branco focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vermelho/25",
       "disabled:cursor-not-allowed disabled:opacity-50",
       className

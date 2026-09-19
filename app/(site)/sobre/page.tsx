@@ -49,7 +49,7 @@ export default function Sobre() {
 
       <section className="bg-papel pb-20 sm:pb-24">
         <Container className="grid items-start gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
-          <Reveal className="relative aspect-[5/4] w-full overflow-hidden rounded-lg">
+          <Reveal className="relative aspect-[5/4] w-full overflow-hidden rounded-none">
             <Image
               src={fotos.isabela.src}
               alt={fotos.isabela.alt}

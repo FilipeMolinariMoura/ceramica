@@ -43,7 +43,7 @@ export default function Obras() {
             /* Sem peça fotografada ainda. O estado vazio não se desculpa: diz
                o que está acontecendo e oferece a porta que funciona hoje. */
             <Reveal>
-              <div className="flex flex-col items-start gap-5 rounded-lg border border-linha bg-branco px-7 py-12 sm:px-12 sm:py-16">
+              <div className="flex flex-col items-start gap-5 rounded-none border border-linha bg-branco px-7 py-12 sm:px-12 sm:py-16">
                 <Eyebrow>Acervo</Eyebrow>
                 <h2 className="max-w-xl font-display text-2xl font-normal leading-[1.15] text-preto sm:text-3xl">
                   As peças novas estão sendo fotografadas.

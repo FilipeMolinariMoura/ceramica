@@ -8,7 +8,7 @@ export function Sobre() {
   return (
     <section id="sobre" className="bg-papel py-20 sm:py-28 lg:py-32">
       <Container className="grid items-center gap-10 lg:grid-cols-[0.82fr_1fr] lg:gap-16">
-        <Reveal className="relative order-2 aspect-[4/5] w-full overflow-hidden rounded-lg lg:order-1">
+        <Reveal className="relative order-2 aspect-[4/5] w-full overflow-hidden rounded-none lg:order-1">
           <Image
             src={fotos.sobre.src}
             alt={fotos.sobre.alt}

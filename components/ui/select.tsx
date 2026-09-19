@@ -15,7 +15,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-12 w-full items-center justify-between rounded-xl border border-preto/15 bg-branco/70 px-4 text-[1rem] text-preto",
+      "flex h-12 w-full items-center justify-between rounded-none border border-linha bg-branco px-4 text-[1rem] text-preto",
       "transition-colors focus:border-vermelho focus:bg-branco focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-vermelho/25",
       "data-[placeholder]:text-preto/35 [&>span]:line-clamp-1",
       className
@@ -39,7 +39,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        "relative z-50 max-h-64 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-xl border border-linha bg-branco p-1 shadow-lift",
+        "relative z-50 max-h-64 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded-none border border-linha bg-branco p-1 shadow-lift",
         "data-[state=open]:animate-[contentIn_0.18s_ease]",
         position === "popper" && "translate-y-1",
         className
@@ -61,7 +61,7 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-9 pr-3 text-[0.95rem] text-preto outline-none",
+      "relative flex w-full cursor-pointer select-none items-center rounded-none py-2.5 pl-9 pr-3 text-[0.95rem] text-preto outline-none",
       "focus:bg-vermelho/10 focus:text-vermelho-escuro data-[state=checked]:font-medium",
       className
     )}

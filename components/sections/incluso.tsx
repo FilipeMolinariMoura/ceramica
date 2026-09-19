@@ -69,7 +69,7 @@ export function Incluso() {
           </ul>
         </div>
 
-        <Reveal className="relative aspect-[4/5] w-full overflow-hidden rounded-lg lg:aspect-[3/4]">
+        <Reveal className="relative aspect-[4/5] w-full overflow-hidden rounded-none lg:aspect-[3/4]">
           <Image
             src={fotos.incluso.src}
             alt={fotos.incluso.alt}

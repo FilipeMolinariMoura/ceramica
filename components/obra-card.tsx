@@ -14,7 +14,7 @@ export function ObraCard({ obra, delay = 0 }: { obra: Obra; delay?: number }) {
 
   const conteudo = (
     <>
-      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-lg bg-branco">
+      <div className="relative aspect-[4/5] w-full overflow-hidden rounded-none bg-branco">
         <Image
           src={obra.foto}
           alt={obra.alt}

@@ -3,25 +3,41 @@
 Site do ateliê de cerâmica da artista visual Isabela Molinari, em Pinheiros (SP).
 
 Nasceu em agosto de 2026 como landing de uma turma só. Em setembro virou site
-completo: **a landing inteira passou a ser a aba `/aulas`**, e o site ganhou
-obras, sobre e encomendas em volta dela.
+completo, e no fim de setembro virou **ponto de venda**: a pessoa escolhe um
+horário de aula avulsa, paga pela InfinitePay e recebe a vaga confirmada, sem
+passar pelo WhatsApp. A Isabela opera tudo por um painel próprio.
 
 **Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS v4 · Postgres ·
 tudo self-hosted em Docker na VPS `prismax`, atrás do Caddy compartilhado.
 
 ---
 
-## As cinco rotas
+## As rotas
 
 | Rota | O que é |
 | --- | --- |
-| `/` | Home: foto de tela cheia, as três portas do site, a artista e o ateliê |
+| `/` | Catálogo de três portas, a artista, prints "em breve" e o ateliê |
+| `/aulas` | **Agenda de aula avulsa com pagamento** + turma mensal |
+| `/aulas/reserva/[token]` | Retorno do pagamento: confirmação, comprovante, `.ics` |
+| `/oficinas` | Oficina fechada — briefing de orçamento |
+| `/atendimentos` | Tarot e astrologia → WhatsApp |
 | `/obras` | Catálogo de peças + galeria do ateliê |
 | `/sobre` | Quem é a Isabela e o que guia o trabalho |
-| `/aulas` | **A landing original, inteira** — é a página que converte |
 | `/encomendas` | Como funciona uma peça sob encomenda |
+| `/painel` | Painel da Isabela (login) |
 
-A barra e o rodapé são do `app/layout.tsx`; nenhuma página monta os seus.
+### Layouts
+
+Há dois grupos de rota, e a diferença importa:
+
+- `app/(site)/` — barra, rodapé e botão do WhatsApp;
+- `app/painel/(interno)/` — a casca do painel, que valida a sessão.
+
+O layout raiz (`app/layout.tsx`) só tem `<html>`, fontes e o `Toaster`. Foi
+assim que o painel deixou de renderizar a navegação pública por cima da tela
+de gestão. E o grupo `(interno)` existe porque o layout que exige sessão não
+pode envolver a própria tela de entrada — se envolvesse, quem não tem sessão
+seria mandado para lá, aquilo renderizaria o mesmo layout e mandaria de novo.
 
 ### Por que `/aulas` é uma página longa e não uma seção
 
@@ -59,6 +75,8 @@ Pré-requisitos: Node 20+.
 ```bash
 npm install
 cp .env.example .env.local   # aponte a DATABASE_URL para um Postgres local
+npm run migrar               # cria o schema
+npm run semear:dev           # horários para a agenda ter o que mostrar
 npm run dev                  # http://localhost:3000
 ```
 
@@ -68,6 +86,10 @@ npm run dev                  # http://localhost:3000
 | `npm run build` | build de produção |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
+| `npm run migrar` | aplica as migrations pendentes |
+| `npm run semear:dev` | horários de brincadeira para a agenda |
+| `npm run verificar:agenda` | invariantes de concorrência e pagamento |
+| `npm run usuario` | cria/troca a senha do painel |
 | `npm run fotos` | redimensiona as fotos-fonte |
 
 ---
@@ -86,10 +108,30 @@ derrubar um sem tocar no outro. Ele **não publica porta**: vive na rede
 | --- | --- | --- |
 | `DATABASE_URL` | **só servidor** | montada pelo compose a partir de `POSTGRES_SENHA` |
 
-O schema está em [`db/init/01-inscricoes.sql`](db/init/01-inscricoes.sql) e roda
-sozinho na primeira subida do contêiner (o `docker-entrypoint` executa o que
-está em `/docker-entrypoint-initdb.d` quando o volume está vazio). Depois disso
-o arquivo é ignorado: mudança de schema em banco já criado é migration à mão.
+### Migrations
+
+O schema vive em [`db/migracoes/`](db/migracoes), aplicado por
+[`scripts/migrar.mjs`](scripts/migrar.mjs).
+
+Antes ele morava em `db/init/`, montado em `/docker-entrypoint-initdb.d`. Aquele
+diretório **só roda com o volume vazio**: em produção o banco já existia, então
+ele nunca foi executado ali e o schema de desenvolvimento vinha divergindo do de
+produção em silêncio. A montagem saiu do compose e a migration `001` é o
+conteúdo daquele arquivo — toda ela `if not exists`, portanto um no-op no banco
+que já está de pé.
+
+```bash
+npm run migrar            # aplica o que falta
+npm run migrar -- --status
+```
+
+No deploy ela roda como **portão de release**, entre o `pull` e o `up -d`, num
+contêiner descartável com a imagem nova. Se falhar, o `set -e` aborta o deploy e
+o contêiner antigo continua no ar. No boot do site seria o contrário: o `up -d`
+já teria destruído o antigo antes de o novo falhar.
+
+Migration nova é um arquivo `NNN-nome.sql`; a ordem do nome é a ordem de
+aplicação. Cada uma roda na própria transação.
 
 **O lead nunca se perde:** se o banco falhar, o erro vai para o log e a pessoa é
 redirecionada ao WhatsApp do mesmo jeito — a conversa é o que fecha a turma, o
@@ -105,8 +147,131 @@ ssh prismax "docker exec ceramica-db psql -U ceramica -d ceramica \
 ### Backup
 
 [`infra/backup.sh`](infra/backup.sh) faz `pg_dump` de dentro do contêiner
-(o banco não é alcançável do host), comprime, guarda em `/opt/ceramica/backups`
-e mantém 30 dias. Roda pelo cron da VPS, uma vez por dia.
+(o banco não é alcançável do host), arquiva o volume de mídias junto, comprime,
+guarda em `/opt/ceramica/backups` e mantém 30 dias. Roda pelo cron da VPS.
+
+**O que ainda falta, e agora pesa:** o backup mora no mesmo disco da VPS.
+Enquanto era uma lista de leads, dava. Desde que o site recebe pagamento, ali
+há registro financeiro e dado pessoal de cliente — perder a máquina levaria
+banco e backup juntos. Falta cópia fora da máquina, e falta política de
+retenção e página de privacidade (LGPD).
+
+---
+
+## Agenda e pagamento
+
+O caminho do dinheiro. É a parte do repositório que mais merece cuidado numa
+refatoração, e a que tem teste automatizado (`npm run verificar:agenda`).
+
+### A lotação é uma linha, não uma contagem
+
+`horarios` guarda `vagas` e `ocupadas`, com `check (ocupadas <= vagas)`.
+Reservar é um `update ... where ocupadas < vagas`: `rowCount = 0` significa
+esgotado. O row lock dura microssegundos.
+
+Advisory lock ficou de fora de propósito. Lock é convenção: qualquer caminho
+futuro que esqueça de pegá-lo — o painel remarcando, um `psql` de correção —
+fura a regra sem erro nenhum. O `CHECK` não tem como ser esquecido.
+
+Devolver vaga de hold vencido agrega por horário antes de decrementar. O
+`group by` não é enfeite: `update ... from` afeta cada linha-alvo **uma vez**,
+por mais linhas que casem na origem — sem ele, duas reservas vencidas no mesmo
+horário devolveriam uma vaga só.
+
+### A chamada à InfinitePay acontece fora da transação
+
+A sequência é: transação curta toma a vaga e grava a reserva pendente →
+**commit** → só então o link de pagamento é criado → falhou, a vaga volta na
+hora.
+
+Fazer a chamada HTTP com a transação aberta seguraria uma conexão do pool pelo
+tempo do round-trip. Algumas simultâneas esgotam o pool, e o pool é o mesmo da
+home, da agenda e do painel: o site **inteiro** pararia, não só o checkout.
+
+Pela mesma razão, `lib/db.ts` tem `emTransacao()`. `db().query("begin")` não
+transaciona nada — o pool devolve a conexão a cada chamada, e o `insert`
+seguinte sai em outra.
+
+### O webhook não é assinado
+
+A API de Checkout da InfinitePay não usa chave: quem identifica a conta é o
+`handle`. O webhook que ela dispara também não é assinado, então **o corpo dele
+nunca é tratado como prova**. Ele é só um gatilho. Três camadas:
+
+1. a URL do webhook carrega um token de 32 bytes, por reserva;
+2. a confirmação vem de `payment_check`, uma pergunta **nossa** à InfinitePay;
+3. `unique (transaction_nsu)` impede reaproveitar o comprovante de uma compra
+   legítima para liberar a reserva de outra pessoa.
+
+**O valor é conferido contra `amount`, nunca contra `paid_amount`.** O líquido
+vem descontado da taxa; comparar por ele recusaria toda venda no crédito — erro
+que só apareceria em produção, derrubando 100% dos pagamentos no cartão.
+
+### Quem pagou e ficou sem vaga
+
+Pagamento que chega depois do hold vencer tenta retomar a vaga. Se não
+conseguir, a reserva vira `paga_sem_vaga` e aparece **em destaque no painel**.
+Nunca em silêncio: é dinheiro de alguém que ficou sem aula.
+
+### O que ainda falta aqui
+
+- **Reconciliação.** Se o webhook se perder (deploy recriando o contêiner, por
+  exemplo), a varredura preguiçosa pode marcar como expirada uma reserva paga.
+  Falta um `infra/reconciliar.sh` no mesmo cron do backup, rodando
+  `payment_check` nas pendentes. Hoje a página de retorno cobre o caso comum,
+  porque ela também confere.
+- **Aviso à Isabela** a cada reserva (e-mail ou push). Hoje ela descobre
+  abrindo o painel.
+
+### Pré-requisitos na conta da InfinitePay
+
+O `handle` é o InfiniteTag, sem o `$`. É preciso ligar **"Checkout externo"** em
+`app.infinitepay.io/external-checkout` → Configurações; sem isso a API responde
+`external_checkout_not_enabled` e nenhum link é criado.
+
+---
+
+## Painel
+
+`/painel`, e-mail e senha, uma pessoa só. Sem tela de cadastro: a conta nasce de
+[`scripts/criar-usuario.mjs`](scripts/criar-usuario.mjs).
+
+```bash
+npm run usuario -- isabela@exemplo.com "Isabela Molinari"
+
+# na VPS
+docker compose -f docker-compose.prod.yml run --rm -it site \
+  node scripts/criar-usuario.mjs isabela@exemplo.com "Isabela Molinari"
+```
+
+Senha com `scrypt` do Node, comparação com `timingSafeEqual`, sessão em cookie
+`httpOnly` com só o hash do token no banco, e limite de tentativas por IP.
+
+**A regra que não pode ser esquecida:** toda Server Action do painel começa com
+`exigirSessao()`. O `middleware.ts` só confere se existe cookie (ele roda no
+edge e não alcança o banco) e protege apenas as páginas. Cada Server Action é
+um endpoint POST próprio, invocável direto, que não passa por ele.
+
+Não existe apagar horário no painel, de propósito — apagaria a aula de quem
+pagou. Só "tirar do ar", que some com ele da agenda e mantém as reservas.
+
+---
+
+## Desenvolvimento da agenda
+
+```bash
+npm run migrar            # schema
+npm run semear:dev        # horários de brincadeira, terças e quintas
+npm run verificar:agenda  # as invariantes de concorrência e pagamento
+```
+
+`verificar:agenda` usa um serviço com slug próprio (`__verificacao`) e se limpa
+no fim, então não encosta em dado real — e recusa rodar fora de localhost.
+
+Para exercitar o pagamento sem conta da InfinitePay, aponte
+`INFINITEPAY_BASE` para um dublê local no `.env.local`. A variável é **ignorada
+em produção** de propósito: uma variável capaz de redirecionar para onde vão os
+dados do pagamento seria um belo alvo.
 
 ---
 
@@ -145,11 +310,17 @@ No repositório (Settings → Secrets):
 Na VPS, em `/opt/ceramica/.env` (chmod 600):
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
+POSTGRES_SENHA=...          # gere uma vez, ver a mensagem do próprio deploy
+INFINITEPAY_HANDLE=...      # o InfiniteTag da Isabela, sem o cifrão
+SITE_ORIGEM=https://belaceramica.prismax.tech
 ```
 
-`IMAGEM_SITE` é escrita pelo próprio deploy a cada publicação.
+`IMAGEM_SITE` é escrita pelo próprio deploy a cada publicação. O deploy recusa
+subir se `POSTGRES_SENHA` ou `INFINITEPAY_HANDLE` não existirem — sem o
+segundo, a agenda aparece mas nenhuma reserva consegue abrir pagamento.
+
+As chaves do Supabase saíram daqui: o banco é da própria stack desde setembro
+de 2026 e ninguém lê aquelas variáveis há tempo.
 
 ### Borda
 
