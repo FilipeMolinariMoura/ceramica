@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
-import { WhatsappFab } from "@/components/whatsapp-fab";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
@@ -68,11 +65,11 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${display.variable} ${sans.variable} antialiased`}
     >
+      {/* A barra e o rodapé NÃO moram aqui: são do grupo `(site)`. O layout
+          raiz vale para tudo, inclusive para o painel, que não pode herdar a
+          navegação pública nem o botão flutuante do WhatsApp. */}
       <body>
-        <SiteHeader />
-        <main>{children}</main>
-        <SiteFooter />
-        <WhatsappFab />
+        {children}
         <Toaster />
       </body>
     </html>
