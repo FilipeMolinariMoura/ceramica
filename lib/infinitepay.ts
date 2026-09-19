@@ -139,11 +139,20 @@ export async function criarLinkPagamento(params: {
       : {}),
   })) as { url?: unknown };
 
-  if (typeof dados?.url !== "string" || !dados.url.startsWith("https://")) {
+  // Exigir `https` é o que impede uma resposta adulterada de mandar a pessoa
+  // para um checkout em texto claro. Em desenvolvimento o dublê local roda em
+  // http, então a exigência vale só onde ela protege alguém de verdade.
+  const exigeHttps = process.env.NODE_ENV === "production";
+  const url = typeof dados?.url === "string" ? dados.url : "";
+  const aceita = exigeHttps
+    ? url.startsWith("https://")
+    : /^https?:\/\//.test(url);
+
+  if (!aceita) {
     throw new ErroInfinitePay("A InfinitePay não devolveu a URL do checkout.", "sem_url");
   }
 
-  return { url: dados.url };
+  return { url };
 }
 
 export type Conferencia = {

@@ -13,7 +13,8 @@
     "verificar:agenda": "node --env-file-if-exists=.env.local scripts/verificar-agenda.mjs",
     "migrar": "node --env-file-if-exists=.env.local scripts/migrar.mjs",
     "semear:dev": "node --env-file-if-exists=.env.local scripts/semear-dev.mjs",
-    "usuario": "node --env-file-if-exists=.env.local scripts/criar-usuario.mjs"
+    "usuario": "node --env-file-if-exists=.env.local scripts/criar-usuario.mjs",
+    "dev:pagamento": "node scripts/duble-pagamento.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
