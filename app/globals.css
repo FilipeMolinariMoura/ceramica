@@ -205,6 +205,22 @@ body::after {
   animation-timing-function: var(--ease-firme);
 }
 
+/* Esmaece a borda direita da régua de dias enquanto houver mais para rolar.
+   `--regua-fim` é 0 quando a pessoa chega ao fim, e aí a máscara some. */
+.regua-dias {
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    #000 0,
+    #000 calc(100% - 3rem),
+    transparent 100%
+  );
+}
+
+.regua-dias::-webkit-scrollbar {
+  display: none;
+}
+
 /* ---- Movimento ---- */
 @keyframes rise {
   from {

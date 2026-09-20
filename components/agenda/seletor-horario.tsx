@@ -105,7 +105,10 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
         <p className="versalete-larga mb-3 text-[0.68rem] text-preto/50">
           Escolha o dia
         </p>
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        {/* A régua rola na horizontal e são dez dias. Sem sinal nenhum, o
+            último chip parece cortado por defeito. A máscara esmaece a borda
+            direita e diz "tem mais aqui" sem gastar uma seta. */}
+        <div className="regua-dias flex gap-2 overflow-x-auto pb-1">
           {dias.map(({ dia, lista }) => {
             const ativo = dia === diaAtivo;
             const primeiro = lista[0]!;
