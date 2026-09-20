@@ -34,6 +34,8 @@ export type HorarioVisivel = {
   diaCurto: string;
   /** "09:30" */
   hora: string;
+  /** "setembro" — a régua separa os meses. */
+  mes: string;
   restantes: number;
 };
 
@@ -51,13 +53,21 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
       lista.push(h);
       por.set(h.dia, lista);
     }
-    // Um dia inteiro esgotado sai da régua: ninguém precisa navegar por ele.
-    return [...por.entries()]
-      .filter(([, lista]) => lista.some((h) => h.restantes > 0))
-      .map(([dia, lista]) => ({ dia, lista }));
+    // O dia esgotado FICA na régua, cinza e sem clique. Tirá-lo fazia a
+    // agenda parecer vazia de procura; mostrá-lo é o que dá valor ao dia que
+    // ainda tem vaga. Mesma decisão do horário esgotado.
+    return [...por.entries()].map(([dia, lista]) => ({
+      dia,
+      lista,
+      livre: lista.some((h) => h.restantes > 0),
+    }));
   }, [horarios]);
 
-  const [diaAtivo, setDiaAtivo] = React.useState(() => dias[0]?.dia ?? "");
+  // Abre no primeiro dia COM VAGA, não no primeiro da régua: se a próxima
+  // terça está lotada, abrir nela mostra uma tela sem nada para clicar.
+  const [diaAtivo, setDiaAtivo] = React.useState(
+    () => dias.find((d) => d.livre)?.dia ?? dias[0]?.dia ?? ""
+  );
   const [escolhido, setEscolhido] = React.useState<HorarioVisivel | null>(null);
 
   /**
@@ -85,7 +95,7 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
 
   const doDia = dias.find((d) => d.dia === diaAtivo)?.lista ?? [];
 
-  if (dias.length === 0) {
+  if (!dias.some((d) => d.livre)) {
     return (
       <div className="border border-linha bg-branco p-8 text-center">
         <p className="font-display text-xl text-preto">
@@ -108,36 +118,60 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
         {/* A régua rola na horizontal e são dez dias. Sem sinal nenhum, o
             último chip parece cortado por defeito. A máscara esmaece a borda
             direita e diz "tem mais aqui" sem gastar uma seta. */}
-        <div className="regua-dias flex gap-2 overflow-x-auto pb-1">
-          {dias.map(({ dia, lista }) => {
+        <div className="regua-dias flex items-stretch gap-2 overflow-x-auto pb-1">
+          {dias.map(({ dia, lista, livre }, i) => {
             const ativo = dia === diaAtivo;
             const primeiro = lista[0]!;
             const vagas = lista.reduce((s, h) => s + h.restantes, 0);
+            // Rótulo de mês na virada. Dez dias cobrindo setembro e outubro
+            // sem isto viram "22/09, 24/09, 29/09, 01/10" — e a pessoa não
+            // percebe que atravessou o mês.
+            const viraMes = i === 0 || lista[0]!.mes !== dias[i - 1]!.lista[0]!.mes;
+
             return (
-              <button
-                key={dia}
-                type="button"
-                onClick={() => escolherDia(dia)}
-                aria-pressed={ativo}
-                style={ativo ? { viewTransitionName: "dia-escolhido" } : undefined}
-                className={cn(
-                  "flex shrink-0 flex-col items-start gap-0.5 border px-4 py-3 text-left",
-                  "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px",
-                  ativo
-                    ? "border-vermelho bg-vermelho text-branco"
-                    : "border-linha bg-branco text-preto hover:border-vermelho"
-                )}
-              >
-                <span className="versalete-larga text-[0.6rem] opacity-75">
-                  {primeiro.diaLongo.split(",")[0]}
-                </span>
-                <span className="font-display text-lg leading-none">
-                  {primeiro.diaCurto}
-                </span>
-                <span className="text-[0.68rem] opacity-75">
-                  {vagas} {vagas === 1 ? "vaga" : "vagas"}
-                </span>
-              </button>
+              <React.Fragment key={dia}>
+                {viraMes ? (
+                  <span
+                    aria-hidden
+                    className="versalete-larga flex shrink-0 items-end pb-1 pr-1 text-[0.58rem] text-preto/40"
+                  >
+                    {primeiro.mes}
+                  </span>
+                ) : null}
+
+                <button
+                  type="button"
+                  disabled={!livre}
+                  onClick={() => escolherDia(dia)}
+                  aria-pressed={ativo}
+                  aria-label={`${primeiro.diaLongo}${livre ? `, ${vagas} vagas` : ", esgotado"}`}
+                  style={ativo ? { viewTransitionName: "dia-escolhido" } : undefined}
+                  className={cn(
+                    "flex shrink-0 flex-col items-start gap-0.5 border px-4 py-3 text-left",
+                    "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)]",
+                    !livre
+                      ? "cursor-not-allowed border-linha bg-papel text-preto/40"
+                      : ativo
+                        ? "border-vermelho bg-vermelho text-branco"
+                        : "border-linha bg-branco text-preto hover:border-vermelho active:translate-y-px"
+                  )}
+                >
+                  <span className="versalete-larga text-[0.6rem] opacity-75">
+                    {primeiro.diaLongo.split(",")[0]}
+                  </span>
+                  <span
+                    className={cn(
+                      "font-display text-lg leading-none",
+                      !livre && "line-through decoration-1"
+                    )}
+                  >
+                    {primeiro.diaCurto}
+                  </span>
+                  <span className="text-[0.68rem] opacity-75">
+                    {livre ? `${vagas} ${vagas === 1 ? "vaga" : "vagas"}` : "esgotado"}
+                  </span>
+                </button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -145,8 +179,13 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
 
       {/* Horas do dia escolhido */}
       <div>
-        <p className="versalete-larga mb-3 text-[0.68rem] text-preto/50">
+        <p className="versalete-larga mb-1 text-[0.68rem] text-preto/50">
           Escolha o horário
+        </p>
+        {/* O chip mostra só "22/09". Quem chega direto na agenda precisa ler
+            o dia por extenso antes de pagar R$ 250 por ele. */}
+        <p className="mb-3 text-[0.9rem] text-grafite">
+          {doDia[0]?.diaLongo ?? ""}
         </p>
         {/* `key` no dia: o React remonta a lista ao trocar de dia, e é isso que
             faz a animação de entrada rodar de novo em vez de só na primeira

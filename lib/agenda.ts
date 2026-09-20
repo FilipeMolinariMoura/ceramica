@@ -148,6 +148,11 @@ export function chaveDia(d: Date): string {
   }).format(d);
 }
 
+/** "setembro" — para separar os meses na régua de dias. */
+export function mes(d: Date): string {
+  return new Intl.DateTimeFormat("pt-BR", { month: "long", timeZone: FUSO }).format(d);
+}
+
 export function reais(centavos: number): string {
   return (centavos / 100).toLocaleString("pt-BR", {
     style: "currency",

@@ -7,6 +7,7 @@ import {
   diaLongo,
   hora,
   horariosDisponiveis,
+  mes,
   reais,
   servicoPorSlug,
 } from "@/lib/agenda";
@@ -36,6 +37,7 @@ export async function AgendaAulaAvulsa() {
     diaLongo: diaLongo(h.inicio),
     diaCurto: diaCurto(h.inicio),
     hora: hora(h.inicio),
+    mes: mes(h.inicio),
     restantes: h.restantes,
   }));
 
