@@ -36,7 +36,7 @@ export function ArtistaBreve() {
 
         <div className="flex flex-col gap-5">
           <Eyebrow>Conheça</Eyebrow>
-          <h2 className="versalete font-display text-[2.1rem] leading-[1.02] text-vermelho sm:text-[2.8rem]">
+          <h2 className="titulo-secao versalete font-display text-vermelho">
             Isabela Molinari
           </h2>
           <p className="versalete-larga text-[0.65rem] text-preto/55">

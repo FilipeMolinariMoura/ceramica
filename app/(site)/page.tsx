@@ -31,8 +31,8 @@ export default function Home() {
       <section className="bg-papel py-16 sm:py-20">
         <Container className="mb-8 flex flex-col gap-4">
           <Eyebrow>O ateliê</Eyebrow>
-          <Reveal>
-            <h2 className="versalete max-w-lg font-display text-[1.9rem] leading-[1.06] text-vermelho sm:text-[2.4rem]">
+          <Reveal tipo="titulo">
+            <h2 className="titulo-secao versalete max-w-lg font-display text-vermelho">
               O trabalho acontecendo
             </h2>
           </Reveal>

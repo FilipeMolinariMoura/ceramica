@@ -31,6 +31,17 @@
   --font-display: var(--font-bodoni);
   --font-sans: var(--font-hanken);
 
+  /* ---- Movimento ----
+     Três durações e duas curvas, e nada além disso. A regra é a da
+     frequência: quanto mais vezes um movimento acontece, mais curto ele é.
+     Um hover roda mil vezes por dia e leva 120ms; uma revelação de seção
+     roda uma vez e pode levar 620ms. */
+  --ease-firme: cubic-bezier(0.2, 0, 0, 1); /* resposta de UI */
+  --ease-entrada: cubic-bezier(0.16, 1, 0.3, 1); /* revelação: desacelera forte */
+  --t-toque: 120ms; /* micro-resposta ao clique e ao hover */
+  --t-estado: 220ms; /* troca de estado na interface */
+  --t-revela: 620ms; /* revelação por scroll */
+
   --shadow-lift: 0 24px 60px -28px rgba(20, 19, 16, 0.5);
 }
 
@@ -74,8 +85,33 @@ h3,
 
 .versalete-larga {
   text-transform: uppercase;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.22em;
   font-weight: 600;
+}
+
+/* ---- Escala de título ----
+   A distância entre o display e o corpo É a identidade da referência. Antes
+   o h2 ficava em 2rem sobre corpo de 1rem — razão de 2,3×, tímida demais
+   para uma serifa de alto contraste, que só mostra o que tem em tamanho
+   grande. Agora a razão é ~3,4× no desktop.
+
+   `clamp` em vez de degraus por breakpoint: a serifa precisa crescer junto
+   com a largura, e não pular de tamanho em 640px. */
+.titulo-hero {
+  font-size: clamp(2.8rem, 7.5vw, 5rem);
+  line-height: 0.95;
+}
+
+.titulo-secao {
+  font-size: clamp(2.4rem, 4.6vw, 3.4rem);
+  line-height: 1.02;
+}
+
+/* Cartão tem largura própria, bem menor que a coluna de uma seção. Usar a
+   escala de seção aqui fez "ATENDIMENTO 1:1" vazar para fora da borda. */
+.titulo-cartao {
+  font-size: clamp(1.35rem, 2.1vw, 1.7rem);
+  line-height: 1.08;
 }
 
 ::selection {
@@ -100,6 +136,73 @@ body::after {
   opacity: 0.035;
   mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Estado da agenda --------------------------------------------------
+   A agenda é a tela que tira R$ 250 de alguém. Ela precisa responder.
+   ------------------------------------------------------------------------ */
+
+@keyframes entra-item {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Escalonamento na troca de dia. O índice vem do `--i` inline, e não de
+   `sibling-index()`: o índice já existe no `map` do React, então usá-lo custa
+   zero JavaScript a mais e funciona em todo navegador, sem `@supports`. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-lista-stagger] > * {
+    animation: entra-item 260ms var(--ease-entrada) both;
+    animation-delay: calc(var(--i, 0) * 40ms);
+  }
+}
+
+/* Barra indeterminada no pé do botão enquanto o pagamento abre. Antes o botão
+   só trocava o rótulo e parecia travado — e travado, numa tela de pagamento,
+   faz a pessoa clicar de novo. */
+@keyframes corre-barra {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+
+.barra-carregando::after {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  block-size: 2px;
+  inline-size: 25%;
+  background: currentColor;
+  opacity: 0.85;
+  animation: corre-barra 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barra-carregando::after {
+    animation: none;
+    inline-size: 100%;
+    opacity: 0.4;
+  }
+}
+
+/* O preenchimento do dia escolhido DESLIZA entre os chips, em vez de piscar
+   de um para o outro. Quem faz isso é a View Transitions API: o elemento
+   marcado com o mesmo `view-transition-name` nos dois estados é interpolado
+   pelo navegador. Sem suporte, a troca é instantânea — que é o que já era. */
+::view-transition-old(dia-escolhido),
+::view-transition-new(dia-escolhido) {
+  animation-duration: var(--t-estado);
+  animation-timing-function: var(--ease-firme);
 }
 
 /* ---- Movimento ---- */
@@ -187,17 +290,116 @@ details[open] > summary .faq-plus {
   transform: rotate(45deg);
 }
 
-/* Reveal por Intersection Observer (uma vez). */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.75s ease,
-    transform 0.75s cubic-bezier(0.2, 0.7, 0.2, 1);
+/* ---- Revelação por scroll ----------------------------------------------
+   Antes isto era um IntersectionObserver num componente de cliente. Agora é
+   do CSS, via `animation-timeline: view()`: sai JavaScript do navegador e o
+   progresso passa a acompanhar o scroll de verdade, em vez de disparar de uma
+   vez quando o elemento cruza um limiar.
+
+   DUAS PROTEÇÕES, e as duas importam:
+
+   1. tudo mora dentro de `@supports`, e o conteúdo é VISÍVEL por padrão.
+      Firefox ainda não tem isto em versão estável. Sem a proteção, quem
+      abrisse lá veria uma página em branco — o pior defeito possível, e
+      justamente o que "opacity: 0 esperando JS" causa quando o JS não roda.
+
+   2. o movimento é por TIPO de bloco, não igual para todos. Foto escala e
+      não translada; texto translada e não escala; faixa só aparece. Era esta
+      hierarquia que faltava: o preço entrava na tela igual a um link de
+      rodapé.
+   ------------------------------------------------------------------------ */
+
+@keyframes revela-titulo {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
-[data-reveal].is-in {
-  opacity: 1;
-  transform: none;
+
+@keyframes revela-texto {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes revela-cartao {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes revela-foto {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes revela-faixa {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-revela] {
+      /* `--i` é o índice na lista, posto pelo componente. Ele desloca o
+         INÍCIO da faixa, de modo que cartões lado a lado entrem em sequência
+         conforme a pessoa rola — e parem junto com ela, porque o progresso é
+         a rolagem e não um cronômetro. Um `animation-delay` faria o segundo
+         cartão esperar no vazio se ela parasse no meio. */
+      --i: 0;
+      --escalona: calc(var(--i) * 6%);
+
+      animation-timeline: view();
+      animation-fill-mode: both;
+      animation-duration: auto;
+      animation-timing-function: var(--ease-entrada);
+    }
+
+    [data-revela="titulo"] {
+      animation-name: revela-titulo;
+      animation-range: entry calc(10% + var(--escalona)) entry 70%;
+    }
+    [data-revela="texto"] {
+      animation-name: revela-texto;
+      animation-range: entry calc(15% + var(--escalona)) entry 75%;
+    }
+    [data-revela="cartao"] {
+      animation-name: revela-cartao;
+      animation-range: entry calc(5% + var(--escalona)) entry 65%;
+    }
+    [data-revela="foto"] {
+      animation-name: revela-foto;
+      animation-range: entry calc(0% + var(--escalona)) entry 60%;
+    }
+    [data-revela="faixa"] {
+      animation-name: revela-faixa;
+      animation-range: entry 20% entry 80%;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -210,10 +412,24 @@ details[open] > summary .faq-plus {
     animation-duration: 0.001ms !important;
     animation-delay: 0ms !important;
     transition-duration: 0.001ms !important;
+    /* Zerar a duração NÃO desliga uma animação de scroll: o progresso dela
+       vem da rolagem, não do relógio. Sem soltar o timeline e apagar o nome,
+       a pessoa que pediu menos movimento continuaria com a página inteira se
+       mexendo enquanto rola. */
+    animation-timeline: auto !important;
   }
-  [data-enter] > *,
-  [data-reveal] {
+  [data-revela] {
+    animation-name: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+  [data-enter] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  /* O stagger da agenda também some. */
+  [data-lista-stagger] > * {
+    animation: none !important;
+    opacity: 1 !important;
   }
 }

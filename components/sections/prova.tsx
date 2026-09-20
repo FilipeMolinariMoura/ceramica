@@ -6,7 +6,7 @@ import { fotos } from "@/lib/fotos";
 export function Prova() {
   return (
     <section className="bg-branco py-16 sm:py-20">
-      <Reveal className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/9] lg:aspect-[16/7]">
+      <Reveal className="relative aspect-[4/5] w-full overflow-hidden sm:aspect-[16/9] lg:aspect-[16/7]" tipo="foto">
         <Image
           src={fotos.prova.src}
           alt={fotos.prova.alt}

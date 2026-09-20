@@ -13,19 +13,19 @@ export function ConviteFinal() {
     <section className="bg-vermelho py-20 text-branco sm:py-24">
       <Container className="flex flex-col items-start gap-7">
         <Eyebrow tone="claro">Turmas abertas</Eyebrow>
-        <Reveal>
-          <h2 className="max-w-2xl font-display text-3xl font-light leading-[1.12] tracking-[-0.01em] sm:text-4xl lg:text-[2.9rem]">
+        <Reveal tipo="titulo">
+          <h2 className="titulo-secao max-w-2xl font-display font-light tracking-[-0.01em]">
             Seis pessoas por turma, às terças, em{" "}
             <em className="italic text-verde-claro">{SITE.bairro}</em>.
           </h2>
         </Reveal>
-        <Reveal delay={80}>
+        <Reveal tipo="faixa">
           <p className="max-w-xl text-[1.05rem] leading-relaxed text-papel/85">
             Turma pequena é decisão de projeto: dá para acompanhar cada pessoa
             individualmente. Não é preciso ter experiência com barro.
           </p>
         </Reveal>
-        <Reveal delay={140} className="flex flex-wrap items-center gap-3">
+        <Reveal className="flex flex-wrap items-center gap-3">
           <Link
             href="/aulas"
             className="inline-flex h-[3.35rem] items-center justify-center rounded-none bg-branco px-8 text-base font-medium tracking-tight text-preto transition-[background-color,transform] duration-200 hover:bg-branco active:scale-[0.98]"
@@ -36,7 +36,7 @@ export function ConviteFinal() {
             href={WHATSAPP_DUVIDA}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex h-[3.35rem] items-center justify-center rounded-none border border-papel/40 px-8 text-base font-medium tracking-tight text-papel transition-colors duration-200 hover:border-papel hover:bg-papel hover:text-vermelho"
+            className="inline-flex h-[3.35rem] items-center justify-center rounded-none border border-papel/40 px-8 text-base font-medium tracking-tight text-papel transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px duration-200 hover:border-papel hover:bg-papel hover:text-vermelho"
           >
             Falar no WhatsApp
           </a>

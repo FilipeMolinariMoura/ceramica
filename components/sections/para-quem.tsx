@@ -19,14 +19,14 @@ export function ParaQuem() {
       <Container className="grid gap-10 lg:grid-cols-[0.5fr_1fr] lg:gap-16">
         <Reveal>
           <Eyebrow>Para quem é</Eyebrow>
-          <h2 className="mt-5 max-w-xs font-display text-3xl font-normal leading-[1.1] tracking-[-0.01em] text-preto sm:text-4xl">
+          <h2 className="titulo-secao mt-5 max-w-xs font-display font-normal tracking-[-0.01em] text-preto">
             Esta turma é para você que…
           </h2>
         </Reveal>
 
         <ul className="flex flex-col">
           {ITENS.map((item, i) => (
-            <Reveal key={item.texto} delay={i * 70}>
+            <Reveal key={item.texto} indice={i} tipo="cartao">
               <li className="flex items-baseline gap-5 border-t border-linha py-5 first:border-t-0 sm:py-6">
                 <span
                   aria-hidden

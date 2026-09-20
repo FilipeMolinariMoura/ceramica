@@ -33,8 +33,8 @@ export function Incluso() {
         <div className="flex flex-col items-start gap-8">
           <div className="flex flex-col gap-5">
             <Eyebrow tone="escuro">O que está incluso</Eyebrow>
-            <Reveal>
-              <h2 className="max-w-md font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl lg:text-[2.9rem]">
+            <Reveal tipo="titulo">
+              <h2 className="titulo-secao max-w-md font-display font-normal tracking-[-0.01em] text-preto">
                 Você não precisa comprar{" "}
                 <em className="italic text-vermelho">nada</em> para começar.
               </h2>
@@ -43,7 +43,7 @@ export function Incluso() {
 
           <ul className="w-full">
             {ITENS.map((item, i) => (
-              <Reveal key={item.titulo} delay={i * 80}>
+              <Reveal key={item.titulo} indice={i} tipo="cartao">
                 <li className="flex flex-col gap-2 border-t border-preto/15 py-6 sm:flex-row sm:items-baseline sm:gap-6">
                   <span
                     className={
@@ -69,7 +69,7 @@ export function Incluso() {
           </ul>
         </div>
 
-        <Reveal className="relative aspect-[4/5] w-full overflow-hidden rounded-none lg:aspect-[3/4]">
+        <Reveal className="relative aspect-[4/5] w-full overflow-hidden rounded-none lg:aspect-[3/4]" tipo="foto">
           <Image
             src={fotos.incluso.src}
             alt={fotos.incluso.alt}

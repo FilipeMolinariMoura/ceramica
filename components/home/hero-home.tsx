@@ -26,7 +26,7 @@ export async function HeroHome() {
             Ateliê de cerâmica · {SITE.cidade}
           </p>
 
-          <h1 className="versalete font-display text-[2.6rem] leading-[0.95] text-vermelho sm:text-[4.2rem] lg:text-[5.6rem]">
+          <h1 className="titulo-hero versalete font-display text-vermelho">
             Bela Cerâmica
           </h1>
 
@@ -39,13 +39,13 @@ export async function HeroHome() {
             <div className="flex shrink-0 flex-wrap gap-3">
               <Link
                 href="/aulas#agenda"
-                className="inline-flex h-12 items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-colors hover:bg-vermelho-escuro"
+                className="inline-flex h-12 items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
               >
                 Marcar uma aula
               </Link>
               <Link
                 href="/obras"
-                className="inline-flex h-12 items-center justify-center border border-preto/25 px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-colors hover:border-preto"
+                className="inline-flex h-12 items-center justify-center border border-preto/25 px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:border-preto"
               >
                 Ver as obras
               </Link>

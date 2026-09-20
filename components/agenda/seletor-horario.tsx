@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/button";
 import {
@@ -46,16 +47,41 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
   const dias = React.useMemo(() => {
     const por = new Map<string, HorarioVisivel[]>();
     for (const h of horarios) {
-      if (h.restantes <= 0) continue;
       const lista = por.get(h.dia) ?? [];
       lista.push(h);
       por.set(h.dia, lista);
     }
-    return [...por.entries()].map(([dia, lista]) => ({ dia, lista }));
+    // Um dia inteiro esgotado sai da régua: ninguém precisa navegar por ele.
+    return [...por.entries()]
+      .filter(([, lista]) => lista.some((h) => h.restantes > 0))
+      .map(([dia, lista]) => ({ dia, lista }));
   }, [horarios]);
 
   const [diaAtivo, setDiaAtivo] = React.useState(() => dias[0]?.dia ?? "");
   const [escolhido, setEscolhido] = React.useState<HorarioVisivel | null>(null);
+
+  /**
+   * A troca de dia passa pela View Transitions API para o preenchimento
+   * vermelho DESLIZAR entre os chips em vez de piscar de um para o outro.
+   *
+   * `flushSync` é obrigatório: `startViewTransition` fotografa o DOM ao fim do
+   * callback, e uma atualização de estado do React é assíncrona por padrão —
+   * sem ele o navegador fotografaria a tela antes da mudança e não haveria
+   * transição nenhuma. Sem suporte à API, a troca é instantânea, que é
+   * exatamente o que já acontecia.
+   */
+  function escolherDia(dia: string) {
+    const podeTransicionar =
+      typeof document !== "undefined" &&
+      typeof document.startViewTransition === "function" &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!podeTransicionar) {
+      setDiaAtivo(dia);
+      return;
+    }
+    document.startViewTransition(() => flushSync(() => setDiaAtivo(dia)));
+  }
 
   const doDia = dias.find((d) => d.dia === diaAtivo)?.lista ?? [];
 
@@ -88,10 +114,12 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
               <button
                 key={dia}
                 type="button"
-                onClick={() => setDiaAtivo(dia)}
+                onClick={() => escolherDia(dia)}
                 aria-pressed={ativo}
+                style={ativo ? { viewTransitionName: "dia-escolhido" } : undefined}
                 className={cn(
-                  "flex shrink-0 flex-col items-start gap-0.5 border px-4 py-3 text-left transition-colors",
+                  "flex shrink-0 flex-col items-start gap-0.5 border px-4 py-3 text-left",
+                  "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px",
                   ativo
                     ? "border-vermelho bg-vermelho text-branco"
                     : "border-linha bg-branco text-preto hover:border-vermelho"
@@ -117,20 +145,60 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
         <p className="versalete-larga mb-3 text-[0.68rem] text-preto/50">
           Escolha o horário
         </p>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-          {doDia.map((h) => (
-            <button
-              key={h.id}
-              type="button"
-              onClick={() => setEscolhido(h)}
-              className="group flex flex-col items-start gap-1 border border-linha bg-branco px-4 py-3 text-left transition-colors hover:border-vermelho hover:bg-vermelho hover:text-branco"
-            >
-              <span className="font-display text-xl leading-none">{h.hora}</span>
-              <span className="text-[0.7rem] opacity-70">
-                {h.restantes} {h.restantes === 1 ? "vaga" : "vagas"} · {duracaoMin} min
-              </span>
-            </button>
-          ))}
+        {/* `key` no dia: o React remonta a lista ao trocar de dia, e é isso que
+            faz a animação de entrada rodar de novo em vez de só na primeira
+            renderização. */}
+        <div
+          key={diaAtivo}
+          data-lista-stagger
+          className="grid grid-cols-2 gap-2 sm:grid-cols-3"
+        >
+          {doDia.map((h, i) => {
+            const esgotado = h.restantes <= 0;
+            const ultima = h.restantes === 1;
+            return (
+              <button
+                key={h.id}
+                type="button"
+                disabled={esgotado}
+                onClick={() => setEscolhido(h)}
+                style={{ "--i": i } as React.CSSProperties}
+                className={cn(
+                  "group flex flex-col items-start gap-1 border px-4 py-3 text-left",
+                  "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)]",
+                  esgotado
+                    ? "cursor-not-allowed border-linha bg-papel text-preto/60"
+                    : "border-linha bg-branco hover:border-vermelho hover:bg-vermelho hover:text-branco active:translate-y-px"
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-display text-xl leading-none",
+                    esgotado && "line-through decoration-1"
+                  )}
+                >
+                  {h.hora}
+                </span>
+                <span
+                  className={cn(
+                    "text-[0.7rem]",
+                    esgotado
+                      ? ""
+                      : ultima
+                        ? "font-semibold text-vermelho group-hover:text-branco"
+                        : "opacity-70"
+                  )}
+                >
+                  {esgotado
+                    ? "esgotado"
+                    : ultima
+                      ? "última vaga"
+                      : `${h.restantes} vagas`}
+                  {esgotado ? "" : ` · ${duracaoMin} min`}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -257,8 +325,17 @@ function FormularioReserva({
             />
           </div>
 
-          <Button type="submit" size="lg" disabled={enviando} className="mt-1 w-full">
-            {enviando ? "Abrindo o pagamento…" : `Pagar ${precoFormatado}`}
+          <Button
+            type="submit"
+            size="lg"
+            disabled={enviando}
+            aria-busy={enviando}
+            className={cn(
+              "relative mt-1 w-full overflow-hidden disabled:opacity-100",
+              enviando && "barra-carregando"
+            )}
+          >
+            {enviando ? "Abrindo o pagamento" : `Pagar ${precoFormatado}`}
           </Button>
 
           <p className="text-center text-[0.75rem] leading-relaxed text-grafite/65">

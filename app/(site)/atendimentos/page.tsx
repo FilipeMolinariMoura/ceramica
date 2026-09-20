@@ -85,7 +85,7 @@ export default function Atendimentos() {
       <section className="bg-verde py-16 sm:py-20">
         <Container className="flex max-w-2xl flex-col items-start gap-5">
           <Eyebrow tone="claro">Como marcar</Eyebrow>
-          <h2 className="versalete font-display text-[1.9rem] leading-[1.06] text-branco sm:text-[2.3rem]">
+          <h2 className="titulo-secao versalete font-display text-branco">
             Pelo WhatsApp, direto com a Isabela
           </h2>
           <p className="text-[1rem] leading-relaxed text-branco/85">
@@ -97,7 +97,7 @@ export default function Atendimentos() {
             href={WHATSAPP_ATENDIMENTO}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 inline-flex h-12 items-center justify-center bg-branco px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-vermelho transition-colors hover:bg-papel"
+            className="mt-1 inline-flex h-12 items-center justify-center bg-branco px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-vermelho transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-papel"
           >
             Chamar no WhatsApp
           </a>

@@ -45,7 +45,7 @@ export default function Obras() {
             <Reveal>
               <div className="flex flex-col items-start gap-5 rounded-none border border-linha bg-branco px-7 py-12 sm:px-12 sm:py-16">
                 <Eyebrow>Acervo</Eyebrow>
-                <h2 className="max-w-xl font-display text-2xl font-normal leading-[1.15] text-preto sm:text-3xl">
+                <h2 className="max-w-xl font-display text-2xl font-normal text-preto">
                   As peças novas estão sendo fotografadas.
                 </h2>
                 <p className="max-w-xl text-[1.05rem] leading-relaxed text-grafite/80">
@@ -58,13 +58,13 @@ export default function Obras() {
                     href={WHATSAPP_ENCOMENDA}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-12 items-center justify-center rounded-none bg-vermelho px-7 text-[0.95rem] font-medium text-branco transition-colors hover:bg-vermelho-escuro"
+                    className="inline-flex h-12 items-center justify-center rounded-none bg-vermelho px-7 text-[0.95rem] font-medium text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
                   >
                     Conversar sobre uma peça
                   </a>
                   <Link
                     href="/encomendas"
-                    className="inline-flex h-12 items-center justify-center rounded-none border border-preto/25 px-7 text-[0.95rem] font-medium text-preto transition-colors hover:border-preto hover:bg-preto hover:text-papel"
+                    className="inline-flex h-12 items-center justify-center rounded-none border border-preto/25 px-7 text-[0.95rem] font-medium text-preto transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:border-preto hover:bg-preto hover:text-papel"
                   >
                     Como funciona a encomenda
                   </Link>
@@ -86,8 +86,8 @@ export default function Obras() {
       <section className="bg-branco py-20 sm:py-24">
         <Container className="mb-9 flex flex-col gap-4">
           <Eyebrow>O ateliê</Eyebrow>
-          <Reveal>
-            <h2 className="max-w-lg font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl">
+          <Reveal tipo="titulo">
+            <h2 className="titulo-secao max-w-lg font-display font-normal tracking-[-0.01em] text-preto">
               Onde as peças nascem.
             </h2>
           </Reveal>

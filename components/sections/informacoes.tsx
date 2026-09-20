@@ -17,7 +17,7 @@ export function Informacoes() {
       <Container>
         <Reveal>
           <Eyebrow>Informações</Eyebrow>
-          <h2 className="mt-5 max-w-lg font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl lg:text-[2.9rem]">
+          <h2 className="titulo-secao mt-5 max-w-lg font-display font-normal tracking-[-0.01em] text-preto">
             Tudo o que você precisa saber.
           </h2>
         </Reveal>
@@ -78,7 +78,7 @@ export function Informacoes() {
             </Reveal>
           </div>
 
-          <Reveal delay={90} className="flex flex-col gap-6">
+          <Reveal className="flex flex-col gap-6">
             <div className="border-t border-linha pt-5">
               <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-preto/45">
                 Mensalidade

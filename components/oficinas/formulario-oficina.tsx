@@ -68,7 +68,7 @@ export function FormularioOficina() {
           href={WHATSAPP_OFICINA}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 inline-flex h-12 items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-colors hover:bg-vermelho-escuro"
+          className="mt-6 inline-flex h-12 items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
         >
           Abrir o WhatsApp
         </a>

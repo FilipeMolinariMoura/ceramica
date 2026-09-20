@@ -60,7 +60,7 @@ export async function Hero() {
           >
             <Eyebrow>Aulas de cerâmica · Pinheiros</Eyebrow>
 
-            <h1 className="versalete font-display text-[2.4rem] leading-[0.98] text-vermelho sm:text-[3.2rem] lg:text-[3.8rem]">
+            <h1 className="titulo-hero versalete font-display text-vermelho">
               Mão no barro,
               <br />
               nesta semana
@@ -88,7 +88,7 @@ export async function Hero() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href="#agenda"
-                className="inline-flex h-[3.1rem] items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-colors hover:bg-vermelho-escuro"
+                className="inline-flex h-[3.1rem] items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
               >
                 Ver os horários
               </Link>

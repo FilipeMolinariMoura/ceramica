@@ -29,13 +29,13 @@ export function DoisCaminhos() {
           {CAMINHOS.map((c, i) => (
             <Reveal
               key={c.nome}
-              delay={i * 90}
+              indice={i}
               className={
                 i === 1
                   ? "border-t border-papel/15 pt-10 md:border-l md:border-t-0 md:pl-14 md:pt-0"
                   : "md:pr-14"
               }
-            >
+             tipo="cartao">
               <div className="flex items-center gap-3">
                 <span aria-hidden className={`h-2.5 w-2.5 rounded-full ${c.cor}`} />
                 <h3 className="font-display text-4xl font-normal tracking-tight text-papel sm:text-5xl">
@@ -50,7 +50,7 @@ export function DoisCaminhos() {
           ))}
         </div>
 
-        <Reveal delay={160}>
+        <Reveal>
           <p className="mt-14 max-w-2xl text-2xl font-light leading-snug text-papel sm:text-[1.75rem]">
             Você escolhe o caminho,{" "}
             <em className="font-display italic text-verde">

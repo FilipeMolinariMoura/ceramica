@@ -58,7 +58,7 @@ export async function Portas() {
 
       <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {PORTAS.map((porta, i) => (
-          <Reveal key={porta.href} delay={i * 90} className="h-full">
+          <Reveal key={porta.href} indice={i} className="h-full" tipo="cartao">
             <Link
               href={porta.href}
               className="group flex h-full flex-col border border-linha bg-branco transition-colors hover:border-vermelho"
@@ -79,7 +79,7 @@ export async function Portas() {
               </div>
 
               <div className="flex flex-1 flex-col gap-2.5 p-6">
-                <h2 className="versalete font-display text-[1.45rem] leading-[1.1] text-vermelho">
+                <h2 className="titulo-cartao versalete font-display text-vermelho">
                   {porta.titulo}
                 </h2>
                 <p className="text-[0.95rem] leading-relaxed text-grafite/85">

@@ -61,7 +61,7 @@ export default function Oficinas() {
         <Container className="grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
           <div className="flex flex-col gap-5">
             <Eyebrow>O que está incluso</Eyebrow>
-            <h2 className="versalete font-display text-[1.9rem] leading-[1.06] text-vermelho sm:text-[2.3rem]">
+            <h2 className="titulo-secao versalete font-display text-vermelho">
               Você leva as pessoas.
               <br />O resto é com a gente.
             </h2>
@@ -86,7 +86,7 @@ export default function Oficinas() {
         <Container className="max-w-3xl">
           <div className="mb-8 flex flex-col gap-4">
             <Eyebrow>Orçamento</Eyebrow>
-            <h2 className="versalete font-display text-[1.9rem] leading-[1.06] text-vermelho sm:text-[2.3rem]">
+            <h2 className="titulo-secao versalete font-display text-vermelho">
               Conte o que você quer
             </h2>
           </div>

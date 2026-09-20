@@ -54,7 +54,7 @@ export function ObraCard({ obra, delay = 0 }: { obra: Obra; delay?: number }) {
   );
 
   return (
-    <Reveal delay={delay}>
+    <Reveal indice={delay} tipo="cartao">
       {vendida ? (
         <article className="group">{conteudo}</article>
       ) : (

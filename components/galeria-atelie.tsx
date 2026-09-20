@@ -53,7 +53,8 @@ export function GaleriaAtelie({
       {ATELIE.map((foto, i) => (
         <Reveal
           key={foto.legenda}
-          delay={(i % 3) * 80}
+          indice={i % 3}
+          tipo="foto"
           className={cn(foto.formato === "larga" && "sm:col-span-2")}
         >
           <figure>

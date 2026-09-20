@@ -8,7 +8,7 @@ export function QuemConduz() {
   return (
     <section className="bg-branco py-20 sm:py-28 lg:py-32">
       <Container className="grid items-center gap-10 lg:grid-cols-[1fr_0.82fr] lg:gap-16">
-        <Reveal className="relative order-1 aspect-[5/4] w-full overflow-hidden rounded-none">
+        <Reveal className="relative order-1 aspect-[5/4] w-full overflow-hidden rounded-none" tipo="foto">
           <Image
             src={fotos.isabela.src}
             alt={fotos.isabela.alt}
@@ -22,15 +22,15 @@ export function QuemConduz() {
 
         <div className="order-2 flex flex-col items-start gap-6">
           <Eyebrow>Quem conduz</Eyebrow>
-          <Reveal>
-            <h2 className="font-display text-4xl font-normal leading-none tracking-[-0.01em] text-preto sm:text-5xl">
+          <Reveal tipo="titulo">
+            <h2 className="titulo-secao font-display font-normal leading-none tracking-[-0.01em] text-preto">
               Isabela Molinari
             </h2>
             <p className="mt-3 text-[0.82rem] font-semibold uppercase tracking-[0.16em] text-vermelho">
               Artista visual · Arteterapeuta
             </p>
           </Reveal>
-          <Reveal delay={90}>
+          <Reveal>
             <p className="max-w-md text-[1.08rem] leading-relaxed text-grafite/85">
               Bacharela em Artes Visuais pela Belas Artes de São Paulo e
               arteterapeuta. Há quatro anos orienta processos criativos em

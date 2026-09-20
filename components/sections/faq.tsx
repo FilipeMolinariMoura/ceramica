@@ -35,14 +35,14 @@ export function Faq() {
       <Container className="grid gap-10 lg:grid-cols-[0.5fr_1fr] lg:gap-16">
         <Reveal>
           <Eyebrow>Perguntas frequentes</Eyebrow>
-          <h2 className="mt-5 max-w-xs font-display text-3xl font-normal leading-[1.1] tracking-[-0.01em] text-preto sm:text-4xl">
+          <h2 className="titulo-secao mt-5 max-w-xs font-display font-normal tracking-[-0.01em] text-preto">
             Ainda em dúvida?
           </h2>
         </Reveal>
 
         <div>
           {PERGUNTAS.map((item, i) => (
-            <Reveal key={item.q} delay={i * 50}>
+            <Reveal key={item.q} indice={i} tipo="cartao">
               <details className="group border-t border-linha last:border-b">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
                   <span className="text-lg font-medium text-preto sm:text-xl">

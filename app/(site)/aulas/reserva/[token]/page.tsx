@@ -84,7 +84,7 @@ export default async function Reserva({ params, searchParams }: Props) {
             {confirmada ? (
               <a
                 href={`/aulas/reserva/${token}/agenda.ics`}
-                className="inline-flex h-12 items-center justify-center border border-vermelho px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-vermelho transition-colors hover:bg-vermelho hover:text-branco"
+                className="inline-flex h-12 items-center justify-center border border-vermelho px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-vermelho transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho hover:text-branco"
               >
                 Salvar no calendário
               </a>
@@ -94,7 +94,7 @@ export default async function Reserva({ params, searchParams }: Props) {
                 href={reserva.receiptUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-12 items-center justify-center border border-linha px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-colors hover:border-preto"
+                className="inline-flex h-12 items-center justify-center border border-linha px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:border-preto"
               >
                 Ver o comprovante
               </a>
@@ -103,7 +103,7 @@ export default async function Reserva({ params, searchParams }: Props) {
               href={WHATSAPP_DUVIDA}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-12 items-center justify-center border border-linha px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-colors hover:border-preto"
+              className="inline-flex h-12 items-center justify-center border border-linha px-6 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-preto transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:border-preto"
             >
               Falar com a Isabela
             </a>
@@ -145,7 +145,7 @@ function Cabecalho({ estado }: { estado: string }) {
           <Check className="h-7 w-7" strokeWidth={2.5} />
         </span>
         <Eyebrow>Confirmada</Eyebrow>
-        <h1 className="versalete font-display text-[2rem] leading-[1.05] text-vermelho sm:text-[2.4rem]">
+        <h1 className="titulo-secao versalete font-display text-vermelho">
           Sua vaga está garantida
         </h1>
         <p className="text-[1rem] leading-relaxed text-grafite/85">
@@ -162,7 +162,7 @@ function Cabecalho({ estado }: { estado: string }) {
           <TriangleAlert className="h-7 w-7" strokeWidth={2.2} />
         </span>
         <Eyebrow>Pago — precisa remarcar</Eyebrow>
-        <h1 className="versalete font-display text-[2rem] leading-[1.05] text-vermelho sm:text-[2.4rem]">
+        <h1 className="titulo-secao versalete font-display text-vermelho">
           Vamos achar outro horário
         </h1>
       </div>
@@ -175,7 +175,7 @@ function Cabecalho({ estado }: { estado: string }) {
         <Clock className="h-7 w-7" strokeWidth={2} />
       </span>
       <Eyebrow tone="escuro">Aguardando pagamento</Eyebrow>
-      <h1 className="versalete font-display text-[2rem] leading-[1.05] text-preto sm:text-[2.4rem]">
+      <h1 className="titulo-secao versalete font-display text-preto">
         Reserva ainda não confirmada
       </h1>
     </div>

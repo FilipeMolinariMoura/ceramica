@@ -23,7 +23,7 @@ export default async function Entrar({
   return (
     <div className="flex min-h-screen items-center justify-center bg-papel px-6 py-24">
       <div className="w-full max-w-sm">
-        <h1 className="versalete font-display text-3xl text-vermelho">
+        <h1 className="titulo-secao versalete font-display text-vermelho">
           Bela Cerâmica
         </h1>
         <p className="versalete-larga mt-2 text-[0.6rem] text-preto/45">

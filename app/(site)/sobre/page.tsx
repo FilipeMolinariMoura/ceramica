@@ -49,7 +49,7 @@ export default function Sobre() {
 
       <section className="bg-papel pb-20 sm:pb-24">
         <Container className="grid items-start gap-10 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
-          <Reveal className="relative aspect-[5/4] w-full overflow-hidden rounded-none">
+          <Reveal className="relative aspect-[5/4] w-full overflow-hidden rounded-none" tipo="foto">
             <Image
               src={fotos.isabela.src}
               alt={fotos.isabela.alt}
@@ -71,7 +71,7 @@ export default function Sobre() {
                 aceita, o que ele recusa e o que aparece no caminho.
               </p>
             </Reveal>
-            <Reveal delay={70}>
+            <Reveal>
               <p>
                 Sou bacharela em Artes Visuais pela Belas Artes de São Paulo e
                 arteterapeuta. Essas duas formações se encontram no ateliê: há{" "}
@@ -80,13 +80,13 @@ export default function Sobre() {
                 no ritmo dela.
               </p>
             </Reveal>
-            <Reveal delay={140}>
+            <Reveal>
               <p>
                 O ateliê fica em {SITE.cidade}, e é dele que saem as peças
                 autorais, as encomendas e as turmas de terça.
               </p>
             </Reveal>
-            <Reveal delay={200}>
+            <Reveal>
               <a
                 href={INSTAGRAM_URL}
                 target="_blank"
@@ -105,7 +105,7 @@ export default function Sobre() {
           <Eyebrow tone="escuro">O que guia o trabalho</Eyebrow>
           <ul className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-3">
             {EIXOS.map((eixo, i) => (
-              <Reveal key={eixo.titulo} delay={i * 90}>
+              <Reveal key={eixo.titulo} indice={i} tipo="cartao">
                 <li className="border-t border-preto/20 pt-5">
                   <h2 className="font-display text-2xl text-preto">
                     {eixo.titulo}
@@ -122,22 +122,22 @@ export default function Sobre() {
 
       <section className="bg-papel py-20 sm:py-24">
         <Container className="flex flex-col items-start gap-6">
-          <Reveal>
-            <h2 className="max-w-2xl font-display text-3xl font-normal leading-[1.12] tracking-[-0.01em] text-preto sm:text-4xl">
+          <Reveal tipo="titulo">
+            <h2 className="titulo-secao max-w-2xl font-display font-normal tracking-[-0.01em] text-preto">
               Dá para começar do zero —{" "}
               <em className="italic text-vermelho">a maioria começa</em>.
             </h2>
           </Reveal>
-          <Reveal delay={80}>
+          <Reveal>
             <p className="max-w-xl text-[1.05rem] leading-relaxed text-grafite/80">
               As turmas recebem quem nunca encostou em barro. São seis pessoas
               por turma justamente para caber acompanhamento individual.
             </p>
           </Reveal>
-          <Reveal delay={140}>
+          <Reveal>
             <Link
               href="/aulas"
-              className="inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-colors hover:bg-vermelho-escuro"
+              className="inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
             >
               Ver as turmas
             </Link>

@@ -14,7 +14,11 @@ import { cn } from "@/lib/utils";
  * a Isabela chamou de "tia da cerâmica".
  */
 const button = cva(
-  "inline-flex items-center justify-center gap-2 rounded-none font-semibold uppercase tracking-[0.12em] transition-[background-color,color,border-color,transform] duration-200 will-change-transform active:scale-[0.99] focus-visible:outline-2 focus-visible:outline-offset-3 disabled:pointer-events-none disabled:opacity-50",
+  // `active:translate-y-px`, e NÃO `active:scale`. Escalar um retângulo de
+  // canto vivo arredonda a borda por um instante e o botão parece de borracha.
+  // Um retângulo afunda 1px, como tecla. 120ms porque um hover acontece mil
+  // vezes por dia — a regra da frequência: quanto mais repete, mais curto.
+  "inline-flex items-center justify-center gap-2 rounded-none font-semibold uppercase tracking-[0.12em] transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-3 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {

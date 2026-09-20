@@ -26,17 +26,18 @@ export async function AgendaAulaAvulsa() {
   const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
   if (!servico) return null;
 
+  // Os esgotados VÃO para a tela, riscados. Antes eram filtrados fora, e com
+  // isso a agenda parecia vazia de procura: ver a vaga que já foi é o que faz
+  // a vaga que sobrou valer alguma coisa.
   const horarios = await horariosDisponiveis(servico.id);
-  const visiveis: HorarioVisivel[] = horarios
-    .filter((h) => h.restantes > 0)
-    .map((h) => ({
-      id: h.id,
-      dia: chaveDia(h.inicio),
-      diaLongo: diaLongo(h.inicio),
-      diaCurto: diaCurto(h.inicio),
-      hora: hora(h.inicio),
-      restantes: h.restantes,
-    }));
+  const visiveis: HorarioVisivel[] = horarios.map((h) => ({
+    id: h.id,
+    dia: chaveDia(h.inicio),
+    diaLongo: diaLongo(h.inicio),
+    diaCurto: diaCurto(h.inicio),
+    hora: hora(h.inicio),
+    restantes: h.restantes,
+  }));
 
   const preco = reais(servico.precoCentavos);
 
@@ -45,7 +46,7 @@ export async function AgendaAulaAvulsa() {
       <Container className="grid gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-16">
         <div className="flex flex-col gap-5">
           <Eyebrow>Aula avulsa</Eyebrow>
-          <h2 className="versalete font-display text-[2.1rem] leading-[1.05] text-vermelho sm:text-[2.6rem]">
+          <h2 className="titulo-secao versalete font-display text-vermelho">
             Uma aula,
             <br />
             sem assinar o mês
@@ -80,7 +81,7 @@ export async function AgendaAulaAvulsa() {
               href={WHATSAPP_DUVIDA}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-vermelho underline underline-offset-4 hover:text-vermelho-escuro"
+              className="text-vermelho underline underline-offset-4 transition-colors duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:text-vermelho-escuro"
             >
               Chame no WhatsApp
             </a>

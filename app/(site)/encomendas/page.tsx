@@ -76,7 +76,7 @@ export default function Encomendas() {
           href={WHATSAPP_ENCOMENDA}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-1 inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-colors hover:bg-vermelho-escuro"
+          className="mt-1 inline-flex h-[3.35rem] items-center justify-center rounded-none bg-vermelho px-8 text-base font-medium tracking-tight text-branco transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-vermelho-escuro"
         >
           Começar pelo WhatsApp
         </a>
@@ -84,7 +84,7 @@ export default function Encomendas() {
 
       <section className="bg-papel pb-20 sm:pb-24">
         <Container className="grid gap-10 lg:grid-cols-[0.85fr_1fr] lg:gap-16">
-          <Reveal className="relative order-2 aspect-[4/5] w-full overflow-hidden rounded-none lg:order-1">
+          <Reveal className="relative order-2 aspect-[4/5] w-full overflow-hidden rounded-none lg:order-1" tipo="foto">
             <Image
               src={fotos.sobre.src}
               alt={fotos.sobre.alt}
@@ -100,7 +100,7 @@ export default function Encomendas() {
             <Eyebrow>Como funciona</Eyebrow>
             <ol className="mt-8">
               {ETAPAS.map((etapa, i) => (
-                <Reveal key={etapa.n} delay={i * 70}>
+                <Reveal key={etapa.n} indice={i} tipo="cartao">
                   <li className="flex gap-5 border-t border-linha py-6 last:border-b">
                     <span className="font-display text-lg text-vermelho/70">
                       {etapa.n}
@@ -127,7 +127,7 @@ export default function Encomendas() {
             <Eyebrow>O que dá para encomendar</Eyebrow>
             <ul className="mt-7 flex flex-col">
               {TIPOS.map((tipo, i) => (
-                <Reveal key={tipo} delay={i * 55}>
+                <Reveal key={tipo} indice={i} tipo="cartao">
                   <li className="flex items-start gap-3 border-t border-linha py-4 text-[1.05rem] text-grafite/85 last:border-b">
                     <span
                       aria-hidden
@@ -140,7 +140,7 @@ export default function Encomendas() {
             </ul>
           </div>
 
-          <Reveal delay={120}>
+          <Reveal>
             <div className="flex h-full flex-col items-start justify-center gap-5 rounded-2xl bg-vermelho p-8 text-branco sm:p-10">
               <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-papel/70">
                 Antes de encomendar
@@ -156,7 +156,7 @@ export default function Encomendas() {
                   href={WHATSAPP_ENCOMENDA}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-none bg-branco px-7 text-[0.95rem] font-medium text-vermelho transition-colors hover:bg-branco"
+                  className="inline-flex h-12 items-center justify-center rounded-none bg-branco px-7 text-[0.95rem] font-medium text-vermelho transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:bg-branco"
                 >
                   Falar no WhatsApp
                 </a>
@@ -164,7 +164,7 @@ export default function Encomendas() {
                   href={INSTAGRAM_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-12 items-center justify-center rounded-none border border-papel/40 px-7 text-[0.95rem] font-medium text-papel transition-colors hover:border-papel hover:bg-papel hover:text-vermelho"
+                  className="inline-flex h-12 items-center justify-center rounded-none border border-papel/40 px-7 text-[0.95rem] font-medium text-papel transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] active:translate-y-px hover:border-papel hover:bg-papel hover:text-vermelho"
                 >
                   Ver @{INSTAGRAM_HANDLE}
                 </a>

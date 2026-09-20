@@ -25,7 +25,7 @@ export function PageHero({
       <Container>
         <div data-enter className="flex max-w-3xl flex-col items-start gap-6">
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h1 className="font-display text-[2.5rem] font-light leading-[1.06] tracking-[-0.02em] text-preto sm:text-5xl lg:text-[3.6rem]">
+          <h1 className="titulo-hero font-display font-light tracking-[-0.02em] text-preto">
             {titulo}
             {destaque ? (
               <>
