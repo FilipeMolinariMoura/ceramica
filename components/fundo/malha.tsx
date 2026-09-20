@@ -56,7 +56,11 @@ function compilar(gl: WebGLRenderingContext, tipo: number, fonte: string) {
   gl.shaderSource(s, fonte);
   gl.compileShader(s);
   if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-    console.error("[malha] shader não compilou:", gl.getShaderInfoLog(s));
+    /* Contexto perdido reprova a compilação sem registro nenhum — o log vem
+       `null`. Não é erro de shader e não deve gritar no console: é o caminho
+       normal de quem já soltou o contexto. Erro de verdade tem texto. */
+    const log = gl.getShaderInfoLog(s);
+    if (log) console.error("[malha] shader não compilou:", log);
     gl.deleteShader(s);
     return null;
   }
@@ -78,6 +82,19 @@ export function Malha({ className }: { className?: string }) {
       powerPreference: "low-power",
     });
     if (!gl) return; // trava 4
+
+    /* Trava 5: contexto JÁ perdido.
+       A limpeza deste efeito solta o contexto de propósito — o navegador
+       guarda poucos, e navegar para outra página e voltar vazaria um por
+       visita. Mas `getContext` devolve SEMPRE o mesmo objeto para um canvas,
+       inclusive depois de perdido. Se o efeito rodar de novo sobre o mesmo
+       elemento (o StrictMode monta, limpa e monta outra vez em
+       desenvolvimento), o que chega aqui é o contexto morto, e todo comando
+       seguinte falha em silêncio — canvas vazio sobre a seção.
+
+       Saindo agora, o que fica é a seção preta que já estava desenhada, que é
+       o mesmo destino de quem não tem WebGL. Nunca um buraco. */
+    if (gl.isContextLost()) return;
 
     const vs = compilar(gl, gl.VERTEX_SHADER, VERTICE);
     const fs = compilar(gl, gl.FRAGMENT_SHADER, FRAGMENTO);

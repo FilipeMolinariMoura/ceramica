@@ -3,12 +3,10 @@
   "configurations": [
     {
       "name": "ceramica",
-      "runtimeExecutable": "npm",
+      "runtimeExecutable": "sh",
       "runtimeArgs": [
-        "--prefix",
-        "/Users/filipemolinari/projetos/ceramica",
-        "run",
-        "dev"
+        "-c",
+        "ulimit -n 10240 2>/dev/null || true; WATCHPACK_POLLING=${WATCHPACK_POLLING:-1000} exec npm --prefix /Users/filipemolinari/projetos/ceramica run dev"
       ],
       "port": 3000,
       "autoPort": true

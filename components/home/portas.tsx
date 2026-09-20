@@ -1,51 +1,57 @@
 import { FotoDaSecao } from "@/components/foto-da-secao";
 import Link from "next/link";
 import { Container } from "@/components/section";
-import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
 import { reais, servicoPorSlug } from "@/lib/agenda";
 import { SERVICO_AULA_AVULSA } from "@/lib/constants";
+import { OFICINA } from "@/lib/oficina";
 
 /**
  * O catálogo. Três portas, na ordem que a Isabela pediu.
  *
- * ── Por que não é mais um cartão com borda ────────────────────────────────
- * Porque a referência não tem cartão. Ela tem FOTO SOBRE FUNDO TINGIDO, e
- * embaixo, fora da foto, uma legenda pequena e o preço. Sem moldura, sem
- * sombra, sem seta. O que separa um item do outro é o espaço e o tingido do
- * fundo — é o que faz aquilo parecer catálogo impresso e não uma tela de
- * aplicativo.
+ * ── A numeração não é enfeite ─────────────────────────────────────────────
+ * Ela vem do material dela. O deck que a Isabela manda para cliente numera as
+ * etapas "0 1  0 2  0 3  0 4" e pagina "0 1 / 0 4", com o dígito espaçado. É
+ * a linguagem gráfica que ela já usa quando fala com quem paga — então o site
+ * passa a falar igual, em vez de inventar um sistema paralelo.
  *
- * A versão anterior era o cartão genérico de sempre: borda de 1px, foto no
- * topo, título, texto, seta. Funcionava e não se parecia com nada que ela
- * tinha mandado.
+ * ── O preço aparece ───────────────────────────────────────────────────────
+ * Os três valores estavam como "sob consulta" e "sob orçamento". Mas o deck
+ * de oficina dela ABRE com R$ 320 por participante, em corpo grande, na
+ * primeira página. Esconder no site um número que ela mesma publica no PDF só
+ * adiciona uma ida e volta de WhatsApp antes de a pessoa descobrir se cabe no
+ * orçamento — e algumas desistem no meio.
  *
- * O preço aparece aqui, na primeira dobra. É o número que faz clicar, e ele
- * vem do banco — a Isabela muda pelo painel.
+ * O 1:1 continua sem número porque ela ainda não definiu, e inventar um seria
+ * pior do que não ter.
+ *
+ * ── Por que não é cartão ──────────────────────────────────────────────────
+ * Porque a referência não tem cartão: tem FOTO SOBRE FUNDO TINGIDO, e embaixo,
+ * fora da foto, legenda pequena e preço. Sem moldura, sem sombra, sem seta.
+ * Os tingidos agora saem da obra — osso, cinza de luto, sanguínea — em vez do
+ * verde-sálvia, que não está em nenhum trabalho dela.
  */
 const PORTAS = [
   {
     href: "/aulas",
     titulo: "Turma de aulas",
-    texto: "Avulsa com hora marcada, ou turma mensal de seis.",
+    texto: "Terças, seis por turma. Avulsa com hora marcada ou mensal.",
     chaveFoto: "home.porta.aulas",
-    /* O fundo atrás da foto muda por porta, como na referência, onde cada
-       produto assenta num tingido diferente. */
-    tingido: "bg-verde-claro/45",
+    tingido: "bg-osso/40",
   },
   {
     href: "/oficinas",
     titulo: "Sua oficina",
-    texto: "Aniversário, time, bodas. A gente monta e leva.",
+    texto: `De ${OFICINA.minimo} a ${OFICINA.maximo} pessoas, ${OFICINA.duracao}, com a peça esmaltada e entregue.`,
     chaveFoto: "home.porta.oficinas",
-    tingido: "bg-vermelho/10",
+    tingido: "bg-sanguinea/20",
   },
   {
     href: "/atendimentos",
     titulo: "Atendimento 1:1",
     texto: "Tarot e astrologia, em sessão individual.",
     chaveFoto: "home.porta.atendimentos",
-    tingido: "bg-preto/[0.07]",
+    tingido: "bg-cinza/20",
   },
 ] as const;
 
@@ -55,19 +61,28 @@ export async function Portas() {
 
   const valor: Record<string, string> = {
     "/aulas": preco ? `a partir de ${preco}` : "sob consulta",
-    "/oficinas": "sob orçamento",
+    "/oficinas": `R$ ${OFICINA.precoPorPessoa} por pessoa`,
     "/atendimentos": "sob consulta",
   };
 
   return (
-    <section className="creme py-16 sm:py-20 lg:py-24">
-      <CabecalhoSecao
-        titulo="O que tem aqui"
-        subtitulo="Três portas para o ateliê, e nenhuma delas exige experiência nenhuma."
-        className="mb-10 sm:mb-12"
-      />
+    <section className="creme relative pt-16 pb-16 sm:pt-20 sm:pb-20 lg:pt-24 lg:pb-24">
+      <Container className="mb-10 flex flex-col gap-4 sm:mb-12">
+        <p className="rotulo">O que tem aqui</p>
+        <Reveal tipo="titulo">
+          <h2 className="titulo-secao versalete max-w-2xl font-display text-realce">
+            Três portas
+          </h2>
+        </Reveal>
+        <Reveal tipo="texto">
+          <p className="max-w-md text-[0.98rem] leading-relaxed text-texto/70">
+            Nenhuma delas exige experiência com barro. As duas primeiras têm
+            preço aqui embaixo.
+          </p>
+        </Reveal>
+      </Container>
 
-      <Container className="grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
+      <Container className="grid gap-x-5 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {PORTAS.map((porta, i) => (
           <Reveal key={porta.href} indice={i} tipo="cartao">
             <Link href={porta.href} className="group block">
@@ -82,16 +97,24 @@ export async function Portas() {
                 />
               </div>
 
-              <div className="mt-3.5 flex flex-col gap-1">
-                <h3 className="text-[0.95rem] font-medium text-realce transition-colors group-hover:text-vermelho-escuro">
-                  {porta.titulo}
-                </h3>
-                <p className="text-[0.85rem] leading-snug text-texto/60">
-                  {porta.texto}
-                </p>
-                <p className="mt-0.5 font-display text-[1.05rem] text-texto">
-                  {valor[porta.href]}
-                </p>
+              <div className="mt-4 flex items-baseline gap-3 border-t border-borda pt-3">
+                <span
+                  aria-hidden
+                  className="indice shrink-0 text-realce/70"
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <h3 className="titulo-cartao font-display text-texto transition-colors group-hover:text-realce">
+                    {porta.titulo}
+                  </h3>
+                  <p className="text-[0.85rem] leading-snug text-texto/60">
+                    {porta.texto}
+                  </p>
+                  <p className="numeral mt-1 text-[1.05rem] text-realce">
+                    {valor[porta.href]}
+                  </p>
+                </div>
               </div>
             </Link>
           </Reveal>

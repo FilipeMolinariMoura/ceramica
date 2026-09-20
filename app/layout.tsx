@@ -36,8 +36,17 @@ const sans = Jost({
   variable: "--font-jost",
 });
 
+/**
+ * A descrição padrão do site.
+ *
+ * A anterior — "ateliê de cerâmica ... peças autorais, encomendas e turmas com
+ * acompanhamento individual" — servia para qualquer ateliê do país. Esta diz o
+ * que só vale para ela: individual apoiada pela Funarte, residência, e a
+ * cerâmica como pesquisa. É o que aparece no Google e no cartão do WhatsApp,
+ * e é onde a diferença precisa caber em duas linhas.
+ */
 const description =
-  "Ateliê de cerâmica de Isabela Molinari, artista visual e arteterapeuta, em Pinheiros. Peças autorais, encomendas e turmas de cerâmica com acompanhamento individual.";
+  "Isabela Molinari é artista visual e arteterapeuta em Pinheiros, São Paulo. Cerâmica, desenho e pintura como pesquisa sobre o corpo e o símbolo — e aulas, oficinas e encomendas saídas do mesmo ateliê.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.dominio),
@@ -53,12 +62,17 @@ export const metadata: Metadata = {
     siteName: SITE.nome,
     title: `${SITE.nome} · ${SITE.artista}`,
     description,
+    /* `public/og.jpg` é a mesma colagem da abertura do site — creme, bloco
+       vermelho chapado e uma peça das Flores de Luto fugindo do canto. Era
+       uma foto de mesa de aula, que não dizia nem o nome nem o que é. Este
+       cartão é o que a Isabela manda no WhatsApp quando divulga uma turma,
+       então ele precisa parecer o trabalho dela à primeira vista. */
     images: [
       {
         url: "/og.jpg",
         width: 1200,
         height: 630,
-        alt: "Mesa coletiva de cerâmica vista de cima, com mãos trabalhando o barro.",
+        alt: "Cartaz da Bela Cerâmica: “O barro guarda o gesto”, ao lado de uma peça circular de cerâmica da série Flores de Luto sobre um bloco vermelho.",
       },
     ],
   },

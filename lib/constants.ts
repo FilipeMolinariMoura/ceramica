@@ -35,7 +35,35 @@ export const ARTISTA = {
   tituloFrase: "Artista visual e arteterapeuta",
   formacao: "Bacharela em Artes Visuais pela Belas Artes de São Paulo",
   anosEnsinando: 4,
+  /** O projeto de oficinas existe desde 2022 — é o nome da marca. */
+  projetoDesde: 2022,
 } as const;
+
+/**
+ * A LINHA DA MARCA.
+ *
+ * Não é slogan: é descrição. As esculturas dela "revelam o processo como
+ * parte essencial da criação" e guardam "o contato direto com o barro
+ * molhado" — a frase do portfólio. O barro registra o que a mão fez e leva
+ * esse registro para dentro do forno; o que sai é o gesto endurecido.
+ *
+ * Serve às duas coisas que ela vende ao mesmo tempo, e é por isso que está
+ * aqui em vez de num componente: a obra é isso, e a aula é isso. Quem paga
+ * R$ 250 numa aula avulsa não está comprando técnica de cerâmica — está
+ * comprando duas horas com uma artista cuja pesquisa é exatamente essa.
+ *
+ * O resto do site não precisa repeti-la. Uma vez, grande, na abertura.
+ */
+export const LINHA = {
+  frase: "O barro guarda o gesto",
+  /* A tradução direta da frase, para quem não quer decifrar nada — é o
+     "texto bem direto" que a Isabela pediu, logo abaixo do que é poético. */
+  apoio:
+    "Artista visual e arteterapeuta. Trabalho o corpo, o símbolo e o inconsciente em cerâmica e desenho — e ensino o mesmo processo, às terças, em Pinheiros.",
+} as const;
+
+/* A oficina para empresas e eventos mora em `lib/oficina.ts` — ela tem
+   etapas, itens inclusos e formatos, e isso não cabe numa constante. */
 
 /* ── Turma mensal ──────────────────────────────────────────────────────── */
 
@@ -114,10 +142,6 @@ export const WHATSAPP_OFICINA = zap(
 export const WHATSAPP_ATENDIMENTO = zap(
   "Oi, Isabela! Queria marcar um atendimento de tarot ou astrologia."
 );
-
-export function whatsappObra(peca: string): string {
-  return zap(`Oi, Isabela! Vi a peça "${peca}" no site e queria saber mais.`);
-}
 
 export const INSTAGRAM_HANDLE = "zabelamolinari";
 export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM_HANDLE}`;

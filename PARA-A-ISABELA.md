@@ -81,9 +81,29 @@ Se você tentar usar um endereço que já é do site (`obras`, `aulas`), ele avi
 
 ---
 
+## A sua obra no site
+
+As páginas **Obras** e **Sobre** foram montadas a partir do seu portfólio de
+2026 e do PDF de oficina. Estão no ar, com título, ano, técnica e medida de
+cada trabalho, do jeito que você escreveu:
+
+- **Flores de Luto** — a peça de 2026 e três imagens de processo.
+- **Esculturas** — as seis peças de 2020 a 2023.
+- **Pinturas e desenhos** — *Do interdito ao céu*, *Entrelaços entre mundos* e
+  as duas *Natureza viva*.
+- **Trajetória** — a individual no Teatro de Arena com apoio da Funarte, as
+  duas coletivas, a residência em Igatu, a formação e o projeto desde 2022.
+
+Isso **não** está no painel: é ficha de obra, e ficha errada é pior que ficha
+nenhuma. Quando entrar trabalho novo, ou quando você expuser de novo, me manda
+as fotos e os dados (título, ano, técnica, medida) que eu ponho no ar.
+
+---
+
 ## O que só o Filipe faz
 
 - Trocar a sua senha.
+- Acrescentar ou corrigir obra, exposição, residência e formação.
 - Mudar os textos fixos das páginas de Aulas, Oficinas, Atendimentos, Obras,
   Sobre e Encomendas — os que não são blocos.
 - Mexer no visual.
