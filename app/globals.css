@@ -166,6 +166,40 @@ h3,
   font-weight: 600;
 }
 
+/* ---- Vocabulário roubado do projeto da Landgraf ------------------------
+   Lá está escrito, sobre uma seção que tinha o mesmo defeito que a agenda
+   daqui tinha: "oito coisas do mesmo tamanho, com o mesmo peso, são uma
+   lista para auditar, não uma carta para escolher". Estas três classes são
+   o que dá peso diferente a coisas diferentes.
+   ------------------------------------------------------------------------ */
+
+/* Rótulo de seção: caixa-alta pequena, entreletra MUITO aberta, na cor de
+   acento. O que marca a seção é o espaço em volta, não um enfeite. */
+.rotulo {
+  display: inline-block;
+  font-size: 0.64rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  font-weight: 500;
+  color: var(--color-realce);
+}
+
+/* Número que se lê como número: serifa de display com algarismo de largura
+   fixa. Sem `tabular-nums`, "09:30" e "14:00" têm larguras diferentes e a
+   coluna de horários fica torta. */
+.numeral {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* A superfície de cartão, pintada com PAPÉIS — serve igual na seção de creme
+   e na escura, sem condicional em componente nenhum. */
+.carta {
+  background-color: var(--color-superficie);
+  border: 1px solid color-mix(in oklab, var(--color-texto) 12%, transparent);
+}
+
 /* ---- Escala de título ----
    A distância entre o display e o corpo É a identidade da referência. Antes
    o h2 ficava em 2rem sobre corpo de 1rem — razão de 2,3×, tímida demais

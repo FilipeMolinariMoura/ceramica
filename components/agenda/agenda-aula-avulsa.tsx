@@ -1,5 +1,4 @@
 import { Container } from "@/components/section";
-import { Eyebrow } from "@/components/eyebrow";
 import { SeletorHorario, type HorarioVisivel } from "@/components/agenda/seletor-horario";
 import {
   chaveDia,
@@ -11,25 +10,35 @@ import {
   reais,
   servicoPorSlug,
 } from "@/lib/agenda";
-import { SERVICO_AULA_AVULSA, WHATSAPP_DUVIDA } from "@/lib/constants";
+import { SERVICO_AULA_AVULSA, SITE, WHATSAPP_DUVIDA } from "@/lib/constants";
 
 /**
  * A seção que vende.
  *
- * É Server Component e lê o banco a cada visita (ver `dynamic` na página): uma
- * agenda em cache mostraria vaga que já foi vendida, e a pessoa só descobriria
- * depois de preencher o formulário.
+ * ── A composição veio do projeto da Landgraf ──────────────────────────────
+ * Título à esquerda e o texto de apoio à direita, alinhados pela BASE
+ * (`items-end`), e a condição que vale para todos os horários como FAIXA
+ * depois da grade — não como mais um cartão. Lá isso separa "o que eu estou
+ * escolhendo" de "o que vale para qualquer escolha", e é exatamente a
+ * distinção que faltava aqui.
+ *
+ * A versão anterior era uma coluna à esquerda com uma tabela de valor,
+ * duração, vagas e endereço, e a grade de horários à direita. O preço ficava
+ * a meia tela de distância do botão que cobrava por ele.
+ *
+ * É Server Component e lê o banco a cada visita (ver `dynamic` na página):
+ * agenda em cache mostraria vaga já vendida, e a pessoa só descobriria depois
+ * de preencher o formulário.
  *
  * Toda data vira TEXTO aqui, no servidor, em horário de Brasília. O cliente
- * recebe rótulo pronto e nunca formata data — ver `seletor-horario.tsx`.
+ * recebe rótulo pronto e nunca formata data.
  */
 export async function AgendaAulaAvulsa() {
   const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
   if (!servico) return null;
 
-  // Os esgotados VÃO para a tela, riscados. Antes eram filtrados fora, e com
-  // isso a agenda parecia vazia de procura: ver a vaga que já foi é o que faz
-  // a vaga que sobrou valer alguma coisa.
+  // Os esgotados VÃO para a tela. Ver a vaga que já foi é o que faz a vaga
+  // que sobrou valer alguma coisa.
   const horarios = await horariosDisponiveis(servico.id);
   const visiveis: HorarioVisivel[] = horarios.map((h) => ({
     id: h.id,
@@ -43,59 +52,62 @@ export async function AgendaAulaAvulsa() {
 
   const preco = reais(servico.precoCentavos);
 
-  return (
-    <section id="agenda" className="scroll-mt-24 bg-branco py-20 sm:py-24">
-      <Container className="grid gap-10 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-16">
-        <div className="flex flex-col gap-5">
-          <Eyebrow>Aula avulsa</Eyebrow>
-          <h2 className="titulo-secao versalete font-display text-vermelho">
-            Uma aula,
-            <br />
-            sem assinar o mês
-          </h2>
-          <p className="text-[1.02rem] leading-relaxed text-grafite/85">
-            Duas horas no torno ou na modelagem, com acompanhamento individual.
-            Barro, ferramentas, esmalte e queima inclusos. Não precisa ter
-            experiência.
-          </p>
+  const INCLUSO = [
+    ["Barro e ferramentas", "Tudo o que se usa na aula"],
+    ["Esmalte e queima", "As peças voltam prontas em ~3 semanas"],
+    ["Acompanhamento", "Individual, do começo ao fim"],
+  ] as const;
 
-          <dl className="mt-1 divide-y divide-linha border-y border-linha">
-            {[
-              ["Valor", preco],
-              ["Duração", `${servico.duracaoMin} minutos`],
-              ["Vagas por horário", String(servico.vagasPadrao)],
-              ["Onde", "Pinheiros, São Paulo"],
-            ].map(([rotulo, valor]) => (
-              <div key={rotulo} className="flex items-baseline justify-between gap-4 py-3">
-                <dt className="versalete-larga text-[0.66rem] text-preto/50">
-                  {rotulo}
-                </dt>
-                <dd className="text-right text-[0.98rem] font-medium text-preto">
-                  {valor}
+  return (
+    <section id="agenda" className="creme scroll-mt-24 py-20 sm:py-24">
+      <Container>
+        <p className="rotulo">Aula avulsa</p>
+
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
+          <h2 className="titulo-secao versalete max-w-[14ch] font-display text-realce">
+            Uma aula, sem assinar o mês
+          </h2>
+          <p className="max-w-[38ch] text-[0.95rem] leading-relaxed text-texto/60">
+            Duas horas no torno ou na modelagem. Você escolhe o horário, paga
+            aqui e vem — não precisa ter encostado em barro antes.
+          </p>
+        </div>
+
+        <div className="mt-12">
+          <SeletorHorario
+            horarios={visiveis}
+            precoFormatado={preco}
+            duracaoMin={servico.duracaoMin}
+          />
+        </div>
+
+        {/* A condição que vale para QUALQUER horário vem como faixa depois da
+            grade, e não como mais um cartão: não é uma opção a escolher. */}
+        <div className="carta mt-4 flex flex-col gap-6 p-7 sm:flex-row sm:items-center sm:justify-between">
+          <dl className="grid flex-1 gap-5 sm:grid-cols-3">
+            {INCLUSO.map(([titulo, texto]) => (
+              <div key={titulo}>
+                <dt className="text-[0.9rem] font-medium text-texto">{titulo}</dt>
+                <dd className="mt-0.5 text-[0.82rem] leading-snug text-texto/55">
+                  {texto}
                 </dd>
               </div>
             ))}
           </dl>
 
-          <p className="text-[0.85rem] leading-relaxed text-grafite/70">
-            Alguma dúvida antes de reservar?{" "}
+          <div className="shrink-0 sm:border-l sm:border-borda sm:pl-7">
+            <p className="text-[0.82rem] text-texto/55">No ateliê, em</p>
+            <p className="text-[0.95rem] font-medium text-texto">{SITE.bairro}</p>
             <a
               href={WHATSAPP_DUVIDA}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-vermelho underline underline-offset-4 transition-colors duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:text-vermelho-escuro"
+              className="mt-2 inline-block text-[0.82rem] text-realce underline underline-offset-4 transition-colors duration-[var(--t-toque)] hover:text-vermelho-escuro"
             >
-              Chame no WhatsApp
+              Tirar uma dúvida
             </a>
-            .
-          </p>
+          </div>
         </div>
-
-        <SeletorHorario
-          horarios={visiveis}
-          precoFormatado={preco}
-          duracaoMin={servico.duracaoMin}
-        />
       </Container>
     </section>
   );

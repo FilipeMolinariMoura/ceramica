@@ -179,66 +179,100 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
 
       {/* Horas do dia escolhido */}
       <div>
-        <p className="versalete-larga mb-1 text-[0.68rem] text-preto/50">
-          Escolha o horário
-        </p>
+        <p className="rotulo mb-1.5">Escolha o horário</p>
         {/* O chip mostra só "22/09". Quem chega direto na agenda precisa ler
-            o dia por extenso antes de pagar R$ 250 por ele. */}
-        <p className="mb-3 text-[0.9rem] text-grafite">
+            o dia por extenso antes de pagar por ele. */}
+        <p className="mb-4 text-[0.95rem] text-texto/70">
           {doDia[0]?.diaLongo ?? ""}
         </p>
-        {/* `key` no dia: o React remonta a lista ao trocar de dia, e é isso que
-            faz a animação de entrada rodar de novo em vez de só na primeira
-            renderização. */}
+
+        {/* CARTA, e não caixinha.
+            A versão anterior era uma grade de retângulos iguais com a hora
+            miúda e o preço a meia tela de distância, numa tabela à esquerda.
+            Está escrito no projeto da Landgraf, sobre uma seção com o mesmo
+            defeito: "oito coisas do mesmo tamanho, com o mesmo peso, são uma
+            lista para auditar, não uma carta para escolher".
+
+            Cada horário agora tem as três âncoras que o olho pega antes de
+            ler: a HORA em corpo grande, o PREÇO no alto à direita — que é o
+            que se procura primeiro ao comparar — e um botão de largura
+            inteira no pé, que é alvo de clique de verdade. */}
         <div
           key={diaAtivo}
           data-lista-stagger
-          className="grid grid-cols-2 gap-2 sm:grid-cols-3"
+          className="grid items-stretch gap-3 sm:grid-cols-2"
         >
           {doDia.map((h, i) => {
             const esgotado = h.restantes <= 0;
             const ultima = h.restantes === 1;
+
             return (
-              <button
+              <article
                 key={h.id}
-                type="button"
-                disabled={esgotado}
-                onClick={() => setEscolhido(h)}
                 style={{ "--i": i } as React.CSSProperties}
                 className={cn(
-                  "group flex flex-col items-start gap-1 border px-4 py-3 text-left",
-                  "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)]",
-                  esgotado
-                    ? "cursor-not-allowed border-linha bg-papel text-preto/60"
-                    : "border-linha bg-branco hover:border-vermelho hover:bg-vermelho hover:text-branco active:translate-y-px"
+                  "carta flex h-full flex-col p-5",
+                  esgotado && "opacity-55"
                 )}
               >
-                <span
-                  className={cn(
-                    "font-display text-xl leading-none",
-                    esgotado && "line-through decoration-1"
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p
+                      className={cn(
+                        "numeral text-[2rem] leading-none text-texto",
+                        esgotado && "line-through decoration-1"
+                      )}
+                    >
+                      {h.hora}
+                    </p>
+                    <p className="mt-1.5 text-[0.8rem] text-texto/55">
+                      {duracaoMin} minutos
+                    </p>
+                  </div>
+
+                  <div className="text-right">
+                    <p className="numeral text-[1.4rem] leading-none text-realce">
+                      {precoFormatado}
+                    </p>
+                    <p className="mt-1.5 text-[0.72rem] text-texto/45">
+                      por pessoa
+                    </p>
+                  </div>
+                </div>
+
+                {/* Altura fixa, e o botão empurrado para o pé com `mt-auto`.
+                    A etiqueta de "última vaga" é mais alta que a linha de
+                    texto simples, e sem isso as cartas da mesma fileira
+                    terminavam em alturas diferentes — o botão de uma ficava
+                    três pixels acima do da outra, que é o tipo de desalinho
+                    que se vê sem saber nomear. */}
+                <div className="mt-4 flex h-7 items-center">
+                  {ultima && !esgotado ? (
+                    <span className="versalete-larga bg-vermelho px-2 py-1 text-[0.58rem] text-branco">
+                      Última vaga
+                    </span>
+                  ) : (
+                    <span className="text-[0.78rem] text-texto/55">
+                      {esgotado ? "Esgotado" : `${h.restantes} vagas`}
+                    </span>
                   )}
-                >
-                  {h.hora}
-                </span>
-                <span
+                </div>
+
+                <button
+                  type="button"
+                  disabled={esgotado}
+                  onClick={() => setEscolhido(h)}
                   className={cn(
-                    "text-[0.7rem]",
+                    "mt-auto h-12 w-full border text-[0.72rem] font-semibold uppercase tracking-[0.14em]",
+                    "transition-[background-color,border-color,color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)]",
                     esgotado
-                      ? ""
-                      : ultima
-                        ? "font-semibold text-vermelho group-hover:text-branco"
-                        : "opacity-70"
+                      ? "cursor-not-allowed border-borda text-texto/35"
+                      : "border-vermelho text-vermelho hover:bg-vermelho hover:text-branco active:translate-y-px"
                   )}
                 >
-                  {esgotado
-                    ? "esgotado"
-                    : ultima
-                      ? "última vaga"
-                      : `${h.restantes} vagas`}
-                  {esgotado ? "" : ` · ${duracaoMin} min`}
-                </span>
-              </button>
+                  {esgotado ? "Sem vaga" : "Reservar"}
+                </button>
+              </article>
             );
           })}
         </div>
