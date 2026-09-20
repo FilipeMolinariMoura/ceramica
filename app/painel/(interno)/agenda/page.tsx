@@ -1,7 +1,12 @@
 import { db } from "@/lib/db";
 import { exigirSessao } from "@/lib/auth";
 import { chaveDia, diaLongo, expirarVencidas, hora } from "@/lib/agenda";
-import { abrirHorario, fecharHorario, reabrirHorario } from "@/app/painel/acoes";
+import {
+  abrirHorario,
+  fecharHorario,
+  reabrirHorario,
+  salvarServico,
+} from "@/app/painel/acoes";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +24,8 @@ export default async function Agenda() {
   await expirarVencidas();
 
   const [{ rows: servicos }, { rows: horarios }] = await Promise.all([
-    db().query(`select id, nome, vagas_padrao from servicos where ativo order by ordem, nome`),
+    db().query(`select id, nome, vagas_padrao, preco_centavos, duracao_min
+                  from servicos where ativo order by ordem, nome`),
     db().query<LinhaHorario>(
       `select h.id, h.inicio, h.vagas, h.ocupadas, h.publicado, s.nome as servico
          from horarios h join servicos s on s.id = h.servico_id
@@ -42,6 +48,80 @@ export default async function Agenda() {
 
   return (
     <div className="flex flex-col gap-10">
+      {/* ── Preço ────────────────────────────────────────────────────────
+          Estava só na semente do banco: mudar de R$ 250 para R$ 280 exigia
+          deploy. É o número mais provável de mudar no site inteiro. */}
+      <section className="flex flex-col gap-4">
+        <div>
+          <h2 className="versalete font-display text-xl text-vermelho">
+            Preço e formato
+          </h2>
+          <p className="mt-1 text-[0.85rem] text-grafite/75">
+            Muda em todo lugar do site de uma vez. Reservas já feitas mantêm o
+            valor que a pessoa viu.
+          </p>
+        </div>
+
+        {servicos.map((sv) => (
+          <form
+            key={sv.id}
+            action={salvarServico}
+            className="grid gap-4 border border-linha bg-branco p-5 sm:grid-cols-[1fr_auto_auto_auto] sm:items-end"
+          >
+            <input type="hidden" name="servicoId" value={sv.id} />
+            <p className="font-medium text-preto sm:pb-3">{sv.nome}</p>
+
+            <label className="grid gap-1.5">
+              <span className="versalete-larga text-[0.6rem] text-preto/50">
+                Valor (R$)
+              </span>
+              <input
+                name="preco"
+                inputMode="decimal"
+                defaultValue={(Number(sv.preco_centavos) / 100).toFixed(2)}
+                className="h-11 w-28 border border-linha bg-branco px-3 text-[0.9rem]"
+              />
+            </label>
+
+            <label className="grid gap-1.5">
+              <span className="versalete-larga text-[0.6rem] text-preto/50">
+                Minutos
+              </span>
+              <input
+                name="duracao"
+                type="number"
+                min={15}
+                max={600}
+                step={15}
+                defaultValue={sv.duracao_min}
+                className="h-11 w-24 border border-linha bg-branco px-3 text-[0.9rem]"
+              />
+            </label>
+
+            <label className="grid gap-1.5">
+              <span className="versalete-larga text-[0.6rem] text-preto/50">
+                Vagas
+              </span>
+              <input
+                name="vagas"
+                type="number"
+                min={1}
+                max={50}
+                defaultValue={sv.vagas_padrao}
+                className="h-11 w-20 border border-linha bg-branco px-3 text-[0.9rem]"
+              />
+            </label>
+
+            <button
+              type="submit"
+              className="h-11 bg-vermelho px-5 text-[0.68rem] font-semibold uppercase tracking-[0.1em] text-branco transition-colors hover:bg-vermelho-escuro sm:col-start-4"
+            >
+              Salvar
+            </button>
+          </form>
+        ))}
+      </section>
+
       <section className="border border-linha bg-branco p-6">
         <h2 className="versalete font-display text-xl text-vermelho">
           Abrir um horário

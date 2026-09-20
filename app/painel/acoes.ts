@@ -116,6 +116,37 @@ export async function reabrirHorario(form: FormData): Promise<void> {
   revalidatePath("/aulas");
 }
 
+/* ── Serviços ──────────────────────────────────────────────────────────── */
+
+export async function salvarServico(form: FormData): Promise<void> {
+  await exigirSessao();
+
+  const id = Number(form.get("servicoId"));
+  if (!Number.isInteger(id) || id <= 0) return;
+
+  // O valor chega em REAIS, porque é assim que ela pensa, e é convertido para
+  // centavos aqui. Guardar em centavos é o que impede a aritmética de ponto
+  // flutuante de transformar R$ 250,00 em R$ 249,99 no caminho até o cobrador.
+  const reais = Number(String(form.get("preco") ?? "").replace(",", "."));
+  const duracao = Number(form.get("duracao"));
+  const vagas = Number(form.get("vagas"));
+
+  if (!Number.isFinite(reais) || reais < 0 || reais > 100_000) return;
+  if (!Number.isInteger(duracao) || duracao < 15 || duracao > 600) return;
+  if (!Number.isInteger(vagas) || vagas < 1 || vagas > 50) return;
+
+  await db().query(
+    `update servicos
+        set preco_centavos = $2, duracao_min = $3, vagas_padrao = $4
+      where id = $1`,
+    [id, Math.round(reais * 100), duracao, vagas]
+  );
+
+  // O preço aparece na home, na página de aulas e nas portas.
+  revalidatePath("/", "layout");
+  revalidatePath("/painel/agenda");
+}
+
 /* ── Reservas ──────────────────────────────────────────────────────────── */
 
 export async function cancelarReserva(form: FormData): Promise<void> {

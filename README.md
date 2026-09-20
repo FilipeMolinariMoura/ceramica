@@ -233,6 +233,10 @@ O `handle` é o InfiniteTag, sem o `$`. É preciso ligar **"Checkout externo"** 
 
 ## Painel
 
+**Para entregar a ela:** [PARA-A-ISABELA.md](PARA-A-ISABELA.md) explica as
+quatro abas em português, sem uma linha de código. É o arquivo para mandar
+junto com a senha.
+
 `/painel`, e-mail e senha, uma pessoa só. Sem tela de cadastro: a conta nasce de
 [`scripts/criar-usuario.mjs`](scripts/criar-usuario.mjs).
 
@@ -254,6 +258,10 @@ um endpoint POST próprio, invocável direto, que não passa por ele.
 
 Não existe apagar horário no painel, de propósito — apagaria a aula de quem
 pagou. Só "tirar do ar", que some com ele da agenda e mantém as reservas.
+
+**O que ela controla sem deploy:** preço, duração e vagas por horário; os
+horários da agenda; as fotos das nove vagas do site; e páginas inteiras, com
+endereço próprio, montadas por blocos.
 
 ---
 
