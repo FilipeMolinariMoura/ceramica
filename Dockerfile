@@ -30,11 +30,23 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 
-# As migrations e o runner NÃO vêm no standalone — ele só traz o que o
-# server.js importa. Sem estas duas linhas o passo de migration do deploy
+# As migrations e os scripts de operação NÃO vêm no standalone — ele só traz
+# o que o server.js importa. Sem estas linhas o passo de migration do deploy
 # rodaria contra um diretório vazio e "passaria" sem migrar nada.
 COPY --from=build /app/db/migracoes ./db/migracoes
 COPY --from=build /app/scripts/migrar.mjs ./scripts/migrar.mjs
+
+# `criar-usuario.mjs` é o ÚNICO jeito de criar ou trocar a senha do painel —
+# não existe tela de cadastro, de propósito. O próprio arquivo documenta, no
+# topo, que se roda `docker compose run --rm -it site node scripts/
+# criar-usuario.mjs` na VPS — e ele não estava aqui, então esse comando morria
+# com MODULE_NOT_FOUND. Descoberto na primeira vez que precisou, criando a
+# conta da Isabela em produção.
+#
+# Os outros scripts (`fotos`, `favicon`, `semear-dev`, `verificar-agenda`,
+# `duble-pagamento`) continuam fora: são de desenvolvimento e não têm o que
+# fazer numa imagem de produção.
+COPY --from=build /app/scripts/criar-usuario.mjs ./scripts/criar-usuario.mjs
 
 # Falhar alto, e não em silêncio: sem o sharp o Next desliga a otimização de
 # imagem e serve o original, com AVIF configurado e nada sendo gerado. Já
