@@ -1,26 +1,39 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Hanken_Grotesk } from "next/font/google";
+import { Fraunces, Jost } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { SITE } from "@/lib/constants";
 import "./globals.css";
 
-// Bodoni Moda: serifa de alto contraste, que em versalete com entreletra larga
-// é o gesto da referência que a Isabela mandou. Substituiu a Fraunces, que é
-// macia e arredondada — exatamente a "tia da cerâmica" que ela pediu para
-// evitar. O eixo `opsz` deixa o título grande ganhar contraste sem afinar o
-// texto pequeno.
-const display = Bodoni_Moda({
+/**
+ * DUAS VOZES, e as duas saíram da referência que a Isabela mandou.
+ *
+ * A Bodoni Moda foi embora. Olhada de perto, a serifa da referência tem
+ * SERIFA COM COLO — a haste engrossa antes de virar o pé. Bodoni é didone:
+ * serifa reta, fina, sem colo, e um contraste que na tela vira haste
+ * quebradiça. Ela lia como capa de revista de moda, não como ateliê.
+ *
+ * Volta a Fraunces, que era o que estava aqui antes, mas afinada: `WONK` em 0
+ * tira as terminações torcidas que a deixavam simpática demais, e `opsz` alto
+ * dá o contraste do título sem afinar o texto pequeno. É a serifa da
+ * referência com mais carne.
+ *
+ * E a grotesca saiu: o texto de interface da referência é uma GEOMÉTRICA de
+ * entreletra aberta, da família da Futura. A Hanken Grotesk é humanista e
+ * neutra — correta, e nada a ver com aquilo. Jost é a geométrica livre mais
+ * próxima, e é a mesma escolha já feita no projeto da Landgraf.
+ */
+const display = Fraunces({
   subsets: ["latin"],
   display: "swap",
   style: ["normal", "italic"],
-  axes: ["opsz"],
-  variable: "--font-bodoni",
+  axes: ["opsz", "SOFT", "WONK"],
+  variable: "--font-fraunces",
 });
 
-const sans = Hanken_Grotesk({
+const sans = Jost({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-hanken",
+  variable: "--font-jost",
 });
 
 const description =

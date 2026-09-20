@@ -23,8 +23,21 @@ import { cn } from "@/lib/utils";
  * O item ativo é marcado por `startsWith`, e não por igualdade, para que uma
  * futura `/obras/<peca>` continue acendendo "Obras".
  */
-export function SiteHeader() {
+/**
+ * `extras` são as páginas que a Isabela criou e marcou para aparecer no menu.
+ * Elas chegam do layout, que é servidor: a barra é componente de cliente e
+ * não pode consultar o banco.
+ */
+export function SiteHeader({
+  extras = [],
+}: {
+  extras?: { slug: string; titulo: string }[];
+}) {
   const pathname = usePathname();
+  const itens = [
+    ...NAV,
+    ...extras.map((p) => ({ href: `/${p.slug}`, label: p.titulo })),
+  ];
   const [aberto, setAberto] = React.useState(false);
 
   // Fecha o menu ao navegar: sem isto, no mobile a rota muda por baixo do
@@ -59,7 +72,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-7 md:flex">
-          {NAV.map((item) => (
+          {itens.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -94,7 +107,7 @@ export function SiteHeader() {
         className="fixed inset-x-0 top-[4.25rem] bottom-0 z-40 bg-papel transition-[opacity,transform] duration-300 data-[aberto=false]:pointer-events-none data-[aberto=false]:-translate-y-2 data-[aberto=false]:opacity-0 md:hidden"
       >
         <Container className="flex flex-col pt-4">
-          {NAV.map((item) => (
+          {itens.map((item) => (
             <Link
               key={item.href}
               href={item.href}

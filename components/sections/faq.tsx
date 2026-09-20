@@ -1,5 +1,5 @@
 import { Container } from "@/components/section";
-import { Eyebrow } from "@/components/eyebrow";
+import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
 
 const PERGUNTAS = [
@@ -29,39 +29,47 @@ const PERGUNTAS = [
   },
 ];
 
+/**
+ * FAQ no formato da referência: perguntas NUMERADAS, em vermelho, pequenas e
+ * em peso médio, separadas por um filete fino, com o `+` à direita.
+ *
+ * Antes era pergunta grande em preto num bloco de duas colunas com um rótulo
+ * de lado. Correto e genérico. A numeração é o que faz aquilo parecer índice
+ * de impresso, e é de graça.
+ */
 export function Faq() {
   return (
-    <section className="bg-papel py-20 sm:py-28 lg:py-32">
-      <Container className="grid gap-10 lg:grid-cols-[0.5fr_1fr] lg:gap-16">
-        <Reveal>
-          <Eyebrow>Perguntas frequentes</Eyebrow>
-          <h2 className="titulo-secao mt-5 max-w-xs font-display font-normal tracking-[-0.01em] text-preto">
-            Ainda em dúvida?
-          </h2>
-        </Reveal>
+    <section className="creme py-20 sm:py-24">
+      <CabecalhoSecao
+        titulo="Perguntas frequentes"
+        subtitulo="O que perguntam antes de reservar."
+        className="mb-10"
+      />
 
-        <div>
-          {PERGUNTAS.map((item, i) => (
-            <Reveal key={item.q} indice={i} tipo="cartao">
-              <details className="group border-t border-linha last:border-b">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 [&::-webkit-details-marker]:hidden">
-                  <span className="text-lg font-medium text-preto sm:text-xl">
-                    {item.q}
+      <Container className="max-w-2xl">
+        {PERGUNTAS.map((item, i) => (
+          <Reveal key={item.q} indice={i} tipo="cartao">
+            <details className="group border-t border-borda last:border-b">
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-5 py-4 [&::-webkit-details-marker]:hidden">
+                <span className="flex gap-2.5 text-[0.95rem] font-medium text-realce">
+                  <span aria-hidden className="tabular-nums">
+                    {i + 1}.
                   </span>
-                  <span
-                    aria-hidden
-                    className="faq-plus select-none text-2xl font-light leading-none text-vermelho transition-transform duration-200"
-                  >
-                    +
-                  </span>
-                </summary>
-                <p className="-mt-1 max-w-2xl pb-6 text-[1.02rem] leading-relaxed text-grafite/80">
-                  {item.a}
-                </p>
-              </details>
-            </Reveal>
-          ))}
-        </div>
+                  {item.q}
+                </span>
+                <span
+                  aria-hidden
+                  className="faq-plus shrink-0 select-none text-xl font-light leading-none text-realce transition-transform duration-[var(--t-estado)]"
+                >
+                  +
+                </span>
+              </summary>
+              <p className="-mt-1 pb-5 pl-6 text-[0.95rem] leading-relaxed text-texto/70">
+                {item.a}
+              </p>
+            </details>
+          </Reveal>
+        ))}
       </Container>
     </section>
   );

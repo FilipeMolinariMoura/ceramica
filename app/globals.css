@@ -28,8 +28,28 @@
   --color-preto: #141310; /* títulos e texto forte */
   --color-grafite: #3a372f; /* corpo de texto longo */
 
-  --font-display: var(--font-bodoni);
-  --font-sans: var(--font-hanken);
+  /* ---- PAPÉIS ----
+     Roubado do projeto da Landgraf, onde está explicado em detalhe. As seções
+     deixam de pintar CORES e passam a pintar PAPÉIS. O padrão é a seção de
+     creme; `.escuro` e `.verde` redefinem os mesmos cinco tokens e a seção
+     inteira inverte sem que nenhum componente saiba disso.
+
+     Funciona porque no Tailwind v4 `text-texto/60` compila para
+     `color: var(--color-texto)`, e redefinir a variável dentro de um escopo
+     cascateia para tudo que está lá dentro. Um cartão escrito uma vez serve
+     às três metades da página.
+
+     O REALCE é o que mais muda: vermelho sobre creme dá 6,0:1 e é o acento
+     da marca, mas sobre preto dá 1,6:1 e some. No escuro quem faz o papel de
+     acento é o creme, e o vermelho volta só como fundo de etiqueta. */
+  --color-fundo: #f4f0e8;
+  --color-texto: #141310;
+  --color-superficie: #ffffff;
+  --color-borda: #d8d0c2;
+  --color-realce: #a82f1c;
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-jost);
 
   /* ---- Movimento ----
      Três durações e duas curvas, e nada além disso. A regra é a da
@@ -50,7 +70,46 @@
 }
 
 * {
-  border-color: var(--color-linha);
+  border-color: var(--color-borda);
+}
+
+/* Seção de noite: o preto da paleta. O acento vira creme, porque vermelho
+   sobre este fundo dá 1,6:1 e desaparece. */
+.escuro {
+  --color-fundo: #141310;
+  --color-texto: #f4f0e8;
+  --color-superficie: #221f1a;
+  --color-borda: #4a463d;
+  --color-realce: #f4f0e8;
+  color-scheme: dark;
+}
+
+/* Seção de verde-sálvia — o fundo tingido em que a referência apoia as fotos
+   de produto. Mesmo raciocínio de acento. */
+.verde {
+  --color-fundo: #3c5142;
+  --color-texto: #f4f0e8;
+  --color-superficie: #47604d;
+  --color-borda: #6c8272;
+  --color-realce: #f4f0e8;
+  color-scheme: dark;
+}
+
+/* Quem usa os papéis pinta o próprio fundo e a própria cor de texto. */
+.escuro,
+.verde,
+.creme {
+  background-color: var(--color-fundo);
+  color: var(--color-texto);
+}
+
+.creme {
+  --color-fundo: #f4f0e8;
+  --color-texto: #141310;
+  --color-superficie: #ffffff;
+  --color-borda: #d8d0c2;
+  --color-realce: #a82f1c;
+  color-scheme: light;
 }
 
 html {
@@ -59,9 +118,23 @@ html {
 }
 
 body {
+  /* O grão é FUNDO do body, não uma camada por cima.
+     Antes era um `::after` fixo, de tela cheia, em `mix-blend-mode`. Está
+     documentado no projeto da Landgraf que essa forma obriga o navegador a
+     remisturar a viewport inteira a cada quadro de rolagem, e que foi a causa
+     principal de travamento lá. Como plano de fundo empilhado, custa uma
+     pintura só — e as seções que pintam o próprio fundo simplesmente cobrem
+     o grão, que é o comportamento certo. */
   background-color: var(--color-papel);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.14'/%3E%3C/svg%3E");
+  background-blend-mode: multiply;
   color: var(--color-preto);
-  font-family: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  /* `clip` e não `hidden`: os dois cortam o transbordo horizontal, mas
+     `hidden` faz o `overflow-y` computar para `auto` e transforma o body num
+     container de rolagem. `clip` deixa a rolagem com a viewport, que é o
+     caminho rápido do compositor. */
+  overflow-x: clip;
+  font-family: var(--font-jost), "Futura", "Century Gothic", sans-serif;
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -71,7 +144,11 @@ h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-bodoni), "Bodoni 72", Didot, Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  /* WONK 0 tira as terminações torcidas da Fraunces — é o que a fazia parecer
+     simpática. SOFT 0 endurece os cantos. opsz alto entrega o contraste de
+     título sem afinar nada pequeno. */
+  font-variation-settings: "opsz" 120, "SOFT" 0, "WONK" 0;
 }
 
 /* O gesto que define a referência: título em VERSALETE com entreletra larga.
@@ -114,6 +191,20 @@ h3,
   line-height: 1.08;
 }
 
+/* Seção fora da tela não paga layout, estilo nem pintura. Com shader,
+   revelação por scroll e uma galeria longa, é a diferença entre rolar liso e
+   rolar aos trancos. O `auto 900px` impede a barra de rolagem de pular. */
+main > section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+/* O primeiro bloco fica de fora: ele está sempre visível, e adiar o que se vê
+   primeiro não economiza nada. */
+main > section:first-child {
+  content-visibility: visible;
+}
+
 ::selection {
   background: var(--color-vermelho);
   color: var(--color-papel);
@@ -125,18 +216,7 @@ h3,
   border-radius: 0;
 }
 
-/* Grão de papel impresso. Mais discreto que a versão anterior: a referência é
-   um impresso, não uma lona. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
-  opacity: 0.035;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-}
+
 
 /* ---- Estado da agenda --------------------------------------------------
    A agenda é a tela que tira R$ 250 de alguém. Ela precisa responder.

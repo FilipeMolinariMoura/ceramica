@@ -44,3 +44,7 @@ scripts/_favicon-preview.png
 *.tsbuildinfo
 next-env.d.ts
 backups/
+
+# Fotos que a Isabela sobe pelo painel, em desenvolvimento. Em produção isto
+# é um volume Docker (ceramica-midias), nunca o repositório.
+.midias/

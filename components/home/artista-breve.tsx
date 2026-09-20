@@ -1,9 +1,8 @@
-import Image from "next/image";
+import { FotoDaSecao } from "@/components/foto-da-secao";
 import Link from "next/link";
 import { Container } from "@/components/section";
 import { Eyebrow } from "@/components/eyebrow";
 import { Reveal } from "@/components/reveal";
-import { fotos } from "@/lib/fotos";
 import { ARTISTA } from "@/lib/constants";
 
 /**
@@ -22,11 +21,8 @@ export function ArtistaBreve() {
       <Container className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <Reveal>
           <div className="relative aspect-[4/5] w-full overflow-hidden">
-            <Image
-              src={fotos.isabela.src}
-              alt={fotos.isabela.alt}
-              fill
-              placeholder="blur"
+            <FotoDaSecao
+              chave="home.artista"
               quality={88}
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"

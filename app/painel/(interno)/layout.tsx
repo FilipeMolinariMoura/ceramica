@@ -16,6 +16,8 @@ export const metadata: Metadata = {
 const ABAS = [
   { href: "/painel", label: "Reservas" },
   { href: "/painel/agenda", label: "Agenda" },
+  { href: "/painel/fotos", label: "Fotos" },
+  { href: "/painel/paginas", label: "Páginas" },
 ] as const;
 
 /**

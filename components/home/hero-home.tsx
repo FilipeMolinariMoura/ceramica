@@ -1,7 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
+import { FotoDaSecao } from "@/components/foto-da-secao";
 import { Container } from "@/components/section";
-import { fotos } from "@/lib/fotos";
 import { reais, servicoPorSlug } from "@/lib/agenda";
 import { SERVICO_AULA_AVULSA, SITE } from "@/lib/constants";
 
@@ -55,13 +54,12 @@ export async function HeroHome() {
       </Container>
 
       <div className="relative mt-10 aspect-[16/10] w-full overflow-hidden sm:aspect-[16/7]">
-        <Image
-          src={fotos.hero.src}
-          alt={fotos.hero.alt}
-          fill
+        {/* A foto vem do painel. Enquanto a Isabela não escolher outra,
+            vale a do repositório — ver `components/foto-da-secao.tsx`. */}
+        <FotoDaSecao
+          chave="home.hero"
           priority
           quality={90}
-          placeholder="blur"
           sizes="100vw"
           className="hero-img object-cover object-center"
         />

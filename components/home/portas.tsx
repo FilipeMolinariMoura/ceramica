@@ -1,48 +1,51 @@
-import Image from "next/image";
+import { FotoDaSecao } from "@/components/foto-da-secao";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/section";
-import { Eyebrow } from "@/components/eyebrow";
+import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
-import { fotos } from "@/lib/fotos";
 import { reais, servicoPorSlug } from "@/lib/agenda";
 import { SERVICO_AULA_AVULSA } from "@/lib/constants";
 
 /**
- * O catálogo: três portas, na ordem que a Isabela pediu.
+ * O catálogo. Três portas, na ordem que a Isabela pediu.
  *
- * Três cards do MESMO tamanho, de propósito — é um catálogo, e um card maior
- * diria que uma das três importa mais. A versão anterior tinha grade
- * assimétrica porque a home vendia uma turma só.
+ * ── Por que não é mais um cartão com borda ────────────────────────────────
+ * Porque a referência não tem cartão. Ela tem FOTO SOBRE FUNDO TINGIDO, e
+ * embaixo, fora da foto, uma legenda pequena e o preço. Sem moldura, sem
+ * sombra, sem seta. O que separa um item do outro é o espaço e o tingido do
+ * fundo — é o que faz aquilo parecer catálogo impresso e não uma tela de
+ * aplicativo.
  *
- * O preço da aula avulsa aparece aqui, na primeira dobra: é o número que faz
- * a pessoa clicar, e escondê-lo dentro da página seria perder quem só passa
- * os olhos. Ele vem do banco, não do código — a Isabela muda pelo painel.
+ * A versão anterior era o cartão genérico de sempre: borda de 1px, foto no
+ * topo, título, texto, seta. Funcionava e não se parecia com nada que ela
+ * tinha mandado.
+ *
+ * O preço aparece aqui, na primeira dobra. É o número que faz clicar, e ele
+ * vem do banco — a Isabela muda pelo painel.
  */
 const PORTAS = [
   {
     href: "/aulas",
-    numero: "01",
     titulo: "Turma de aulas",
-    texto: "Aula avulsa com horário marcado, ou turma mensal de seis pessoas.",
-    foto: fotos.isabela,
-    chamada: "Ver a agenda",
+    texto: "Avulsa com hora marcada, ou turma mensal de seis.",
+    chaveFoto: "home.porta.aulas",
+    /* O fundo atrás da foto muda por porta, como na referência, onde cada
+       produto assenta num tingido diferente. */
+    tingido: "bg-verde-claro/45",
   },
   {
     href: "/oficinas",
-    numero: "02",
     titulo: "Sua oficina",
-    texto: "Aniversário, time, bodas, formatura. A gente monta e leva.",
-    foto: fotos.prova,
-    chamada: "Pedir orçamento",
+    texto: "Aniversário, time, bodas. A gente monta e leva.",
+    chaveFoto: "home.porta.oficinas",
+    tingido: "bg-vermelho/10",
   },
   {
     href: "/atendimentos",
-    numero: "03",
     titulo: "Atendimento 1:1",
     texto: "Tarot e astrologia, em sessão individual.",
-    foto: fotos.quebra,
-    chamada: "Saber como funciona",
+    chaveFoto: "home.porta.atendimentos",
+    tingido: "bg-preto/[0.07]",
   },
 ] as const;
 
@@ -50,55 +53,45 @@ export async function Portas() {
   const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
   const preco = servico ? reais(servico.precoCentavos) : null;
 
-  return (
-    <section className="bg-papel py-16 sm:py-20 lg:py-24">
-      <Container className="mb-9">
-        <Eyebrow>O que tem aqui</Eyebrow>
-      </Container>
+  const valor: Record<string, string> = {
+    "/aulas": preco ? `a partir de ${preco}` : "sob consulta",
+    "/oficinas": "sob orçamento",
+    "/atendimentos": "sob consulta",
+  };
 
-      <Container className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  return (
+    <section className="creme py-16 sm:py-20 lg:py-24">
+      <CabecalhoSecao
+        titulo="O que tem aqui"
+        subtitulo="Três portas para o ateliê, e nenhuma delas exige experiência nenhuma."
+        className="mb-10 sm:mb-12"
+      />
+
+      <Container className="grid gap-x-5 gap-y-9 sm:grid-cols-2 lg:grid-cols-3">
         {PORTAS.map((porta, i) => (
-          <Reveal key={porta.href} indice={i} className="h-full" tipo="cartao">
-            <Link
-              href={porta.href}
-              className="group flex h-full flex-col border border-linha bg-branco transition-colors hover:border-vermelho"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <Image
-                  src={porta.foto.src}
-                  alt={porta.foto.alt}
-                  fill
-                  placeholder="blur"
+          <Reveal key={porta.href} indice={i} tipo="cartao">
+            <Link href={porta.href} className="group block">
+              <div
+                className={`relative aspect-[4/3] w-full overflow-hidden ${porta.tingido}`}
+              >
+                <FotoDaSecao
+                  chave={porta.chaveFoto}
                   quality={86}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
                 />
-                <span className="versalete-larga absolute left-0 top-0 bg-vermelho px-2.5 py-1.5 text-[0.6rem] text-branco">
-                  {porta.numero}
-                </span>
               </div>
 
-              <div className="flex flex-1 flex-col gap-2.5 p-6">
-                <h2 className="titulo-cartao versalete font-display text-vermelho">
+              <div className="mt-3.5 flex flex-col gap-1">
+                <h3 className="text-[0.95rem] font-medium text-realce transition-colors group-hover:text-vermelho-escuro">
                   {porta.titulo}
-                </h2>
-                <p className="text-[0.95rem] leading-relaxed text-grafite/85">
+                </h3>
+                <p className="text-[0.85rem] leading-snug text-texto/60">
                   {porta.texto}
                 </p>
-
-                {porta.href === "/aulas" && preco ? (
-                  <p className="text-[0.95rem] font-semibold text-preto">
-                    Avulsa {preco}
-                  </p>
-                ) : null}
-
-                <span className="versalete-larga mt-auto flex items-center gap-2 pt-3 text-[0.65rem] text-preto/60 transition-colors group-hover:text-vermelho">
-                  {porta.chamada}
-                  <ArrowRight
-                    aria-hidden
-                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </span>
+                <p className="mt-0.5 font-display text-[1.05rem] text-texto">
+                  {valor[porta.href]}
+                </p>
               </div>
             </Link>
           </Reveal>

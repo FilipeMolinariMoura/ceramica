@@ -10,15 +10,17 @@ import {
 } from "@/lib/constants";
 
 /**
- * Rodapé do site inteiro. Substituiu o rodapé da landing, que falava só de
- * turma ("Turmas de setembro · Terças") — informação que envelhece e que agora
- * vive só na aba de aulas.
+ * Rodapé do site inteiro.
+ *
+ * VERMELHO SÓLIDO, como na referência: ela fecha numa faixa cheia da cor da
+ * marca, com links miúdos em versalete. O rodapé preto anterior era um bloco
+ * de informação bem organizado que podia ser de qualquer site.
  */
 export function SiteFooter() {
   const ano = new Date().getFullYear();
 
   return (
-    <footer className="bg-preto py-16 text-papel sm:py-20">
+    <footer className="bg-vermelho py-14 text-papel sm:py-16">
       <Container className="flex flex-col gap-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-2">
@@ -39,7 +41,7 @@ export function SiteFooter() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="w-fit text-papel/85 transition-colors hover:text-verde"
+                className="w-fit text-papel/80 transition-colors duration-[var(--t-toque)] hover:text-papel"
               >
                 {item.label}
               </Link>
@@ -54,7 +56,7 @@ export function SiteFooter() {
               href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-fit text-papel/85 transition-colors hover:text-verde"
+              className="w-fit text-papel/80 transition-colors duration-[var(--t-toque)] hover:text-papel"
             >
               @{INSTAGRAM_HANDLE}
             </a>
@@ -62,7 +64,7 @@ export function SiteFooter() {
               href={WHATSAPP_DUVIDA}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-fit text-papel/85 transition-colors hover:text-verde"
+              className="w-fit text-papel/80 transition-colors duration-[var(--t-toque)] hover:text-papel"
             >
               WhatsApp
             </a>
