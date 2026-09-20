@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { HeroHome } from "@/components/home/hero-home";
 import { Portas } from "@/components/home/portas";
+import { ProximosHorarios } from "@/components/home/proximos-horarios";
 import { Pesquisa } from "@/components/home/pesquisa";
 import { ArtistaBreve } from "@/components/home/artista-breve";
 import { PrintsEmBreve } from "@/components/home/prints-em-breve";
@@ -9,36 +11,39 @@ import { GaleriaAtelie } from "@/components/galeria-atelie";
 import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { TRAJETORIA } from "@/lib/trajetoria";
+import { FECHAMENTO } from "@/lib/constants";
 
-// O hero e as portas leem o preço da aula avulsa no banco. Sem isto o Next
+// O hero, as portas e os próximos horários leem o banco. Sem isto o Next
 // tentaria prerenderizar a home no `docker build`, onde não há Postgres.
 export const dynamic = "force-dynamic";
 
 /**
  * A HOME.
  *
- * ── O arco ────────────────────────────────────────────────────────────────
- * A versão anterior era: nome, três portas, um "conheça a artista" sem
- * currículo, prints, fotos do ateliê, convite. Sete blocos corretos e
- * intercambiáveis — dava para trocar o nome no topo e vender qualquer outra
- * coisa.
+ * ── O arco, e por que ele mudou de novo ───────────────────────────────────
+ * A primeira versão desta página vendia sem dizer quem ela é. A segunda
+ * corrigiu isso — obra, pesquisa, currículo — e errou para o outro lado: o
+ * bloco de arte ficou grande e cedo, e as três seções seguintes terminavam
+ * em links laterais (o acervo, a trajetória, o Instagram). Dava para percorrer
+ * a página inteira admirando o trabalho e nunca esbarrar num caminho de compra.
  *
- * Agora ela conta uma coisa, nesta ordem:
+ * A ordem agora é:
  *
- *   o que eu faço  (a obra, em cartaz)
- *   o que dá para comprar  (as três portas, com preço)
- *   por que isso vale isso  (a pesquisa, a parte escura)
- *   e não é conversa  (a queima em Igatu, largura total)
- *   quem assina  (o currículo, em índice)
- *   onde acontece  (o ateliê)
- *   vem  (o convite)
+ *   1. o cartaz, com o preço e o botão      ← vende
+ *   2. as três portas, com preço            ← vende
+ *   3. os próximos horários REAIS           ← fecha
+ *   4. a pesquisa                           ← prova, e sai vendendo
+ *   5. a queima em Igatu                    ← prova
+ *   6. o currículo                          ← prova, e sai vendendo
+ *   7. o ateliê                             ← prova, e sai vendendo
+ *   8. prints · 9. convite
  *
- * A parte que vende vem ANTES da parte que é arte, e isso é deliberado: quem
- * chega pelo Instagram precisa do preço na primeira dobra. Mas quem rola
- * descobre que não está comprando aula de cerâmica de bairro — e essa
- * descoberta é o que sustenta R$ 250 a aula.
+ * A arte não saiu e não encolheu de importância: ela é o que sustenta R$ 250
+ * a aula contra o ateliê que cobra menos. O que mudou é que ela deixou de ser
+ * um destino e virou o argumento — toda seção de prova termina apontando para
+ * `FECHAMENTO`, que é o único lugar do site onde alguém compra sozinho.
  *
- * A ordem das três portas é a que a Isabela pediu, e ela não muda.
+ * A ordem das três portas é a que a Isabela pediu, e essa não muda.
  */
 export default function Home() {
   const igatu = TRAJETORIA.find((e) => e.id === "xique-xique")!;
@@ -47,6 +52,7 @@ export default function Home() {
     <>
       <HeroHome />
       <Portas />
+      <ProximosHorarios />
       <Pesquisa />
 
       <FaixaObra
@@ -68,6 +74,14 @@ export default function Home() {
         </Container>
         <Container>
           <GaleriaAtelie variante="faixa" />
+        </Container>
+        <Container className="mt-8">
+          <Link
+            href={FECHAMENTO}
+            className="inline-flex h-[3.1rem] items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:bg-vermelho-escuro active:translate-y-px"
+          >
+            Marcar uma aula nesta mesa
+          </Link>
         </Container>
       </section>
 

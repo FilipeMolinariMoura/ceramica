@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
-import { ARTISTA, INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/constants";
+import { ARTISTA, FECHAMENTO, INSTAGRAM_HANDLE, INSTAGRAM_URL } from "@/lib/constants";
 import { RETRATO, TIPO_ROTULO, TRAJETORIA } from "@/lib/trajetoria";
 
 /**
@@ -64,10 +64,22 @@ export function ArtistaBreve() {
             próprio em São Paulo.
           </p>
 
-          <div className="flex flex-wrap gap-x-5 gap-y-2 text-[0.9rem]">
+          {/* Esta seção terminava em dois links laterais — a trajetória e o
+              Instagram — e era possível ler o currículo inteiro sem cruzar um
+              caminho de compra. O currículo é justamente o argumento mais forte
+              a favor do preço da aula, então é dele que se sai vendendo. Os
+              dois links continuam, abaixo e menores. */}
+          <Link
+            href={FECHAMENTO}
+            className="inline-flex h-[3.1rem] w-fit items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:bg-vermelho-escuro active:translate-y-px"
+          >
+            Ter aula com ela
+          </Link>
+
+          <div className="flex flex-wrap gap-x-5 gap-y-2 text-[0.88rem]">
             <Link
               href="/sobre"
-              className="border-b border-vermelho/30 pb-0.5 text-vermelho transition-colors hover:border-vermelho"
+              className="border-b border-preto/20 pb-0.5 text-preto/60 transition-colors hover:border-preto/60"
             >
               A trajetória inteira
             </Link>
@@ -75,7 +87,7 @@ export function ArtistaBreve() {
               href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-b border-preto/20 pb-0.5 text-preto/70 transition-colors hover:border-preto/60"
+              className="border-b border-preto/20 pb-0.5 text-preto/60 transition-colors hover:border-preto/60"
             >
               @{INSTAGRAM_HANDLE}
             </a>

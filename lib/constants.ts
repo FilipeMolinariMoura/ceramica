@@ -21,12 +21,27 @@ export const SITE = {
  * `/obras` e pelo rodapé, que é onde as pessoas a procuram.
  */
 export const NAV = [
-  { href: "/aulas", label: "Aulas" },
-  { href: "/oficinas", label: "Oficinas" },
-  { href: "/atendimentos", label: "Atendimentos" },
-  { href: "/obras", label: "Obras" },
-  { href: "/sobre", label: "Sobre" },
+  { href: "/aulas", label: "Aulas", tipo: "produto" },
+  { href: "/oficinas", label: "Oficinas", tipo: "produto" },
+  { href: "/atendimentos", label: "Atendimentos", tipo: "produto" },
+  { href: "/obras", label: "Obras", tipo: "lateral" },
+  { href: "/sobre", label: "Sobre", tipo: "lateral" },
 ] as const;
+
+/**
+ * O DESTINO DE FECHAMENTO.
+ *
+ * Um só, e o mesmo em todo lugar: a agenda da aula avulsa. É a única coisa no
+ * site que alguém consegue comprar sozinho, sem conversa, e é o que paga o
+ * aluguel do ateliê.
+ *
+ * Mora aqui para que nenhuma seção invente o próprio caminho de saída. Toda
+ * seção que termina — a pesquisa, a trajetória, o ateliê, as obras — aponta
+ * para este endereço. O que uma seção pode escolher é o RÓTULO, porque o
+ * argumento muda: quem acabou de ler sobre a pesquisa dela responde a um
+ * convite diferente de quem acabou de ver a foto da mesa coletiva.
+ */
+export const FECHAMENTO = "/aulas#agenda";
 
 /** Fatos verificados sobre a Isabela — não invente linha nova aqui. */
 export const ARTISTA = {

@@ -5,6 +5,7 @@ import { Reveal } from "@/components/reveal";
 import { Rasgo } from "@/components/arte/rasgo";
 import { OBRAS, ficha } from "@/lib/obras";
 import { CITACAO, PESQUISA } from "@/lib/trajetoria";
+import { FECHAMENTO } from "@/lib/constants";
 
 /**
  * A PESQUISA — a seção que o site não tinha e que era o buraco inteiro.
@@ -54,7 +55,19 @@ export function Pesquisa() {
             </Reveal>
           ))}
 
-          <Reveal className="mt-2">
+          {/* A saída principal é COMERCIAL, não o acervo.
+              Quem acabou de ler que o fazer manual é caminho de escuta está
+              no melhor momento possível para marcar uma aula — e antes esta
+              seção terminava mandando para outra galeria, que é mais leitura.
+              O acervo continua ali, em segundo plano, para quem quer ver mais
+              antes de decidir. */}
+          <Reveal className="mt-2 flex flex-wrap items-center gap-3">
+            <Link
+              href={FECHAMENTO}
+              className="inline-flex h-[3.1rem] items-center justify-center bg-vermelho px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:bg-vermelho-escuro active:translate-y-px"
+            >
+              Aprender com ela
+            </Link>
             <Link
               href="/obras"
               className="inline-flex h-[3.1rem] items-center justify-center border border-papel/35 px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-papel transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:border-papel hover:bg-papel hover:text-preto active:translate-y-px"
