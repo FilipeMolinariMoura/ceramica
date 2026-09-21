@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { Check } from "lucide-react";
+import { FotoDaSecao } from "@/components/foto-da-secao";
 import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Rasgo } from "@/components/arte/rasgo";
@@ -13,7 +13,6 @@ import {
   PERSONALIZACAO,
   faixaDeInvestimento,
 } from "@/lib/oficina";
-import { fotos } from "@/lib/fotos";
 
 const description =
   "Oficina de cerâmica para empresas e eventos: 2 horas, de 6 a 30 participantes, R$ 320 por pessoa, com a peça esmaltada, queimada e entregue em até 45 dias.";
@@ -72,12 +71,10 @@ export default function Oficinas() {
           <figure className="lg:mb-2">
             <div className="sobreimpressao w-full">
               <div className="fuga relative aspect-[4/3] w-full overflow-hidden">
-                <Image
-                  src={fotos.prova.src}
-                  alt={fotos.prova.alt}
-                  fill
+                {/* Do painel — ver o comentário em `components/sections/hero.tsx`. */}
+                <FotoDaSecao
+                  chave="oficinas.hero"
                   priority
-                  placeholder="blur"
                   quality={90}
                   sizes="(max-width: 1024px) 92vw, 46vw"
                   className="object-cover"

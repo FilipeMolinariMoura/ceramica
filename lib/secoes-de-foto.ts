@@ -12,8 +12,6 @@
  */
 
 import { fotos } from "@/lib/fotos";
-import { RETRATO } from "@/lib/trajetoria";
-import { OBRAS } from "@/lib/obras";
 import type { StaticImageData } from "next/image";
 
 export type VagaDeFoto = {
@@ -27,13 +25,6 @@ export type VagaDeFoto = {
 };
 
 export const VAGAS: VagaDeFoto[] = [
-  {
-    chave: "home.hero",
-    nome: "Foto de abertura da home",
-    onde: "A foto grande ao lado do nome, na primeira tela",
-    maximo: 1,
-    padrao: fotos.hero,
-  },
   {
     chave: "ceramica.hero",
     nome: "Foto de abertura da Bela Cerâmica",
@@ -55,17 +46,14 @@ export const VAGAS: VagaDeFoto[] = [
     nome: "Porta · Conheça a Isabela",
     onde: "Segunda das três portas da página inicial",
     maximo: 1,
-    padrao: { src: RETRATO.foto, alt: RETRATO.alt },
+    padrao: fotos.isabelaPeca,
   },
   {
     chave: "home.porta.astrologia",
     nome: "Porta · Consulta astrológica",
     onde: "Terceira das três portas da página inicial",
     maximo: 1,
-    padrao: {
-      src: OBRAS.find((o) => o.id === "esc-2023-serpente")!.foto,
-      alt: OBRAS.find((o) => o.id === "esc-2023-serpente")!.alt,
-    },
+    padrao: fotos.isabelaPerfil,
   },
   {
     chave: "ceramica.porta.aulas",
@@ -100,13 +88,6 @@ export const VAGAS: VagaDeFoto[] = [
     onde: "A foto larga da página de oficinas",
     maximo: 1,
     padrao: fotos.prova,
-  },
-  {
-    chave: "atendimentos.hero",
-    nome: "Foto dos atendimentos",
-    onde: "A foto larga da página de atendimentos",
-    maximo: 1,
-    padrao: fotos.quebra,
   },
 ];
 

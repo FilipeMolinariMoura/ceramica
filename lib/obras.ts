@@ -245,9 +245,12 @@ export function ficha(obra: Obra): string {
  */
 export const ATELIE = [
   { ...fotos.hero, legenda: "Mesa coletiva", formato: "larga" },
-  { ...fotos.sobre, legenda: "O barro antes da forma", formato: "alta" },
-  { ...fotos.quebra, legenda: "Engobe, camada a camada", formato: "alta" },
+  { ...fotos.sobre, legenda: "Fechando a lateral", formato: "larga" },
+  { ...fotos.isabela, legenda: "Aula de terça", formato: "alta" },
+  { ...fotos.quebra, legenda: "Gravando a placa", formato: "larga" },
+  { ...fotos.cortando, legenda: "O corte com fio", formato: "alta" },
   { ...fotos.incluso, legenda: "Ferramentas do ateliê", formato: "larga" },
-  { ...fotos.isabela, legenda: "Aula de terça", formato: "larga" },
-  { ...fotos.prova, legenda: "Fim de turma", formato: "larga" },
+  { ...fotos.prova, legenda: "Oficina em curso", formato: "alta" },
+  { ...fotos.pecaPronta, legenda: "Depois das duas queimas", formato: "alta" },
+  { ...fotos.atelie, legenda: "O ateliê, em Pinheiros", formato: "alta" },
 ] as const;

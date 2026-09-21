@@ -1,8 +1,7 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Eyebrow } from "@/components/eyebrow";
+import { FotoDaSecao } from "@/components/foto-da-secao";
 import { InscricaoCta } from "@/components/inscricao-cta";
-import { fotos } from "@/lib/fotos";
 import { reais, servicoPorSlug } from "@/lib/agenda";
 import { CURSO, SERVICO_AULA_AVULSA } from "@/lib/constants";
 
@@ -38,13 +37,13 @@ export async function Hero() {
     <section className="relative overflow-hidden">
       <div className="lg:grid lg:min-h-[90svh] lg:grid-cols-2 lg:items-stretch">
         <div className="relative order-1 h-[42svh] w-full overflow-hidden sm:h-[52svh] lg:order-2 lg:h-auto lg:min-h-[90svh]">
-          <Image
-            src={fotos.hero.src}
-            alt={fotos.hero.alt}
-            fill
+          {/* Vem do painel: a vaga `aulas.hero` existia e não era lida por
+              ninguém, então a Isabela podia escolher uma foto aqui e nada
+              mudava no site. */}
+          <FotoDaSecao
+            chave="aulas.hero"
             priority
             quality={90}
-            placeholder="blur"
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="hero-img object-cover object-center"
           />
