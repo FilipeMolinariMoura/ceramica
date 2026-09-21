@@ -2,30 +2,54 @@
 
 export const WHATSAPP_NUMBER = "5511957040729";
 
+/**
+ * O SITE É O NOME DELA.
+ *
+ * Decisão da Isabela, em 20/09/2026, e ela reorganiza tudo: "eu acho que o
+ * site pode ser meu nome, pq bela cerâmica é um dos setores".
+ *
+ * Estava invertido. O site se chamava Bela Cerâmica e a artista aparecia como
+ * assinatura miúda embaixo — o que fazia a cerâmica engolir a obra, a
+ * arteterapia e a astrologia, que são dela e não do ateliê. Trocar a hierarquia
+ * é o que permite a astrologia existir sem parecer puxadinho de uma escola de
+ * barro.
+ *
+ * `setor` guarda os nomes das frentes. Bela Cerâmica continua existindo, com o
+ * mesmo peso de sempre — só que como uma parte, e não como o todo.
+ */
 export const SITE = {
-  nome: "Bela Cerâmica",
+  nome: "Isabela Molinari",
   artista: "Isabela Molinari",
+  /* O domínio continua o mesmo: trocá-lo custaria o certificado, os links já
+     mandados e o que o Google já indexou. O endereço não é a marca. */
   dominio: "https://belaceramica.prismax.tech",
   bairro: "Pinheiros",
   cidade: "Pinheiros, São Paulo",
   endereco: "Rua Irmão Lucas, 75, Pinheiros, São Paulo",
 } as const;
 
+/** As frentes de trabalho. A home é uma porta para cada uma. */
+export const SETOR = {
+  ceramica: "Bela Cerâmica",
+  artista: "A artista",
+  astrologia: "Astrologia",
+} as const;
+
 /**
  * Navegação.
  *
- * As três primeiras são as portas do catálogo da home, na ordem em que a
- * Isabela as pediu. `Obras` e `Sobre` vêm depois porque não vendem nada
- * diretamente. `/encomendas` ficou FORA da barra de propósito: seis itens não
- * cabem no mobile sem virar lista de sistema, e ela é alcançada por dentro de
- * `/obras` e pelo rodapé, que é onde as pessoas a procuram.
+ * Espelha as três portas da home, que são os três setores. `Aulas` e
+ * `Oficinas` saíram da barra: viraram os dois cliques de dentro da Bela
+ * Cerâmica, e tê-los aqui em cima desmontaria o nível que a Isabela pediu.
+ *
+ * `Obras` fica como lateral — é o que faz acreditar, não o que se compra.
+ * `/encomendas` continua fora, alcançada por dentro de `/obras` e pelo rodapé.
  */
 export const NAV = [
-  { href: "/aulas", label: "Aulas", tipo: "produto" },
-  { href: "/oficinas", label: "Oficinas", tipo: "produto" },
-  { href: "/atendimentos", label: "Atendimentos", tipo: "produto" },
+  { href: "/ceramica", label: "Cerâmica", tipo: "produto" },
+  { href: "/atendimentos", label: "Astrologia", tipo: "produto" },
+  { href: "/sobre", label: "A artista", tipo: "produto" },
   { href: "/obras", label: "Obras", tipo: "lateral" },
-  { href: "/sobre", label: "Sobre", tipo: "lateral" },
 ] as const;
 
 /**

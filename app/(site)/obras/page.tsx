@@ -5,6 +5,7 @@ import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Rasgo } from "@/components/arte/rasgo";
 import { ObraFigura } from "@/components/arte/obra-figura";
+import { PrintsEmBreve } from "@/components/home/prints-em-breve";
 import { OBRAS, SERIES, obrasDaSerie } from "@/lib/obras";
 import { VISTAS } from "@/lib/trajetoria";
 import { WHATSAPP_ENCOMENDA } from "@/lib/constants";
@@ -162,6 +163,11 @@ export default function Obras() {
           ))}
         </Container>
       </section>
+
+      {/* Os prints vieram da home enxugada. Aqui eles fazem mais sentido do
+          que lá: quem está vendo o acervo é quem poderia querer uma impressão
+          dele. */}
+      <PrintsEmBreve />
 
       {/* A única porta comercial da página, e ela vem no fim de propósito:
           quem chegou até aqui viu o trabalho antes de ver um botão. */}

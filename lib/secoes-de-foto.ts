@@ -12,6 +12,8 @@
  */
 
 import { fotos } from "@/lib/fotos";
+import { RETRATO } from "@/lib/trajetoria";
+import { OBRAS } from "@/lib/obras";
 import type { StaticImageData } from "next/image";
 
 export type VagaDeFoto = {
@@ -28,37 +30,56 @@ export const VAGAS: VagaDeFoto[] = [
   {
     chave: "home.hero",
     nome: "Foto de abertura da home",
-    onde: "A foto larga logo abaixo do nome, na primeira tela",
+    onde: "A foto grande ao lado do nome, na primeira tela",
     maximo: 1,
     padrao: fotos.hero,
   },
   {
-    chave: "home.porta.aulas",
-    nome: "Porta · Turma de aulas",
-    onde: "Primeira das três portas do catálogo",
+    chave: "ceramica.hero",
+    nome: "Foto de abertura da Bela Cerâmica",
+    onde: "A foto grande no topo da página de cerâmica",
+    maximo: 1,
+    padrao: fotos.sobre,
+  },
+  /* As três portas da home são os três SETORES, na ordem que a Isabela
+     escreveu: Bela Cerâmica, a artista, e a astrologia. */
+  {
+    chave: "home.porta.ceramica",
+    nome: "Porta · Bela Cerâmica",
+    onde: "Primeira das três portas da página inicial",
+    maximo: 1,
+    padrao: fotos.hero,
+  },
+  {
+    chave: "home.porta.artista",
+    nome: "Porta · Conheça a Isabela",
+    onde: "Segunda das três portas da página inicial",
+    maximo: 1,
+    padrao: { src: RETRATO.foto, alt: RETRATO.alt },
+  },
+  {
+    chave: "home.porta.astrologia",
+    nome: "Porta · Consulta astrológica",
+    onde: "Terceira das três portas da página inicial",
+    maximo: 1,
+    padrao: {
+      src: OBRAS.find((o) => o.id === "esc-2023-serpente")!.foto,
+      alt: OBRAS.find((o) => o.id === "esc-2023-serpente")!.alt,
+    },
+  },
+  {
+    chave: "ceramica.porta.aulas",
+    nome: "Cerâmica · Agende sua aula",
+    onde: "Primeiro dos dois cliques dentro de Bela Cerâmica",
     maximo: 1,
     padrao: fotos.isabela,
   },
   {
-    chave: "home.porta.oficinas",
-    nome: "Porta · Sua oficina",
-    onde: "Segunda das três portas",
+    chave: "ceramica.porta.oficinas",
+    nome: "Cerâmica · Orçamento de oficina",
+    onde: "Segundo dos dois cliques dentro de Bela Cerâmica",
     maximo: 1,
     padrao: fotos.prova,
-  },
-  {
-    chave: "home.porta.atendimentos",
-    nome: "Porta · Atendimento 1:1",
-    onde: "Terceira das três portas",
-    maximo: 1,
-    padrao: fotos.quebra,
-  },
-  {
-    chave: "home.artista",
-    nome: "Retrato da Isabela",
-    onde: 'Seção "Conheça Isabela Molinari", na home',
-    maximo: 1,
-    padrao: fotos.isabela,
   },
   {
     chave: "atelie",

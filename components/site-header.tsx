@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { Container } from "@/components/section";
-import { FECHAMENTO, NAV, SITE } from "@/lib/constants";
+import { ARTISTA, FECHAMENTO, NAV, SITE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /**
@@ -84,6 +84,10 @@ export function SiteHeader({
     <>
       <header className="fixed inset-x-0 top-0 z-50 border-b border-linha bg-papel/95 backdrop-blur-md">
         <Container className="flex h-[4.25rem] items-center justify-between gap-4">
+          {/* A marca é o NOME dela agora. Antes era "BELA CERÂMICA" grande com
+              "ISABELA MOLINARI" miúdo embaixo — as duas linhas diziam a mesma
+              coisa duas vezes assim que o site passou a se chamar por ela, e a
+              segunda linha vira a qualificação. */}
           <Link
             href="/"
             className="group flex shrink-0 flex-col leading-none"
@@ -92,8 +96,8 @@ export function SiteHeader({
             <span className="versalete font-display text-lg text-vermelho transition-colors group-hover:text-vermelho-escuro sm:text-xl">
               {SITE.nome}
             </span>
-            <span className="versalete-larga mt-1 text-[0.55rem] text-preto/45">
-              {SITE.artista}
+            <span className="versalete-larga mt-1 hidden text-[0.52rem] text-preto/45 sm:block">
+              {ARTISTA.titulo}
             </span>
           </Link>
 

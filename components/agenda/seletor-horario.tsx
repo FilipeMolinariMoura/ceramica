@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Calendario } from "@/components/agenda/calendario";
 import { cn, maskPhone } from "@/lib/utils";
 
 /**
@@ -30,12 +31,8 @@ export type HorarioVisivel = {
   dia: string;
   /** "terça-feira, 22 de setembro" */
   diaLongo: string;
-  /** "22/09" */
-  diaCurto: string;
   /** "09:30" */
   hora: string;
-  /** "setembro" — a régua separa os meses. */
-  mes: string;
   restantes: number;
 };
 
@@ -43,9 +40,11 @@ type Props = {
   horarios: HorarioVisivel[];
   precoFormatado: string;
   duracaoMin: number;
+  /** `2026-09-21` em horário de Brasília, para contornar o dia de hoje. */
+  hoje: string;
 };
 
-export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) {
+export function SeletorHorario({ horarios, precoFormatado, duracaoMin, hoje }: Props) {
   const dias = React.useMemo(() => {
     const por = new Map<string, HorarioVisivel[]>();
     for (const h of horarios) {
@@ -109,79 +108,27 @@ export function SeletorHorario({ horarios, precoFormatado, duracaoMin }: Props) 
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Dias */}
-      <div>
-        <p className="versalete-larga mb-3 text-[0.68rem] text-preto/50">
-          Escolha o dia
-        </p>
-        {/* A régua rola na horizontal e são dez dias. Sem sinal nenhum, o
-            último chip parece cortado por defeito. A máscara esmaece a borda
-            direita e diz "tem mais aqui" sem gastar uma seta. */}
-        <div className="regua-dias flex items-stretch gap-2 overflow-x-auto pb-1">
-          {dias.map(({ dia, lista, livre }, i) => {
-            const ativo = dia === diaAtivo;
-            const primeiro = lista[0]!;
-            const vagas = lista.reduce((s, h) => s + h.restantes, 0);
-            // Rótulo de mês na virada. Dez dias cobrindo setembro e outubro
-            // sem isto viram "22/09, 24/09, 29/09, 01/10" — e a pessoa não
-            // percebe que atravessou o mês.
-            const viraMes = i === 0 || lista[0]!.mes !== dias[i - 1]!.lista[0]!.mes;
-
-            return (
-              <React.Fragment key={dia}>
-                {viraMes ? (
-                  <span
-                    aria-hidden
-                    className="versalete-larga flex shrink-0 items-end pb-1 pr-1 text-[0.58rem] text-preto/40"
-                  >
-                    {primeiro.mes}
-                  </span>
-                ) : null}
-
-                <button
-                  type="button"
-                  disabled={!livre}
-                  onClick={() => escolherDia(dia)}
-                  aria-pressed={ativo}
-                  aria-label={`${primeiro.diaLongo}${livre ? `, ${vagas} vagas` : ", esgotado"}`}
-                  style={ativo ? { viewTransitionName: "dia-escolhido" } : undefined}
-                  className={cn(
-                    "flex shrink-0 flex-col items-start gap-0.5 border px-4 py-3 text-left",
-                    "transition-[background-color,border-color,color] duration-[var(--t-toque)] ease-[var(--ease-firme)]",
-                    !livre
-                      ? "cursor-not-allowed border-linha bg-papel text-preto/40"
-                      : ativo
-                        ? "border-vermelho bg-vermelho text-branco"
-                        : "border-linha bg-branco text-preto hover:border-vermelho active:translate-y-px"
-                  )}
-                >
-                  <span className="versalete-larga text-[0.6rem] opacity-75">
-                    {primeiro.diaLongo.split(",")[0]}
-                  </span>
-                  <span
-                    className={cn(
-                      "font-display text-lg leading-none",
-                      !livre && "line-through decoration-1"
-                    )}
-                  >
-                    {primeiro.diaCurto}
-                  </span>
-                  <span className="text-[0.68rem] opacity-75">
-                    {livre ? `${vagas} ${vagas === 1 ? "vaga" : "vagas"}` : "esgotado"}
-                  </span>
-                </button>
-              </React.Fragment>
-            );
-          })}
-        </div>
-      </div>
+    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,21rem)_1fr]">
+      {/* O calendário. A Isabela pediu que "o calendário chegue rápido e sem
+          muito texto" — então ele é a primeira coisa da seção, e em telas
+          largas fica ao lado das horas em vez de empurrá-las para baixo. */}
+      <Calendario
+        dias={dias.map(({ dia, lista, livre }) => ({
+          dia,
+          diaLongo: lista[0]!.diaLongo,
+          vagas: lista.reduce((soma, h) => soma + h.restantes, 0),
+          livre,
+        }))}
+        diaAtivo={diaAtivo}
+        hoje={hoje}
+        aoEscolher={escolherDia}
+      />
 
       {/* Horas do dia escolhido */}
       <div>
         <p className="rotulo mb-1.5">Escolha o horário</p>
-        {/* O chip mostra só "22/09". Quem chega direto na agenda precisa ler
-            o dia por extenso antes de pagar por ele. */}
+        {/* A grade mostra só o número do dia. Quem vai pagar precisa ler a
+            data por extenso antes, e ela vem pronta do servidor. */}
         <p className="mb-4 text-[0.95rem] text-texto/70">
           {doDia[0]?.diaLongo ?? ""}
         </p>

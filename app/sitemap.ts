@@ -32,12 +32,16 @@ export const dynamic = "force-dynamic";
  */
 
 const FIXAS: { rota: string; prioridade: number }[] = [
+  /* `/aulas` continua em 1.0 mesmo tendo saído da barra: é a única página do
+     site onde alguém compra sozinho. Prioridade é sobre o que importa, não
+     sobre o nível na navegação. */
   { rota: "/aulas", prioridade: 1.0 },
+  { rota: "/ceramica", prioridade: 0.95 },
   { rota: "/", prioridade: 0.9 },
-  { rota: "/obras", prioridade: 0.9 },
-  { rota: "/sobre", prioridade: 0.8 },
+  { rota: "/sobre", prioridade: 0.85 },
+  { rota: "/obras", prioridade: 0.8 },
   { rota: "/oficinas", prioridade: 0.8 },
-  { rota: "/atendimentos", prioridade: 0.7 },
+  { rota: "/atendimentos", prioridade: 0.75 },
   { rota: "/encomendas", prioridade: 0.6 },
 ];
 

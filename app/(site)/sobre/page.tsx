@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { Rasgo } from "@/components/arte/rasgo";
+import { Pesquisa } from "@/components/home/pesquisa";
+import { FaixaObra } from "@/components/arte/faixa-obra";
 import { OBRAS, ficha } from "@/lib/obras";
 import { FORMACAO, RETRATO, TIPO_ROTULO, TRAJETORIA } from "@/lib/trajetoria";
 import { ARTISTA, INSTAGRAM_HANDLE, INSTAGRAM_URL, SITE } from "@/lib/constants";
@@ -162,8 +164,12 @@ export default function Sobre() {
         </Container>
       </section>
 
-      {/* A trajetória, com imagem. Na home ela é um índice enxuto; aqui cada
-          entrada mostra o que foi. */}
+      {/* A pesquisa e a queima em Igatu vieram da home, que a Isabela pediu
+          para reduzir a três cliques. Este é o lugar delas: quem clicou em
+          "conheça mais sobre Isabela Molinari" veio exatamente por isso. */}
+      <Pesquisa corAcima="var(--color-papel)" />
+
+      {/* A trajetória, com imagem. */}
       <section id="exposicoes" className="scroll-mt-24 bg-papel py-16 sm:py-20">
         <Container className="mb-10 flex flex-col gap-3">
           <p className="rotulo">Exposições, residências e projetos</p>
@@ -267,6 +273,12 @@ export default function Sobre() {
           </div>
         </Container>
       </section>
+
+      <FaixaObra
+        foto={TRAJETORIA.find((e) => e.id === "xique-xique")!.foto!}
+        alt={TRAJETORIA.find((e) => e.id === "xique-xique")!.alt!}
+        legenda="Queima a céu aberto · Residência Artística Mirante Xique Xique, Igatu, BA, 2025"
+      />
 
       <section className="bg-papel py-16 sm:py-20">
         <Container className="flex flex-col items-start gap-6">

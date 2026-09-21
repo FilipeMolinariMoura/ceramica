@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { Container } from "@/components/section";
 import {
+  ARTISTA,
   CURSO,
   INSTAGRAM_HANDLE,
   INSTAGRAM_URL,
   NAV,
+  SETOR,
   SITE,
   WHATSAPP_DUVIDA,
 } from "@/lib/constants";
@@ -26,10 +28,10 @@ export function SiteFooter() {
           <div className="lg:col-span-2">
             <p className="font-display text-2xl text-papel">{SITE.nome}</p>
             <p className="font-display text-2xl italic text-papel/70">
-              {SITE.artista}
+              {ARTISTA.tituloFrase}
             </p>
             <p className="mt-4 max-w-xs text-[0.98rem] leading-relaxed text-papel/60">
-              Ateliê de cerâmica e processos criativos em {SITE.cidade}.
+              {SETOR.ceramica}, obra e atendimento, em {SITE.cidade}.
             </p>
           </div>
 
@@ -78,7 +80,7 @@ export function SiteFooter() {
           <p>
             © {ano} {SITE.artista} · {SITE.cidade}
           </p>
-          <p>Peças, aulas e encomendas</p>
+          <p>Cerâmica, obra e astrologia</p>
         </div>
       </Container>
     </footer>

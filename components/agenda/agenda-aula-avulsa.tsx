@@ -2,11 +2,9 @@ import { Container } from "@/components/section";
 import { SeletorHorario, type HorarioVisivel } from "@/components/agenda/seletor-horario";
 import {
   chaveDia,
-  diaCurto,
   diaLongo,
   hora,
   horariosDisponiveis,
-  mes,
   reais,
   servicoPorSlug,
 } from "@/lib/agenda";
@@ -44,11 +42,15 @@ export async function AgendaAulaAvulsa() {
     id: h.id,
     dia: chaveDia(h.inicio),
     diaLongo: diaLongo(h.inicio),
-    diaCurto: diaCurto(h.inicio),
     hora: hora(h.inicio),
-    mes: mes(h.inicio),
     restantes: h.restantes,
   }));
+
+  /* "Hoje" também é calculado AQUI, em horário de Brasília. Deixar o
+     calendário perguntar ao relógio do navegador contornaria o dia errado
+     para quem abrisse de outro fuso — e, perto da meia-noite, para quem
+     abrisse daqui mesmo. */
+  const hoje = chaveDia(new Date());
 
   const preco = reais(servico.precoCentavos);
 
@@ -63,23 +65,27 @@ export async function AgendaAulaAvulsa() {
       <Container>
         <p className="rotulo">Aula avulsa</p>
 
-        <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
-          <h2 className="titulo-secao versalete max-w-[14ch] font-display text-realce">
-            Uma aula, sem assinar o mês
-          </h2>
-          <p className="max-w-[38ch] text-[0.95rem] leading-relaxed text-texto/60">
-            Duas horas no torno ou na modelagem. Você escolhe o horário, paga
-            aqui e vem — não precisa ter encostado em barro antes.
-          </p>
-        </div>
+        {/* Título curto e o calendário logo abaixo. O parágrafo de apoio que
+            ficava aqui desceu para depois da grade: a Isabela pediu que "o
+            calendário chegue rápido e sem muito texto", e quem chega decidido
+            não deveria ler duas linhas antes de ver as datas. */}
+        <h2 className="titulo-secao versalete mt-4 max-w-[16ch] font-display text-realce">
+          Uma aula, sem assinar o mês
+        </h2>
 
-        <div className="mt-12">
+        <div className="mt-8">
           <SeletorHorario
             horarios={visiveis}
             precoFormatado={preco}
             duracaoMin={servico.duracaoMin}
+            hoje={hoje}
           />
         </div>
+
+        <p className="mt-8 max-w-[52ch] text-[0.95rem] leading-relaxed text-texto/60">
+          Duas horas no torno ou na modelagem. Você escolhe o horário, paga
+          aqui e vem — não precisa ter encostado em barro antes.
+        </p>
 
         {/* A condição que vale para QUALQUER horário vem como faixa depois da
             grade, e não como mais um cartão: não é uma opção a escolher. */}

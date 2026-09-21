@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Jost } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import { SITE } from "@/lib/constants";
+import { ARTISTA, SITE } from "@/lib/constants";
 import "./globals.css";
 
 /**
@@ -51,7 +51,10 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.dominio),
   title: {
-    default: `${SITE.nome} · ${SITE.artista}`,
+    /* `SITE.nome` virou o nome da artista, então "nome · artista" passou a
+       imprimir "Isabela Molinari · Isabela Molinari". O título de abertura
+       agora qualifica em vez de repetir. */
+    default: `${SITE.nome} · ${ARTISTA.tituloFrase}`,
     // Cada página define só o próprio nome; a marca entra por aqui.
     template: `%s · ${SITE.nome}`,
   },
@@ -60,7 +63,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "pt_BR",
     siteName: SITE.nome,
-    title: `${SITE.nome} · ${SITE.artista}`,
+    title: `${SITE.nome} · ${ARTISTA.tituloFrase}`,
     description,
     /* `public/og.jpg` é a mesma colagem da abertura do site — creme, bloco
        vermelho chapado e uma peça das Flores de Luto fugindo do canto. Era
@@ -78,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.nome} · ${SITE.artista}`,
+    title: `${SITE.nome} · ${ARTISTA.tituloFrase}`,
     description,
     images: ["/og.jpg"],
   },

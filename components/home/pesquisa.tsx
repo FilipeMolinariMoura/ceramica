@@ -28,13 +28,20 @@ import { FECHAMENTO } from "@/lib/constants";
  * O site inteiro ganhou vocabulário de impresso, e a tentação era aplicá-lo
  * também aqui. Seria estragar um desenho para imitar um desenho.
  */
-export function Pesquisa() {
+export function Pesquisa({
+  /* A cor da seção DE CIMA, porque o rasgo é o papel dela terminando. Era
+     fixo em `papel` enquanto esta seção só existia na home; agora ela vive em
+     `/sobre`, depois de uma seção creme. */
+  corAcima = "var(--color-papel)",
+}: {
+  corAcima?: string;
+} = {}) {
   const interdito = OBRAS.find((o) => o.id === "do-interdito-ao-ceu")!;
   const naturezaViva = OBRAS.find((o) => o.id === "natureza-viva-lona")!;
 
   return (
     <section className="escuro relative overflow-hidden pt-20 pb-20 sm:pt-24 sm:pb-24">
-      <Rasgo cor="var(--color-papel)" />
+      <Rasgo cor={corAcima} />
 
       <Container className="grid gap-12 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
         <div className="flex flex-col gap-6">

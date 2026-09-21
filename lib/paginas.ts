@@ -15,6 +15,14 @@ import { NAV } from "@/lib/constants";
 /** Endereços que já são do site. Ver o comentário em `criarPagina`. */
 export const SLUGS_RESERVADOS = new Set<string>([
   ...NAV.map((n) => n.href.replace("/", "")),
+  /* Rotas REAIS que não estão na barra.
+     `aulas` e `oficinas` saíram da NAV quando viraram os dois cliques de
+     dentro de `/ceramica` — mas continuam existindo. Sem esta linha a Isabela
+     poderia publicar uma página com um desses endereços: o construtor
+     aceitaria, e ela veria a página antiga no lugar da dela, sem entender por
+     quê. Derivar a lista só da NAV era seguro enquanto NAV e rotas coincidiam. */
+  "aulas",
+  "oficinas",
   "painel",
   "api",
   "midias",
