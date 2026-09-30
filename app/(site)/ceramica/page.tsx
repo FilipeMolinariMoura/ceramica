@@ -7,9 +7,9 @@ import { Reveal } from "@/components/reveal";
 import { GaleriaAtelie } from "@/components/galeria-atelie";
 import { ProximosHorarios } from "@/components/home/proximos-horarios";
 import { ConviteFinal } from "@/components/home/convite-final";
-import { reais, servicoPorSlug } from "@/lib/agenda";
 import { OFICINA } from "@/lib/oficina";
-import { LINHA, SERVICO_AULA_AVULSA, SETOR, SITE } from "@/lib/constants";
+import { LINHA, SETOR, SITE } from "@/lib/constants";
+import { vitrineDasAulas } from "@/lib/vitrine";
 
 // Lê o preço da aula e os horários abertos a cada visita.
 export const dynamic = "force-dynamic";
@@ -54,7 +54,7 @@ const CLIQUES = [
   {
     href: "/aulas#agenda",
     titulo: "Agende sua aula",
-    linha: "Escolha o dia no calendário, pague e venha.",
+    linha: "Turma mensal ou aula avulsa, às terças. Escolha, pague e venha.",
     chaveFoto: "ceramica.porta.aulas",
     tingido: "bg-osso/40",
   },
@@ -68,11 +68,12 @@ const CLIQUES = [
 ] as const;
 
 export default async function Ceramica() {
-  const servico = await servicoPorSlug(SERVICO_AULA_AVULSA);
-  const preco = servico ? reais(servico.precoCentavos) : null;
+  const { avulsa, mensal } = await vitrineDasAulas();
+  // O menor preço POR AULA é o da mensal — é ele que abre a conversa.
+  const aPartir = mensal?.porAula ?? avulsa?.preco ?? null;
 
   const valor: Record<string, string> = {
-    "/aulas#agenda": preco ? `a partir de ${preco}` : "sob consulta",
+    "/aulas#agenda": aPartir ? `a partir de ${aPartir} por aula` : "sob consulta",
     "/oficinas": `R$ ${OFICINA.precoPorPessoa} por pessoa`,
   };
 

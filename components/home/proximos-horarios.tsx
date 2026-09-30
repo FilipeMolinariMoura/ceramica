@@ -9,6 +9,7 @@ import {
   servicoPorSlug,
 } from "@/lib/agenda";
 import { FECHAMENTO, SERVICO_AULA_AVULSA, WHATSAPP_DUVIDA } from "@/lib/constants";
+import { vitrineDasAulas } from "@/lib/vitrine";
 
 /**
  * O FECHAMENTO, na home.
@@ -44,6 +45,7 @@ export async function ProximosHorarios() {
   const proximos = comVaga.slice(0, 3);
 
   const preco = reais(servico.precoCentavos);
+  const { mensal } = await vitrineDasAulas();
 
   return (
     <section className="bg-preto py-14 text-papel sm:py-16">
@@ -58,14 +60,14 @@ export async function ProximosHorarios() {
             </h2>
             <p className="max-w-md text-[0.98rem] leading-relaxed text-papel/65">
               {proximos.length > 0
-                ? `Duas horas de mão no barro, com dia e hora marcados. Você paga aqui e vem — barro, ferramentas, esmalte e queima inclusos.`
+                ? `Duas horas de mão no barro, com dia e hora marcados. Você paga aqui e vem — ferramentas e queima inclusas.`
                 : "A Isabela abre horário conforme a semana. Chame no WhatsApp e ela encaixa você."}
             </p>
           </div>
 
           {proximos.length > 0 ? (
             <Link
-              href={FECHAMENTO}
+              href={`${FECHAMENTO.replace("#", "?origem=ceramica#")}`}
               className="inline-flex h-[3.1rem] shrink-0 items-center justify-center self-start border border-papel/40 px-7 text-[0.78rem] font-semibold uppercase tracking-[0.12em] text-papel transition-[background-color,color,border-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:border-papel hover:bg-papel hover:text-preto active:translate-y-px sm:self-auto"
             >
               Ver todos os horários
@@ -78,8 +80,10 @@ export async function ProximosHorarios() {
             {proximos.map((h, i) => (
               <Reveal key={h.id} indice={i} tipo="cartao">
                 <li>
+                  {/* Direto para o pagamento daquela data: a pessoa já
+                      escolheu aqui, não precisa escolher de novo lá. */}
                   <Link
-                    href={FECHAMENTO}
+                    href={`/aulas?horario=${h.id}&origem=ceramica#agenda`}
                     className="group flex h-full flex-col justify-between gap-5 border border-papel/25 p-5 transition-[background-color,border-color] duration-[var(--t-estado)] hover:border-papel hover:bg-papel/5"
                   >
                     <div className="flex flex-col gap-1">
@@ -106,7 +110,25 @@ export async function ProximosHorarios() {
               </Reveal>
             ))}
           </ul>
-        ) : (
+        ) : null}
+
+        {/* A âncora da mensal ao lado das datas avulsas: quem está olhando
+            para R$ 250 precisa ver que existe R$ 200. */}
+        {proximos.length > 0 && mensal ? (
+          <Link
+            href="/aulas?plano=mensal&origem=ceramica#agenda"
+            className="flex flex-wrap items-center justify-between gap-3 border border-osso/50 bg-osso/10 px-5 py-4 transition-colors hover:border-osso hover:bg-osso/15"
+          >
+            <span className="text-[0.95rem] text-papel">
+              Turma mensal:{" "}
+              <strong className="numeral font-normal text-osso">{mensal.porAula}</strong> por aula
+              <span className="text-papel/60"> · {mensal.aulas} terças · economize {mensal.economia}</span>
+            </span>
+            <span className="versalete-larga text-[0.6rem] text-osso">Ver turma →</span>
+          </Link>
+        ) : null}
+
+        {proximos.length > 0 ? null : (
           <a
             href={WHATSAPP_DUVIDA}
             target="_blank"

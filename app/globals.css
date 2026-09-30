@@ -691,3 +691,103 @@ details[open] > summary .faq-plus {
     opacity: 1 !important;
   }
 }
+
+/* ---- A ENTRADA ---------------------------------------------------------
+   A home é três portas e nada para ler. O que ela tem de movimento é
+   INFORMAÇÃO, não enfeite: o ponto que pulsa diz "isto está acontecendo
+   agora" (a próxima aula, com data), as obras que trocam dizem "há mais de
+   uma coisa aqui", e a roda que gira é o céu da astrologia. Tudo para quando
+   a pessoa pede menos movimento.
+   ------------------------------------------------------------------------ */
+
+@keyframes pulso {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-verde-claro) 70%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 7px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@keyframes gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Duas obras se revezam sobre a foto do painel, num ciclo de 12s: a foto
+   fica 4s sozinha, e cada obra aparece 4s por cima dela. */
+@keyframes troca-obra {
+  0% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+  }
+  39% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes porta-entra {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.porta-obra {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ponto-vivo {
+    animation: pulso 1.8s ease-out infinite;
+  }
+
+  .roda-gira {
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: gira 120s linear infinite;
+  }
+
+  .porta-obra {
+    animation: troca-obra 12s ease-in-out infinite both;
+  }
+
+  .porta-entra {
+    animation: porta-entra 0.7s var(--ease-entrada) both;
+    animation-delay: calc(0.12s + var(--i, 0) * 0.1s);
+  }
+}
+
+/* A régua de portas no celular esconde a barra de rolagem: o indicador de
+   posição é o dos pontinhos embaixo, e a ponta do próximo cartão à vista. */
+.carrossel-portas {
+  scrollbar-width: none;
+}
+
+.carrossel-portas::-webkit-scrollbar {
+  display: none;
+}
+
+/* Enquanto a barra de resumo da agenda está presa ao pé da tela, o botão do
+   WhatsApp sobe para não cobrir o botão de pagar. */
+@media (max-width: 639px) {
+  body[data-barra-fixa] .fab-whatsapp {
+    bottom: 5.75rem;
+  }
+}

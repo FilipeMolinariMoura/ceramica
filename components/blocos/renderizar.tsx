@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Container } from "@/components/section";
 import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
-import { AgendaAulaAvulsa } from "@/components/agenda/agenda-aula-avulsa";
+import { EscolhaAula } from "@/components/agenda/escolha-aula";
 import { urlDaMidia } from "@/lib/midias";
 import type { Bloco } from "@/lib/paginas";
 
@@ -191,7 +191,7 @@ function BlocoUm({ bloco }: { bloco: Bloco }) {
     }
 
     case "agenda":
-      return <AgendaAulaAvulsa />;
+      return <EscolhaAula emBloco origem="pagina" />;
 
     default:
       // Tipo que o código não conhece mais. Some, não derruba.

@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
-import { liberarVaga } from "@/lib/reservas";
+import { cancelarPacote as cancelarPacoteNoBanco, liberarVaga } from "@/lib/reservas";
+import { TURMAS } from "@/lib/constants";
 import {
   autenticar,
   criarSessao,
@@ -80,17 +81,60 @@ export async function abrirHorario(form: FormData): Promise<void> {
 
   // A conversão para instante acontece no POSTGRES, com `at time zone`, a
   // partir da data e hora que a Isabela digitou. O contêiner roda em UTC: se
-  // o JavaScript montasse a data, um horário de 9h30 viraria 9h30 UTC, ou
-  // seja, 6h30 em Brasília.
+  // o JavaScript montasse a data, um horário de 10h viraria 10h UTC, ou
+  // seja, 7h em Brasília.
+  //
+  // `greatest` nas vagas: reabrir um horário com MENOS vagas do que as já
+  // vendidas estouraria o CHECK e a ação quebraria. Assim ela só não reduz
+  // abaixo de quem já pagou.
   await db().query(
     `insert into horarios (servico_id, inicio, vagas)
      values ($1, ($2::date + $3::time) at time zone 'America/Sao_Paulo', $4)
-     on conflict (servico_id, inicio) do update set vagas = excluded.vagas, publicado = true`,
+     on conflict (servico_id, inicio) do update
+       set vagas = greatest(excluded.vagas, horarios.ocupadas), publicado = true`,
     [servicoId, data, hora, vagas]
   );
 
   revalidatePath("/painel/agenda");
   revalidatePath("/aulas");
+}
+
+/**
+ * Abre as terças de várias semanas de uma vez, nos horários das turmas.
+ *
+ * A mensal só vende quando há quatro terças seguidas abertas; abrir uma por
+ * uma, pelo formulário de horário avulso, seria o jeito de ela nunca vender.
+ *
+ * `do nothing` no conflito, e não `do update`: uma terça que a Isabela tirou
+ * do ar de propósito (feriado, viagem) não pode voltar sozinha porque ela
+ * abriu as próximas semanas.
+ */
+export async function abrirTercasEmLote(form: FormData): Promise<void> {
+  await exigirSessao();
+
+  const servicoId = Number(form.get("servicoId"));
+  const aPartir = String(form.get("aPartir") ?? "");
+  const semanas = Number(form.get("semanas"));
+  const vagas = Number(form.get("vagas"));
+  const horas = TURMAS.filter((t) => form.get(`turma-${t.id}`) === "on").map((t) => t.inicio);
+
+  if (!Number.isInteger(servicoId) || !/^\d{4}-\d{2}-\d{2}$/.test(aPartir)) return;
+  if (!Number.isInteger(semanas) || semanas < 1 || semanas > 12) return;
+  if (!Number.isInteger(vagas) || vagas < 1 || vagas > 20 || horas.length === 0) return;
+
+  await db().query(
+    `insert into horarios (servico_id, inicio, vagas)
+     select $1, (d::date + t::time) at time zone 'America/Sao_Paulo', $4
+       from generate_series($2::date, $2::date + ($3::int * 7 - 1), interval '1 day') as d
+      cross join unnest($5::text[]) as t
+      where extract(isodow from d) = 2
+        and (d::date + t::time) at time zone 'America/Sao_Paulo' > now()
+     on conflict (servico_id, inicio) do nothing`,
+    [servicoId, aPartir, semanas, vagas, horas]
+  );
+
+  revalidatePath("/painel/agenda");
+  revalidatePath("/", "layout");
 }
 
 export async function fecharHorario(form: FormData): Promise<void> {
@@ -127,19 +171,33 @@ export async function salvarServico(form: FormData): Promise<void> {
   // O valor chega em REAIS, porque é assim que ela pensa, e é convertido para
   // centavos aqui. Guardar em centavos é o que impede a aritmética de ponto
   // flutuante de transformar R$ 250,00 em R$ 249,99 no caminho até o cobrador.
-  const reais = Number(String(form.get("preco") ?? "").replace(",", "."));
+  const emReais = (campo: string) =>
+    Number(String(form.get(campo) ?? "").trim().replace(",", "."));
+  const reais = emReais("preco");
   const duracao = Number(form.get("duracao"));
   const vagas = Number(form.get("vagas"));
+  // Preço no cartão: só existe no formulário da mensal. Vazio = um preço só.
+  const temCartao = form.has("precoCartao") && String(form.get("precoCartao")).trim() !== "";
+  const cartao = temCartao ? emReais("precoCartao") : null;
 
   if (!Number.isFinite(reais) || reais < 0 || reais > 100_000) return;
   if (!Number.isInteger(duracao) || duracao < 15 || duracao > 600) return;
   if (!Number.isInteger(vagas) || vagas < 1 || vagas > 50) return;
+  if (cartao !== null && (!Number.isFinite(cartao) || cartao < reais || cartao > 100_000)) return;
 
   await db().query(
     `update servicos
-        set preco_centavos = $2, duracao_min = $3, vagas_padrao = $4
+        set preco_centavos = $2, duracao_min = $3, vagas_padrao = $4,
+            preco_cartao_centavos = case when $5::boolean then $6::int else preco_cartao_centavos end
       where id = $1`,
-    [id, Math.round(reais * 100), duracao, vagas]
+    [
+      id,
+      Math.round(reais * 100),
+      duracao,
+      vagas,
+      form.has("precoCartao"),
+      cartao === null ? null : Math.round(cartao * 100),
+    ]
   );
 
   // O preço aparece na home, na página de aulas e nas portas.
@@ -154,8 +212,15 @@ export async function cancelarReserva(form: FormData): Promise<void> {
   const id = String(form.get("reservaId") ?? "");
   if (!/^[0-9a-f-]{36}$/.test(id)) return;
 
-  const { rows } = await db().query(`select status from reservas where id = $1`, [id]);
+  const { rows } = await db().query(
+    `select status, pacote_id from reservas where id = $1`,
+    [id]
+  );
   const status = rows[0]?.status;
+
+  // Aula de pacote AINDA NÃO PAGO não se cancela sozinha: o pagamento do
+  // pacote, se chegar, tentaria retomá-la. Cancela-se o pacote inteiro.
+  if (rows[0]?.pacote_id && status === "pendente") return;
 
   if (status === "pendente") {
     // Devolve a vaga junto, num statement só.
@@ -180,4 +245,16 @@ export async function cancelarReserva(form: FormData): Promise<void> {
 
   revalidatePath("/painel");
   revalidatePath("/aulas");
+}
+
+export async function cancelarPacote(form: FormData): Promise<void> {
+  await exigirSessao();
+  const id = String(form.get("pacoteId") ?? "");
+  if (!/^[0-9a-f-]{36}$/.test(id)) return;
+
+  await cancelarPacoteNoBanco(id);
+
+  revalidatePath("/painel");
+  revalidatePath("/painel/agenda");
+  revalidatePath("/", "layout");
 }

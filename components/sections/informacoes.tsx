@@ -1,17 +1,30 @@
+import Link from "next/link";
 import { Container } from "@/components/section";
 import { Eyebrow } from "@/components/eyebrow";
 import { Reveal } from "@/components/reveal";
-import { InscricaoCta } from "@/components/inscricao-cta";
 import { CURSO, TURMAS } from "@/lib/constants";
-
-const FICHA = [
-  { rotulo: "Início", valor: CURSO.inicio },
-  { rotulo: "Onde", valor: CURSO.endereco },
-];
+import { vitrineDasAulas } from "@/lib/vitrine";
 
 const COR_TURMA = ["bg-vermelho", "bg-verde"];
 
-export function Informacoes() {
+/**
+ * A ficha da turma. O preço e a próxima data vêm do banco, pela vitrine: aqui
+ * morava "Início: 1º de setembro" e "R$ 800" como texto fixo, e a ficha
+ * continuava anunciando setembro em outubro.
+ */
+export async function Informacoes() {
+  const { mensal, avulsa, proximoPacote } = await vitrineDasAulas();
+
+  const ficha = [
+    {
+      rotulo: "Próximo início",
+      valor: proximoPacote
+        ? `${proximoPacote.dia} ${proximoPacote.data}, ${proximoPacote.periodo.toLowerCase()}`
+        : "Lista de espera aberta",
+    },
+    { rotulo: "Onde", valor: CURSO.endereco },
+  ];
+
   return (
     <section id="informacoes" className="bg-papel py-20 sm:py-28 lg:py-32">
       <Container>
@@ -52,7 +65,7 @@ export function Informacoes() {
                       {t.horario}
                     </p>
                     <p className="mt-1 text-sm text-preto/55">
-                      {CURSO.vagasPorTurma} vagas
+                      {CURSO.vagasPorTurma} lugares na mesa
                     </p>
                   </div>
                 ))}
@@ -61,7 +74,7 @@ export function Informacoes() {
 
             <Reveal>
               <dl>
-                {FICHA.map((f) => (
+                {ficha.map((f) => (
                   <div
                     key={f.rotulo}
                     className="flex flex-col gap-1 border-t border-linha py-5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
@@ -78,35 +91,48 @@ export function Informacoes() {
             </Reveal>
           </div>
 
-          <Reveal className="flex flex-col gap-6">
-            <div className="border-t border-linha pt-5">
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-preto/45">
-                Mensalidade
-              </p>
-              <p className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <span className="font-display text-4xl text-preto sm:text-5xl">
-                  {CURSO.mensalidadePix}
-                </span>
-                <span className="text-preto/60">no Pix</span>
-              </p>
-              <p className="mt-1 text-preto/60">
-                {CURSO.mensalidadeCartao} no cartão
-              </p>
-            </div>
+          {mensal ? (
+            <Reveal className="flex flex-col gap-6">
+              <div className="border-t border-linha pt-5">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-preto/45">
+                  Turma mensal · {mensal.aulas} terças
+                </p>
+                <p className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="font-display text-4xl text-preto sm:text-5xl">
+                    {mensal.porAula}
+                  </span>
+                  <span className="text-preto/60">por aula</span>
+                  {avulsa ? (
+                    <span className="font-display text-xl text-preto/35 line-through decoration-vermelho/70">
+                      {avulsa.preco}
+                    </span>
+                  ) : null}
+                </p>
+                <p className="mt-1 text-preto/60">
+                  {mensal.pix} no Pix · {mensal.cartao} no cartão
+                </p>
+              </div>
 
-            <div className="rounded-2xl bg-vermelho p-6 text-branco">
-              <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-papel/70">
-                Mês com cinco terças
-              </p>
-              <p className="mt-2 text-[1.05rem] leading-relaxed">
-                Mensalidade fixa. Alguns meses têm cinco terças. Nesses, você
-                tem <em className="font-display italic">uma aula a mais</em> sem
-                pagar a mais.
-              </p>
-            </div>
+              <div className="bg-vermelho p-6 text-branco">
+                <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-papel/70">
+                  Começa quando você quiser
+                </p>
+                <p className="mt-2 text-[1.05rem] leading-relaxed">
+                  São {mensal.aulas} terças seguidas a partir da data que você
+                  escolher, e você economiza{" "}
+                  <em className="font-display italic">{mensal.economia}</em> em
+                  relação às aulas avulsas.
+                </p>
+              </div>
 
-            <InscricaoCta origem="informacoes" label="Quero minha vaga" />
-          </Reveal>
+              <Link
+                href="/aulas?plano=mensal#agenda"
+                className="inline-flex h-[3.35rem] items-center justify-center self-start bg-vermelho px-8 text-[0.85rem] font-semibold uppercase tracking-[0.12em] text-branco transition-[background-color,translate] duration-[var(--t-toque)] ease-[var(--ease-firme)] hover:bg-vermelho-escuro active:translate-y-px"
+              >
+                Garantir minhas terças
+              </Link>
+            </Reveal>
+          ) : null}
         </div>
       </Container>
     </section>

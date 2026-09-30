@@ -71,7 +71,7 @@ export default function Oficinas() {
           <figure className="lg:mb-2">
             <div className="sobreimpressao w-full">
               <div className="fuga relative aspect-[4/3] w-full overflow-hidden">
-                {/* Do painel — ver o comentário em `components/sections/hero.tsx`. */}
+                {/* Do painel: a Isabela escolhe esta foto na aba Fotos. */}
                 <FotoDaSecao
                   chave="oficinas.hero"
                   priority

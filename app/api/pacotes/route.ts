@@ -1,17 +1,23 @@
 import { NextResponse } from "next/server";
-import { criarReserva } from "@/lib/reservas";
-import { origemDoLead, pendenciasDoEmail } from "@/lib/pendencias";
+import { criarPacote } from "@/lib/reservas";
 import { ipDaRequisicao, permitido } from "@/lib/limite";
 import { origemDoSite } from "@/lib/origem";
+import { origemDoLead, pendenciasDoEmail } from "@/lib/pendencias";
 import { onlyDigits } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
-/** Reservar não custa nada até pagar; ver `lib/limite.ts`. */
+/**
+ * Compra do pacote da turma mensal.
+ *
+ * Mesmas defesas de `/api/reservas`, com um motivo a mais: um pacote segura
+ * QUATRO lugares de uma vez por 20 minutos. O freio por IP e o limite de
+ * pendências por e-mail são o que impede alguém de travar a agenda do mês com
+ * um laço.
+ */
 const LIMITE_POR_IP = 6;
 const JANELA_MS = 10 * 60_000;
-/** Holds simultâneos por pessoa — impede segurar a agenda com um e-mail só. */
-const HOLDS_POR_EMAIL = 2;
+const PENDENCIAS_POR_EMAIL = 2;
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -31,22 +37,32 @@ export async function POST(req: Request) {
   }
 
   const ip = ipDaRequisicao(req);
-  if (!permitido(`reserva:${ip}`, LIMITE_POR_IP, JANELA_MS)) {
+  if (!permitido(`pacote:${ip}`, LIMITE_POR_IP, JANELA_MS)) {
     return NextResponse.json(
       { ok: false, erro: "Muitas tentativas seguidas. Espere alguns minutos." },
       { status: 429 }
     );
   }
 
-  const horarioId = Number(body.horarioId);
+  const turma = body.turma;
+  const meio = body.meio;
+  const inicioId = Number(body.inicioId);
+  const horarioIds = Array.isArray(body.horarioIds)
+    ? body.horarioIds.map(Number)
+    : [];
   const nome = String(body.nome ?? "").trim();
   const email = String(body.email ?? "").trim().toLowerCase();
-  const whatsapp = String(body.whatsapp ?? "").trim();
-  const digitos = onlyDigits(whatsapp);
+  const digitos = onlyDigits(String(body.whatsapp ?? ""));
 
   if (
-    !Number.isInteger(horarioId) ||
-    horarioId <= 0 ||
+    (turma !== "manha" && turma !== "tarde") ||
+    (meio !== "pix" && meio !== "cartao") ||
+    !Number.isInteger(inicioId) ||
+    inicioId <= 0 ||
+    horarioIds.length < 1 ||
+    horarioIds.length > 8 ||
+    !horarioIds.every((id) => Number.isInteger(id) && id > 0) ||
+    horarioIds[0] !== inicioId ||
     nome.length < 2 ||
     nome.length > 120 ||
     !EMAIL.test(email) ||
@@ -60,7 +76,7 @@ export async function POST(req: Request) {
     );
   }
 
-  if ((await pendenciasDoEmail(email)) >= HOLDS_POR_EMAIL) {
+  if ((await pendenciasDoEmail(email)) >= PENDENCIAS_POR_EMAIL) {
     return NextResponse.json(
       {
         ok: false,
@@ -70,8 +86,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const resultado = await criarReserva({
-    horarioId,
+  const resultado = await criarPacote({
+    turma,
+    inicioId,
+    horarioIds,
+    meio,
     nome,
     email,
     whatsapp: digitos,
@@ -80,9 +99,10 @@ export async function POST(req: Request) {
   });
 
   if (!resultado.ok) {
-    // 409 no caso de esgotado: o cliente usa isso para recarregar a agenda em
-    // vez de repetir o mesmo horário.
-    const status = resultado.motivo === "esgotado" ? 409 : 503;
+    // 409 quando a agenda na tela está velha (lotou ou mudou): o cliente
+    // recarrega em vez de insistir nas mesmas datas.
+    const status =
+      resultado.motivo === "esgotado" || resultado.motivo === "agenda_mudou" ? 409 : 503;
     return NextResponse.json(
       { ok: false, erro: resultado.mensagem, motivo: resultado.motivo },
       { status }

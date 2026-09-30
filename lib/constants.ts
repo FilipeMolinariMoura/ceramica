@@ -106,23 +106,34 @@ export const LINHA = {
 
 /* ── Turma mensal ──────────────────────────────────────────────────────── */
 
+/**
+ * O preço da mensal NÃO mora aqui: ele está na tabela `servicos` (slug
+ * `turma-mensal`), editável pelo painel, junto com o do cartão e o número de
+ * aulas do pacote. O que é código é só o que não muda sem mudar o ateliê.
+ */
 export const CURSO = {
-  inicio: "1º de setembro",
   diaSemana: "Terças",
+  /** A mesa inteira, dividida entre mensalistas e avulsos. */
   vagasPorTurma: 6,
   endereco: SITE.endereco,
-  mensalidadePix: "R$ 800",
-  mensalidadeCartao: "R$ 835,08",
 } as const;
 
+/**
+ * Os dois horários de terça. Confirmados pela Isabela em 30/09/2026 — a manhã
+ * passou de 9h30 para 10h. `inicio` é o que casa com o horário gravado no
+ * banco (no fuso de Brasília): é por ele que a agenda sabe a que turma cada
+ * horário pertence.
+ */
 export const TURMAS = [
-  { id: "manha", periodo: "Manhã", horario: "9h30 às 11h30" },
-  { id: "tarde", periodo: "Tarde", horario: "13h30 às 15h30" },
+  { id: "manha", periodo: "Manhã", inicio: "10:00", fim: "12:00", horario: "10h às 12h" },
+  { id: "tarde", periodo: "Tarde", inicio: "13:30", fim: "15:30", horario: "13h30 às 15h30" },
 ] as const;
 
+export type TurmaId = (typeof TURMAS)[number]["id"];
+
 export const TURMA_OPCOES = [
-  { value: "manha", label: "Manhã (9h30 às 11h30)" },
-  { value: "tarde", label: "Tarde (13h30 às 15h30)" },
+  { value: "manha", label: `Manhã (${TURMAS[0].horario})` },
+  { value: "tarde", label: `Tarde (${TURMAS[1].horario})` },
   { value: "tanto_faz", label: "Tanto faz" },
 ] as const;
 
@@ -145,9 +156,12 @@ export type ExperienciaValor = (typeof EXPERIENCIA_OPCOES)[number]["value"];
  */
 export const SERVICO_AULA_AVULSA = "aula-avulsa";
 
+/** O pacote de terças seguidas. Mesmo raciocínio: só o slug é código. */
+export const SERVICO_TURMA_MENSAL = "turma-mensal";
+
 /* ── WhatsApp ──────────────────────────────────────────────────────────── */
 
-function zap(mensagem: string): string {
+export function zap(mensagem: string): string {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
 }
 
@@ -155,7 +169,7 @@ export function whatsappInscricao(nome: string, turma?: TurmaValor): string {
   const abertura = nome.trim() ? `Sou a/o ${nome.trim()} e quero` : "Quero";
   const periodo =
     turma === "manha"
-      ? ", no horário da manhã (9h30)"
+      ? ", no horário da manhã (10h)"
       : turma === "tarde"
         ? ", no horário da tarde (13h30)"
         : turma === "tanto_faz"

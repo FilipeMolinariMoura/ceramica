@@ -87,7 +87,7 @@ npm run dev                  # http://localhost:3000
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
 | `npm run migrar` | aplica as migrations pendentes |
-| `npm run semear:dev` | horários de brincadeira para a agenda |
+| `npm run semear:dev` | terças às 10h e 13h30 para a agenda local |
 | `npm run verificar:agenda` | invariantes de concorrência e pagamento |
 | `npm run usuario` | cria/troca a senha do painel |
 | `npm run fotos` | redimensiona as fotos-fonte |
@@ -213,6 +213,37 @@ Pagamento que chega depois do hold vencer tenta retomar a vaga. Se não
 conseguir, a reserva vira `paga_sem_vaga` e aparece **em destaque no painel**.
 Nunca em silêncio: é dinheiro de alguém que ficou sem aula.
 
+### Turma mensal: o pacote de terças
+
+Desde outubro de 2026 a mensal é vendida pelo site, como a avulsa. O produto é
+um **pacote de quatro terças seguidas** na turma escolhida (manhã 10h ou tarde
+13h30), pago de uma vez: Pix e cartão têm preços diferentes, ambos na tabela
+`servicos` (slug `turma-mensal`, colunas `preco_centavos` e
+`preco_cartao_centavos`), editáveis no painel.
+
+- **Mensal e avulsa dividem a mesa.** Não há horário de mensal: o pacote toma
+  um lugar em cada um dos quatro horários de terça que a avulsa já usa, pelo
+  mesmo contador `horarios.ocupadas` e sob o mesmo CHECK. Tudo ou nada — se uma
+  das terças não tiver lugar, a transação inteira volta.
+- **Pacote = `pacotes` + quatro `reservas` filhas.** As filhas são reservas
+  comuns (valor zero, `pacote_id` preenchido), e é por isso que a expiração, o
+  CHECK e a agenda do painel funcionam sem saber que pacote existe. O dinheiro,
+  o token e o pagamento moram no pacote; `pagamentos` pertence a uma reserva
+  **ou** a um pacote (CHECK `pagamentos_um_dono`).
+- **O meio não se trava.** A API de links da InfinitePay não deixa restringir
+  Pix ou cartão. O botão que a pessoa aperta no site define o valor do link; se
+  ela escolher Pix e pagar no cartão, a compra é confirmada mesmo assim (nunca
+  recusamos dinheiro que entrou) e o painel mostra a diferença.
+- **Pagamento tardio retoma aula por aula.** Se uma das terças lotou enquanto
+  o pagamento vencia, só aquela aula vira `paga_sem_vaga`.
+- **Montagem do pacote é uma função pura** (`montarPacotes` em `lib/agenda.ts`)
+  usada pela tela e de novo pelo servidor na compra, com a agenda relida. Se o
+  resultado não bater com o que a pessoa viu, a compra é recusada com 409.
+
+A migration `007` abriu as terças reais e tirou do ar os horários de teste de
+quarta, quinta e sábado. Dali em diante, quem abre agenda é o painel
+(**Abrir terças**, em lote).
+
 ### O que ainda falta aqui
 
 - **Reconciliação.** Se o webhook se perder (deploy recriando o contêiner, por
@@ -269,7 +300,7 @@ endereço próprio, montadas por blocos.
 
 ```bash
 npm run migrar            # schema
-npm run semear:dev        # horários de brincadeira, terças e quintas
+npm run semear:dev        # a agenda real: terças, 10h e 13h30, seis lugares
 npm run verificar:agenda  # as invariantes de concorrência e pagamento
 ```
 

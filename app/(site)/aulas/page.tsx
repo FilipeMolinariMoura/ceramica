@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/sections/hero";
-import { AgendaAulaAvulsa } from "@/components/agenda/agenda-aula-avulsa";
+import { EscolhaAula } from "@/components/agenda/escolha-aula";
 import { Sobre } from "@/components/sections/sobre";
 import { DoisCaminhos } from "@/components/sections/dois-caminhos";
 import { Incluso } from "@/components/sections/incluso";
@@ -18,7 +17,7 @@ import { RetornoInscricao } from "@/components/retorno-inscricao";
 export const dynamic = "force-dynamic";
 
 const description =
-  "Aula avulsa de cerâmica com horário marcado e pagamento online, e turmas mensais com seis vagas, em Pinheiros. Com a artista visual Isabela Molinari.";
+  "Aulas de cerâmica às terças em Pinheiros: turma mensal a partir de R$ 200 por aula ou aula avulsa, com horário marcado e pagamento online. Com a artista visual Isabela Molinari.";
 
 export const metadata: Metadata = {
   title: "Aulas de cerâmica",
@@ -31,23 +30,38 @@ export const metadata: Metadata = {
   },
 };
 
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+const texto = (v: string | string[] | undefined) => (typeof v === "string" ? v : undefined);
+
 /**
  * A landing original, inteira, virou esta aba. Ela é a página que converte —
- * e por isso continua sendo uma página longa de argumento, com o próprio hero
- * e o próprio CTA, e não uma seção da home.
+ * e por isso continua sendo uma página longa de argumento, com o próprio CTA.
  *
- * O rodapé, o botão flutuante do WhatsApp e a barra saíram daqui: são do
- * layout agora. `RetornoInscricao` fica, porque é desta página que a pessoa
- * sai para o WhatsApp e é para cá que ela volta.
+ * A PRIMEIRA DOBRA É A COMPRA. O hero de texto saiu: quem chega aqui já
+ * clicou em "marcar aula" em algum lugar, e a próxima coisa que precisa ver é
+ * o que escolher, quanto custa e quando — não uma frase sobre o barro. O
+ * argumento continua todo aí embaixo, para quem quiser ler antes de decidir.
+ *
+ * Os parâmetros da URL vêm dos cartões da home: `?horario=ID` abre o
+ * pagamento daquela data direto; `?plano=mensal&turma=manha` já chega com a
+ * escolha feita; `?origem=` diz de onde a pessoa veio, para a Isabela saber
+ * qual porta vende.
  */
-export default function Aulas() {
+export default async function Aulas({ searchParams }: Props) {
+  const busca = await searchParams;
+  const horario = Number(texto(busca.horario));
+
   return (
     <>
-      <Hero />
-      {/* A agenda vem ANTES do argumento. Quem chega pelo Instagram decidido a
-          marcar uma aula não deve ter que rolar a página de venda inteira para
-          achar onde clicar. */}
-      <AgendaAulaAvulsa />
+      <EscolhaAula
+        plano={texto(busca.plano)}
+        turma={texto(busca.turma)}
+        horarioId={Number.isInteger(horario) && horario > 0 ? horario : undefined}
+        origem={/^[a-z0-9-]{1,40}$/.test(texto(busca.origem) ?? "") ? texto(busca.origem) : "aulas"}
+      />
       <Sobre />
       <DoisCaminhos />
       <Incluso />

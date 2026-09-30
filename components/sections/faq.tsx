@@ -1,6 +1,7 @@
 import { Container } from "@/components/section";
 import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
+import { TURMAS } from "@/lib/constants";
 
 const PERGUNTAS = [
   {
@@ -9,7 +10,7 @@ const PERGUNTAS = [
   },
   {
     q: "Tem horário de manhã e de tarde?",
-    a: "Sim. As duas turmas são às terças: uma de manhã (9h30 às 11h30) e outra de tarde (13h30 às 15h30). Você escolhe o horário na inscrição.",
+    a: `Sim. As duas turmas são às terças: uma de manhã (${TURMAS[0].horario}) e outra de tarde (${TURMAS[1].horario}). Você escolhe a turma na hora de reservar.`,
   },
   {
     q: "Preciso comprar ferramentas?",
@@ -24,8 +25,12 @@ const PERGUNTAS = [
     a: "A argila e os esmaltes são por conta do aluno. Nas duas primeiras aulas eu forneço.",
   },
   {
-    q: "Quantas aulas por mês?",
-    a: "Uma por semana, sempre às terças. Alguns meses têm quatro terças, outros cinco. A mensalidade é a mesma.",
+    q: "Como funciona a turma mensal?",
+    a: "São quatro terças seguidas, na mesma turma, a partir da data que você escolher. Você paga pelo site, no Pix ou no cartão, e quando o pacote termina é só renovar para as próximas quatro.",
+  },
+  {
+    q: "E se eu quiser só experimentar?",
+    a: "Faça uma aula avulsa: escolha uma terça, pague pelo site e venha. Se gostar, a turma mensal sai mais barata por aula.",
   },
 ];
 
