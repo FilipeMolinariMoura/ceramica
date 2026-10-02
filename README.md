@@ -246,11 +246,21 @@ quarta, quinta e sábado. Dali em diante, quem abre agenda é o painel
 
 ### O que ainda falta aqui
 
-- **Reconciliação.** Se o webhook se perder (deploy recriando o contêiner, por
-  exemplo), a varredura preguiçosa pode marcar como expirada uma reserva paga.
-  Falta um `infra/reconciliar.sh` no mesmo cron do backup, rodando
-  `payment_check` nas pendentes. Hoje a página de retorno cobre o caso comum,
-  porque ela também confere.
+- **Conferência sem webhook não existe.** Testado com dinheiro real em
+  02/10/2026: o `payment_check` da InfinitePay responde `success:false` quando
+  recebe só o `order_nsu`, mesmo com o pedido pago — ele precisa do
+  `transaction_nsu`/`slug`, que só chegam pelo webhook ou pela URL de retorno.
+  Não dá para o site descobrir sozinho que um pedido foi pago. O que existe no
+  lugar:
+  - o Caddy segura a requisição por até 30s enquanto o contêiner reinicia
+    (`lb_try_duration` em `infra/caddy/ceramica.Caddyfile`), então o webhook
+    que chega durante um deploy espera em vez de levar 502;
+  - o webhook responde **400** em toda falha nossa e quando a InfinitePay
+    ainda não reconhece uma transação que o aviso diz existir — 400 é o código
+    que a documentação dela diz que dispara o reenvio;
+  - a página de retorno confere de novo quando a pessoa volta.
+  Se mesmo assim um pagamento ficar sem reserva, ele aparece como venda na
+  InfinitePay e como "não pagou" no painel: é o cruzamento manual.
 - **Aviso à Isabela** a cada reserva (e-mail ou push). Hoje ela descobre
   abrindo o painel.
 

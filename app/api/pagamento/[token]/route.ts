@@ -39,11 +39,12 @@ export async function POST(
   }
 
   const texto = (v: unknown) => (typeof v === "string" && v ? v : null);
+  const transactionNsu = texto(corpo.transaction_nsu);
 
   try {
     const estado = await confirmarPagamento({
       token,
-      transactionNsu: texto(corpo.transaction_nsu),
+      transactionNsu,
       slugFatura: texto(corpo.invoice_slug) ?? texto(corpo.slug),
       receiptUrl: texto(corpo.receipt_url),
       bruto: corpo,
@@ -53,10 +54,21 @@ export async function POST(
       return NextResponse.json({ ok: false }, { status: 404 });
     }
 
+    // O aviso diz que houve transação, mas a InfinitePay ainda responde "não
+    // pago" à nossa pergunta: o aviso chegou antes de o pagamento assentar do
+    // lado dela. Pedimos para ela tentar de novo, em vez de aceitar o "não
+    // pago" e perder a confirmação. Sem `transaction_nsu` no corpo não há o
+    // que esperar — aí o "não pago" é a resposta certa.
+    if (estado === "nao_paga" && transactionNsu) {
+      return NextResponse.json({ ok: false, estado }, { status: 400 });
+    }
+
     return NextResponse.json({ ok: true, estado });
   } catch (err) {
     console.error("[webhook] falha ao confirmar:", err);
-    // Aqui sim vale 500: foi problema NOSSO, e queremos a retentativa dela.
-    return NextResponse.json({ ok: false }, { status: 500 });
+    // Problema NOSSO (banco fora, InfinitePay sem responder à conferência), e
+    // queremos a retentativa dela. É 400, e não 500, porque é o código que a
+    // documentação da InfinitePay diz que dispara o reenvio.
+    return NextResponse.json({ ok: false }, { status: 400 });
   }
 }
