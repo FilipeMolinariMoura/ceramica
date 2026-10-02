@@ -11,12 +11,11 @@
 #
 # ATENÇÃO, e isto mudou de peso em setembro de 2026: desde que o site passou a
 # receber pagamento, o que está aqui deixou de ser uma lista de leads e virou
-# registro financeiro e dado pessoal de cliente. Duas consequências que este
-# script NÃO resolve sozinho:
+# registro financeiro e dado pessoal de cliente. Duas consequências:
 #
-#   1. o destino é o MESMO disco da VPS. Perder a máquina leva banco e backup
-#      juntos. Falta uma cópia fora da máquina — é o próximo passo, e o mais
-#      importante que falta nesta stack;
+#   1. (resolvido em 02/10/2026) o destino daqui é o MESMO disco da VPS;
+#      desde então cada backup também sai criptografado para outra máquina,
+#      pelo infra/backup-fora.sh chamado no fim deste script;
 #   2. LGPD: não há política de retenção nem página de privacidade publicada.
 set -euo pipefail
 
@@ -66,6 +65,16 @@ if docker volume inspect ceramica-midias >/dev/null 2>&1; then
   echo "backup: $MIDIAS ($(du -h "$MIDIAS" | cut -f1))"
 else
   echo "backup: volume ceramica-midias ainda não existe, nada a arquivar"
+fi
+
+# ── Cópia para fora da VPS ─────────────────────────────────────────────────
+# Criptografada e enviada para outra máquina — ver infra/backup-fora.sh. Se
+# falhar, o backup local continua valendo, mas a falha fica BEM visível no
+# cron.log: backup externo parado em silêncio é o pior tipo de backup.
+ENVIAR=("$ARQUIVO")
+[ -f "$MIDIAS" ] && ENVIAR+=("$MIDIAS")
+if ! bash "$DIR/infra/backup-fora.sh" "${ENVIAR[@]}"; then
+  echo "backup: ATENÇÃO — a cópia para fora da VPS FALHOU hoje" >&2
 fi
 
 find "$DESTINO" -name 'ceramica-*.sql.gz' -mtime "+$DIAS_GUARDADOS" -delete
