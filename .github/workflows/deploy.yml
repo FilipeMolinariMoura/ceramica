@@ -143,20 +143,38 @@ jobs:
 
             # ── Migration como PORTÃO DE RELEASE ─────────────────────────
             # Roda com a imagem NOVA, num contêiner descartável, antes de
-            # encostar no site que está no ar. Se falhar, o `set -e` aborta o
+            # encostar no site que está no ar. Se falhar, o set -e aborta o
             # deploy inteiro: o job fica vermelho e o contêiner ANTIGO segue
             # de pé e saudável.
             #
             # É por isso que a migration não roda no boot do site: lá o
-            # `up -d` já teria destruído o contêiner antigo antes de o novo
+            # up -d já teria destruído o contêiner antigo antes de o novo
             # falhar, e o resultado seria crashloop com o site fora do ar.
+            #
+            # -T e </dev/null NÃO são detalhe: este script chega à VPS pela
+            # entrada padrão do ssh, e um compose run sem eles lê essa
+            # entrada — engolia o resto do script, e tudo daqui para baixo
+            # (inclusive o up -d que troca o site) não rodava, com o job
+            # verde. Foi assim até outubro de 2026. E nada de crase nestes
+            # comentários: o heredoc não é citado, e o runner executaria o
+            # que estivesse entre crases.
             docker compose -f docker-compose.prod.yml up -d db
-            docker compose -f docker-compose.prod.yml run --rm --no-deps site \
-              node scripts/migrar.mjs
+            docker compose -f docker-compose.prod.yml run --rm --no-deps -T site \
+              node scripts/migrar.mjs </dev/null
 
-            # `up -d` sem nome de serviço: sobe o banco junto se ele ainda não
+            # up -d sem nome de serviço: sobe o banco junto se ele ainda não
             # estiver de pé, e respeita o depends_on/healthcheck do site.
             docker compose -f docker-compose.prod.yml up -d
+
+            # A prova de que o deploy aconteceu: o contêiner no ar está com a
+            # imagem deste commit. Sem isto o job ficou verde por semanas sem
+            # trocar o site (ver o comentário do compose run acima).
+            no_ar="\$(docker inspect -f '{{.Config.Image}}' ceramica-1)"
+            if [ "\$no_ar" != "$REGISTRO/site:$SHA" ]; then
+              echo "ERRO: o site no ar está com \$no_ar, e não com $REGISTRO/site:$SHA"
+              exit 1
+            fi
+            echo "site no ar com a imagem $SHA"
 
             # ── Borda ────────────────────────────────────────────────────
             # O que identifica o bloco é o upstream, não o hostname: assim
