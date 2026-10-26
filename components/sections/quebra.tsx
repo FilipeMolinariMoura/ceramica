@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Container } from "@/components/section";
 import { Reveal } from "@/components/reveal";
 import { fotos } from "@/lib/fotos";
+import { TURMAS_ABERTAS } from "@/lib/constants";
 
 export function Quebra() {
   return (
@@ -19,7 +20,7 @@ export function Quebra() {
       <Container className="relative">
         <Reveal className="max-w-xl">
           <p className="text-[0.72rem] font-semibold uppercase tracking-[0.22em] text-papel/70">
-            Terças · manhã ou tarde
+            Terças · {TURMAS_ABERTAS.map((t) => t.periodo.toLowerCase()).join(" ou ")}
           </p>
           <p className="mt-3 font-display text-3xl font-light italic leading-tight text-papel sm:text-4xl lg:text-[2.9rem]">
             Uma pausa no meio da semana, só você e o barro.

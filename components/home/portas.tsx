@@ -18,7 +18,8 @@ import { cn } from "@/lib/utils";
  * porta é uma chamada para AGIR, e quem chega entende o que está à venda
  * sem ler uma frase:
  *
- *   Cerâmica   → a próxima aula AO VIVO (data, hora, lugares na mesa) e os
+ *   Cerâmica   → a próxima aula AO VIVO (data e hora; quantos lugares sobram
+ *                não aparece, pedido da Isabela em 26/10/2026) e os
  *                dois preços lado a lado, com a mensal por aula ao lado da
  *                avulsa. "R$ 200/aula" contra "R$ 250" é o argumento inteiro.
  *   Artista    → as obras se revezando na própria porta.
@@ -60,10 +61,7 @@ export async function Portas() {
                 <span className="text-[0.78rem] font-medium">
                   {proximaAula.dia} {proximaAula.data} · {proximaAula.hora}
                 </span>
-                <Lugares vagas={proximaAula.vagas} restantes={proximaAula.restantes} />
-                <span className="sr-only">
-                  {proximaAula.restantes} lugares livres. Reservar esta aula.
-                </span>
+                <span className="sr-only">Reservar esta aula.</span>
               </Link>
             ) : null}
 
@@ -256,24 +254,5 @@ function Atalho({ href, children }: { href: string; children: React.ReactNode })
     >
       {children}
     </Link>
-  );
-}
-
-/** Um ponto por lugar da mesa: vazado = livre. A escassez sem palavra. */
-function Lugares({ vagas, restantes }: { vagas: number; restantes: number }) {
-  const ocupados = Math.max(vagas - restantes, 0);
-  return (
-    <span aria-hidden className="flex gap-[3px]">
-      {Array.from({ length: Math.min(vagas, 8) }, (_, n) => (
-        <span
-          key={n}
-          className={
-            n < ocupados
-              ? "h-[7px] w-[7px] rounded-full bg-papel/45"
-              : "h-[7px] w-[7px] rounded-full border border-papel"
-          }
-        />
-      ))}
-    </span>
   );
 }

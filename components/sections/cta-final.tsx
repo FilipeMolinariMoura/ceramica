@@ -6,8 +6,9 @@ import { SeisLugares } from "@/components/seis-lugares";
 import { vitrineDasAulas } from "@/lib/vitrine";
 
 /**
- * O fechamento da página. Diz a data de verdade do próximo pacote e quantos
- * lugares sobram nele — antes dizia "Turmas de setembro" e "as aulas começam
+ * O fechamento da página. Diz a data de verdade do próximo pacote — e não
+ * quantos lugares sobram nele, que a Isabela pediu para não mostrar
+ * (26/10/2026). Antes dizia "Turmas de setembro" e "as aulas começam
  * em 1º de setembro", fixo no código, e continuou dizendo depois de setembro.
  *
  * Sem pacote aberto, a mesma faixa vira lista de espera: é melhor guardar o
@@ -31,9 +32,6 @@ export async function CtaFinal() {
           {mensal ? (
             <p className="mt-5 max-w-md text-lg text-papel/85">
               {mensal.aulas} terças por {mensal.pix} — {mensal.porAula} por aula.
-              {proximoPacote
-                ? ` ${proximoPacote.minRestantes === 1 ? "Resta 1 lugar" : `Restam ${proximoPacote.minRestantes} lugares`}.`
-                : ""}
             </p>
           ) : null}
         </Reveal>

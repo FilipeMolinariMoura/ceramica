@@ -33,6 +33,10 @@ import { SERVICO_AULA_AVULSA, SERVICO_TURMA_MENSAL, TURMAS, type TurmaId } from 
  * R$ 200 ao lado dos R$ 250 da avulsa. Nenhum número aqui é fixo: tudo sai do
  * banco (preço, pacote, vagas), e a Isabela muda pelo painel.
  *
+ * Quantos lugares sobram NÃO sai daqui (pedido da Isabela, 26/10/2026): o
+ * cliente recebe só se a data está lotada ou não. Mandar a contagem e
+ * escondê-la na tela ainda a deixaria no HTML para quem olhasse.
+ *
  * É Server Component e lê o banco a cada visita (ver `dynamic` na página):
  * agenda em cache mostraria vaga já vendida. Toda data vira TEXTO aqui, em
  * horário de Brasília; o cliente recebe rótulo pronto e nunca formata data.
@@ -72,11 +76,9 @@ export async function EscolhaAula({
       diaLongo: diaLongo(h.inicio),
       hora: horaCurta(h.inicio),
       turma: turmaDe(h.inicio),
-      restantes: h.restantes,
-      vagas: h.vagas,
+      lotado: h.restantes <= 0,
     }));
 
-  const porId = new Map(horarios.map((h) => [h.id, h]));
   const pacotes = {} as Record<TurmaId, PacoteVisivel[]>;
   for (const t of TURMAS) {
     pacotes[t.id] = mensal
@@ -90,8 +92,6 @@ export async function EscolhaAula({
             ids: o.ids,
             datas: o.inicios.map(diaCurto),
             inicioLongo: diaLongo(o.inicios[0]!),
-            restantes: o.ids.map((id) => porId.get(id)?.restantes ?? 0),
-            vagas: o.ids.map((id) => porId.get(id)?.vagas ?? 0),
             disponivel: o.disponivel,
           }))
       : [];

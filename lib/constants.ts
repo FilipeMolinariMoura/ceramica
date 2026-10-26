@@ -123,13 +123,21 @@ export const CURSO = {
  * passou de 9h30 para 10h. `inicio` é o que casa com o horário gravado no
  * banco (no fuso de Brasília): é por ele que a agenda sabe a que turma cada
  * horário pertence.
+ *
+ * `aberta`: a turma que o site ANUNCIA. A manhã saiu a partir das terças de
+ * novembro/2026 (pedido da Isabela em 26/10). Ela continua na lista porque
+ * pacotes e reservas antigos da manhã ainda precisam do nome e do horário
+ * dela; só deixa de aparecer nos textos e de ser vendida. Para voltar, é
+ * `aberta: true` aqui e abrir as terças pelo painel.
  */
 export const TURMAS = [
-  { id: "manha", periodo: "Manhã", inicio: "10:00", fim: "12:00", horario: "10h às 12h" },
-  { id: "tarde", periodo: "Tarde", inicio: "13:30", fim: "15:30", horario: "13h30 às 15h30" },
+  { id: "manha", periodo: "Manhã", inicio: "10:00", fim: "12:00", horario: "10h às 12h", aberta: false },
+  { id: "tarde", periodo: "Tarde", inicio: "13:30", fim: "15:30", horario: "13h30 às 15h30", aberta: true },
 ] as const;
 
 export type TurmaId = (typeof TURMAS)[number]["id"];
+
+export const TURMAS_ABERTAS = TURMAS.filter((t) => t.aberta);
 
 export const TURMA_OPCOES = [
   { value: "manha", label: `Manhã (${TURMAS[0].horario})` },

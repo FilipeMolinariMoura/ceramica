@@ -21,7 +21,7 @@ import { vitrineDasAulas } from "@/lib/vitrine";
  * vontade não sobrevive a três passos.
  *
  * Esta faixa traz os PRÓXIMOS HORÁRIOS REAIS para a primeira página — dia,
- * hora, quantas vagas restam — e cada um é um link direto para a agenda. Não
+ * hora, até que horas vai — e cada um é um link direto para a agenda. Não
  * é um banner dizendo "marque sua aula": é a coisa em si, com data.
  *
  * ── Por que só três ───────────────────────────────────────────────────────
@@ -96,10 +96,10 @@ export async function ProximosHorarios() {
                     </div>
 
                     <div className="flex items-baseline justify-between gap-3">
+                      {/* Até que horas vai — e não quantas vagas sobram, que
+                          a Isabela pediu para não mostrar (26/10/2026). */}
                       <span className="text-[0.8rem] text-papel/60">
-                        {h.restantes === 1
-                          ? "última vaga"
-                          : `${h.restantes} vagas`}
+                        até {hora(new Date(h.inicio.getTime() + servico.duracaoMin * 60_000))}
                       </span>
                       <span className="versalete-larga text-[0.6rem] text-osso transition-colors group-hover:text-papel">
                         Reservar

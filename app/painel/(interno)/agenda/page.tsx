@@ -256,7 +256,7 @@ export default async function Agenda() {
               <legend className={`${ROTULO} mb-1.5`}>Turmas</legend>
               {TURMAS.map((t) => (
                 <label key={t.id} className="flex items-center gap-2 text-[0.9rem] text-preto">
-                  <input type="checkbox" name={`turma-${t.id}`} defaultChecked className="h-4 w-4 accent-vermelho" />
+                  <input type="checkbox" name={`turma-${t.id}`} defaultChecked={t.aberta} className="h-4 w-4 accent-vermelho" />
                   {t.periodo} · {t.horario}
                 </label>
               ))}

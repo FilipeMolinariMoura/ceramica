@@ -1,17 +1,22 @@
 import { Container } from "@/components/section";
 import { CabecalhoSecao } from "@/components/cabecalho-secao";
 import { Reveal } from "@/components/reveal";
-import { TURMAS } from "@/lib/constants";
+import { TURMAS_ABERTAS } from "@/lib/constants";
 
 const PERGUNTAS = [
   {
     q: "Preciso ter experiência?",
     a: "Não. A turma recebe iniciantes e o acompanhamento é individual.",
   },
-  {
-    q: "Tem horário de manhã e de tarde?",
-    a: `Sim. As duas turmas são às terças: uma de manhã (${TURMAS[0].horario}) e outra de tarde (${TURMAS[1].horario}). Você escolhe a turma na hora de reservar.`,
-  },
+  TURMAS_ABERTAS.length > 1
+    ? {
+        q: "Tem horário de manhã e de tarde?",
+        a: `Sim. As turmas são às terças: ${TURMAS_ABERTAS.map((t) => `${t.periodo.toLowerCase()} (${t.horario})`).join(" e ")}. Você escolhe a turma na hora de reservar.`,
+      }
+    : {
+        q: "Qual é o horário?",
+        a: `A turma é às terças, das ${TURMAS_ABERTAS[0]?.horario}. De vez em quando abro um horário extra, que aparece na agenda.`,
+      },
   {
     q: "Preciso comprar ferramentas?",
     a: "Não. Todas as ferramentas estão inclusas.",
@@ -30,7 +35,7 @@ const PERGUNTAS = [
   },
   {
     q: "E se eu quiser só experimentar?",
-    a: "Faça uma aula avulsa: escolha uma terça, pague pelo site e venha. Se gostar, a turma mensal sai mais barata por aula.",
+    a: "Faça uma aula avulsa: escolha uma data, pague pelo site e venha. Se gostar, a turma mensal sai mais barata por aula.",
   },
 ];
 

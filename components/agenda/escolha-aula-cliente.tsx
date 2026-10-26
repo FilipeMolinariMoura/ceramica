@@ -4,7 +4,7 @@ import * as React from "react";
 import { Check, MessageCircle, Palette, Flame, Hand } from "lucide-react";
 import { InscricaoCta } from "@/components/inscricao-cta";
 import { FormularioPagamento, type Pedido } from "@/components/agenda/formulario-pagamento";
-import { TURMAS, WHATSAPP_DUVIDA, type TurmaId } from "@/lib/constants";
+import { TURMAS, TURMAS_ABERTAS, WHATSAPP_DUVIDA, type TurmaId } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /**
@@ -12,8 +12,9 @@ import { cn } from "@/lib/utils";
  *
  * Três toques até o botão de pagar: o PLANO (mensal ou avulsa), a TURMA
  * (manhã ou tarde) e a DATA. Tudo o que a pessoa precisa para decidir está
- * nas próprias opções — preço por aula, economia, lugares livres —, e não em
- * parágrafo nenhum. Quem quiser detalhe tem a página inteira embaixo.
+ * nas próprias opções — preço por aula, economia, data lotada ou não —, e não
+ * em parágrafo nenhum. Quantos lugares sobram não aparece (pedido da Isabela,
+ * 26/10/2026). Quem quiser detalhe tem a página inteira embaixo.
  *
  * A mensal vem primeiro e pré-selecionada: é a que vale mais para quem
  * compra e para o ateliê, e o preço por aula dela só funciona como argumento
@@ -35,8 +36,7 @@ export type SlotVisivel = {
   /** "10h" */
   hora: string;
   turma: TurmaId | null;
-  restantes: number;
-  vagas: number;
+  lotado: boolean;
 };
 
 export type PacoteVisivel = {
@@ -44,8 +44,6 @@ export type PacoteVisivel = {
   ids: number[];
   datas: string[];
   inicioLongo: string;
-  restantes: number[];
-  vagas: number[];
   disponivel: boolean;
 };
 
@@ -86,19 +84,32 @@ export function EscolhaAulaCliente({
 }: Props) {
   const temMensal = precos.mensal !== null;
   const deepLink = inicial.horarioId
-    ? slots.find((s) => s.id === inicial.horarioId && s.restantes > 0)
+    ? slots.find((s) => s.id === inicial.horarioId && !s.lotado)
     : undefined;
+
+  // Uma turma fechada (`aberta: false`) só aparece enquanto ainda tem data
+  // no ar — a última terça da manhã, por exemplo. Depois disso some, em vez
+  // de virar uma aba de "turma completa" que não vai reabrir.
+  const turmaVisivel = (t: (typeof TURMAS)[number], p: Plano) =>
+    t.aberta || (p === "mensal" ? pacotes[t.id].length > 0 : slots.some((s) => s.turma === t.id));
+  const primeiraTurma = (p: Plano): TurmaId =>
+    TURMAS.find((t) => turmaVisivel(t, p))?.id ?? TURMAS_ABERTAS[0]?.id ?? "tarde";
 
   const [plano, setPlano] = React.useState<Plano>(() =>
     deepLink ? "avulsa" : !temMensal ? "avulsa" : (inicial.plano ?? "mensal")
   );
 
   // A turma abre na que tem o que vender: a pedida, senão a primeira com
-  // pacote disponível, senão a manhã.
+  // pacote disponível, senão a primeira turma à vista.
   const [aba, setAba] = React.useState<Aba>(() => {
     if (deepLink) return deepLink.turma ?? "outros";
-    if (inicial.turma) return inicial.turma;
-    return TURMAS.find((t) => pacotes[t.id].some((p) => p.disponivel))?.id ?? "manha";
+    const p: Plano = !temMensal ? "avulsa" : (inicial.plano ?? "mensal");
+    const pedida = TURMAS.find((t) => t.id === inicial.turma);
+    if (pedida && turmaVisivel(pedida, p)) return pedida.id;
+    return (
+      TURMAS.find((t) => turmaVisivel(t, p) && pacotes[t.id].some((x) => x.disponivel))?.id ??
+      primeiraTurma(p)
+    );
   });
 
   const [slotId, setSlotId] = React.useState<number | null>(deepLink?.id ?? null);
@@ -106,11 +117,15 @@ export function EscolhaAulaCliente({
   const [pedido, setPedido] = React.useState<Pedido | null>(null);
 
   const temOutros = slots.some((s) => s.turma === null);
-  const turma: TurmaId = aba === "outros" ? "manha" : aba;
+  const turma: TurmaId = aba === "outros" ? primeiraTurma(plano) : aba;
+  const turmasVisiveis = TURMAS.filter((t) => turmaVisivel(t, plano));
 
   // Na mensal não existe "outros": horário fora das turmas não entra em pacote.
+  // E uma turma que saiu do ar num plano não fica selecionada ao trocar de plano.
   React.useEffect(() => {
-    if (plano === "mensal" && aba === "outros") setAba("manha");
+    if (plano === "mensal" && aba === "outros") setAba(primeiraTurma(plano));
+    else if (aba !== "outros" && !turmasVisiveis.some((t) => t.id === aba)) setAba(primeiraTurma(plano));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plano, aba]);
 
   const slotsDaAba = slots.filter((s) => (aba === "outros" ? s.turma === null : s.turma === aba));
@@ -119,8 +134,8 @@ export function EscolhaAulaCliente({
   // Seleção padrão: a primeira data com lugar. Recalculada quando a turma ou
   // o plano mudam e a seleção atual deixa de pertencer à lista.
   const slot =
-    slotsDaAba.find((s) => s.id === slotId && s.restantes > 0) ??
-    slotsDaAba.find((s) => s.restantes > 0) ??
+    slotsDaAba.find((s) => s.id === slotId && !s.lotado) ??
+    slotsDaAba.find((s) => !s.lotado) ??
     null;
   const pacote =
     pacotesDaTurma.find((p) => p.inicioId === inicioId && p.disponivel) ??
@@ -192,7 +207,7 @@ export function EscolhaAulaCliente({
   return (
     <div ref={ref} className="flex flex-col gap-8">
       <header className="flex flex-col gap-3" data-enter>
-        <p className="rotulo">Terças · {TURMAS.map((t) => t.horario.split(" ")[0]).join(" ou ")} · Pinheiros</p>
+        <p className="rotulo">Terças · {TURMAS_ABERTAS.map((t) => t.horario.split(" ")[0]).join(" ou ")} · Pinheiros</p>
         <Titulo className="titulo-hero versalete font-display text-vermelho">Mão no barro</Titulo>
       </header>
 
@@ -215,7 +230,7 @@ export function EscolhaAulaCliente({
           aoEscolher={() => setPlano("avulsa")}
           titulo="Aula avulsa"
           preco={precos.avulsa}
-          linha="1 terça · sem compromisso"
+          linha="1 aula · sem compromisso"
         />
       </div>
 
@@ -224,12 +239,21 @@ export function EscolhaAulaCliente({
       ) : (
         <>
           {/* ── 2. A turma ───────────────────────────────────────────────── */}
-          <div role="tablist" aria-label="Turma" className="grid grid-cols-2 gap-px border border-borda bg-borda sm:inline-grid sm:auto-cols-fr sm:grid-flow-col sm:self-start">
-            {TURMAS.map((t) => {
-              const livres =
+          {/* Uma aba só (a mensal, com a manhã fechada) ocupa a linha sozinha;
+              com duas colunas fixas sobraria uma casa vazia ao lado. */}
+          <div
+            role="tablist"
+            aria-label="Turma"
+            className={cn(
+              "grid gap-px border border-borda bg-borda sm:inline-grid sm:auto-cols-fr sm:grid-flow-col sm:self-start",
+              turmasVisiveis.length + (plano === "avulsa" && temOutros ? 1 : 0) > 1 ? "grid-cols-2" : "grid-cols-1"
+            )}
+          >
+            {turmasVisiveis.map((t) => {
+              const temLugar =
                 plano === "mensal"
-                  ? (pacotes[t.id].find((p) => p.disponivel)?.restantes[0] ?? 0)
-                  : (slots.find((s) => s.turma === t.id && s.restantes > 0)?.restantes ?? 0);
+                  ? pacotes[t.id].some((p) => p.disponivel)
+                  : slots.some((s) => s.turma === t.id && !s.lotado);
               return (
                 <AbaTurma
                   key={t.id}
@@ -237,7 +261,7 @@ export function EscolhaAulaCliente({
                   aoEscolher={() => setAba(t.id)}
                   titulo={t.periodo}
                   sub={t.horario}
-                  livres={livres}
+                  temLugar={temLugar}
                 />
               );
             })}
@@ -247,7 +271,7 @@ export function EscolhaAulaCliente({
                 aoEscolher={() => setAba("outros")}
                 titulo="Outros"
                 sub="horários extras"
-                livres={slots.find((s) => s.turma === null && s.restantes > 0)?.restantes ?? 0}
+                temLugar={slots.some((s) => s.turma === null && !s.lotado)}
               />
             ) : null}
           </div>
@@ -260,12 +284,10 @@ export function EscolhaAulaCliente({
                   key={s.id}
                   i={i}
                   ativo={slot?.id === s.id}
-                  esgotado={s.restantes <= 0}
+                  esgotado={s.lotado}
                   aoEscolher={() => setSlotId(s.id)}
                   topo={aba === "outros" ? `${s.dia} · ${s.hora}` : s.dia}
                   data={s.data}
-                  restantes={s.restantes}
-                  vagas={s.vagas}
                 />
               ))}
             </Regua>
@@ -281,8 +303,6 @@ export function EscolhaAulaCliente({
                     aoEscolher={() => setInicioId(p.inicioId)}
                     topo="ter"
                     data={p.datas[0]!}
-                    restantes={Math.min(...p.restantes)}
-                    vagas={p.vagas[0] ?? 6}
                   />
                 ))}
               </Regua>
@@ -437,13 +457,13 @@ function AbaTurma({
   aoEscolher,
   titulo,
   sub,
-  livres,
+  temLugar,
 }: {
   ativa: boolean;
   aoEscolher: () => void;
   titulo: string;
   sub: string;
-  livres: number;
+  temLugar: boolean;
 }) {
   return (
     <button
@@ -458,8 +478,8 @@ function AbaTurma({
     >
       <span className="text-[0.95rem] font-medium">{titulo}</span>
       <span className={cn("text-[0.75rem]", ativa ? "text-papel/70" : "text-texto/55")}>{sub}</span>
-      <span className={cn("mt-1 text-[0.68rem]", ativa ? "text-papel/80" : livres > 0 ? "text-realce" : "text-texto/40")}>
-        {livres > 0 ? `${livres} ${livres === 1 ? "lugar" : "lugares"} na próxima` : "lotada"}
+      <span className={cn("mt-1 text-[0.68rem]", ativa ? "text-papel/80" : temLugar ? "text-realce" : "text-texto/40")}>
+        {temLugar ? "com vaga" : "lotada"}
       </span>
     </button>
   );
@@ -498,8 +518,6 @@ function ChipData({
   aoEscolher,
   topo,
   data,
-  restantes,
-  vagas,
 }: {
   i: number;
   ativo: boolean;
@@ -507,10 +525,7 @@ function ChipData({
   aoEscolher: () => void;
   topo: string;
   data: string;
-  restantes: number;
-  vagas: number;
 }) {
-  const ultima = restantes === 1 && !esgotado;
   return (
     <button
       type="button"
@@ -529,43 +544,12 @@ function ChipData({
     >
       <span className={cn("versalete-larga text-[0.55rem]", ativo ? "text-branco/80" : "text-texto/50")}>{topo}</span>
       <span className={cn("numeral text-[1.3rem] leading-none", esgotado && "line-through decoration-1")}>{data}</span>
-      <Lugares vagas={vagas} restantes={restantes} claro={ativo} />
-      <span
-        className={cn(
-          "text-[0.62rem] leading-none",
-          ativo ? "text-branco" : ultima ? "font-semibold text-realce" : "text-texto/55"
-        )}
-      >
-        {esgotado ? "lotada" : ultima ? "última vaga" : `restam ${restantes}`}
+      {/* Só "lotada" — nunca quantos sobram. O espaço fica reservado para as
+          datas da régua manterem a mesma altura. */}
+      <span className={cn("text-[0.62rem] leading-none", ativo ? "text-branco" : "text-texto/55")}>
+        {esgotado ? "lotada" : "\u00a0"}
       </span>
     </button>
-  );
-}
-
-/**
- * Um ponto por lugar da mesa: cheio é lugar tomado, vazado é lugar livre. Lê
- * a escassez num relance, sem escrever "restam poucas vagas".
- */
-function Lugares({ vagas, restantes, claro }: { vagas: number; restantes: number; claro?: boolean }) {
-  const ocupados = Math.max(vagas - restantes, 0);
-  return (
-    <span className="flex gap-[3px]" aria-hidden>
-      {Array.from({ length: Math.min(vagas, 8) }, (_, i) => (
-        <span
-          key={i}
-          className={cn(
-            "h-[7px] w-[7px] rounded-full",
-            i < ocupados
-              ? claro
-                ? "bg-branco/45"
-                : "bg-texto/30"
-              : claro
-                ? "border border-branco"
-                : "border border-realce"
-          )}
-        />
-      ))}
-    </span>
   );
 }
 
@@ -585,7 +569,6 @@ function LinhaDoPacote({ pacote }: { pacote: PacoteVisivel }) {
         >
           <span className="numeral text-[0.7rem] text-texto/40">{i + 1}ª</span>
           <span className="numeral text-[1.05rem] leading-none text-texto sm:text-[1.2rem]">{d}</span>
-          <Lugares vagas={pacote.vagas[i] ?? 6} restantes={pacote.restantes[i] ?? 0} />
         </li>
       ))}
     </ol>

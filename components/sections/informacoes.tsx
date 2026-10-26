@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/section";
 import { Eyebrow } from "@/components/eyebrow";
 import { Reveal } from "@/components/reveal";
-import { CURSO, TURMAS } from "@/lib/constants";
+import { CURSO, TURMAS_ABERTAS } from "@/lib/constants";
 import { vitrineDasAulas } from "@/lib/vitrine";
 
 const COR_TURMA = ["bg-vermelho", "bg-verde"];
@@ -40,10 +40,10 @@ export async function Informacoes() {
             {/* Dois horários — sempre às terças. Manhã ou tarde, bem separados. */}
             <Reveal>
               <p className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-preto/45">
-                Duas turmas · sempre às terças
+                {TURMAS_ABERTAS.length > 1 ? "Duas turmas" : "Uma turma"} · sempre às terças
               </p>
               <div className="mt-5 grid gap-6 sm:grid-cols-2">
-                {TURMAS.map((t, i) => (
+                {TURMAS_ABERTAS.map((t, i) => (
                   <div
                     key={t.id}
                     className={
